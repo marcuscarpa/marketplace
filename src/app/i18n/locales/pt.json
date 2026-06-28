@@ -1,0 +1,27 @@
+{
+  "common": {
+    "addToCart": "Adicionar ao Carrinho",
+    "removeFromCart": "Remover do Carrinho",
+    "checkout": "Finalizar Compra",
+    "continue": "Continuar Comprando",
+    "loading": "Carregando..."
+  },
+  "nav": {
+    "home": "Início",
+    "shop": "Loja",
+    "about": "Sobre",
+    "contact": "Contato"
+  },
+  "product": {
+    "outOfStock": "Fora de Estoque",
+    "inStock": "Em Estoque",
+    "addToWishlist": "Adicionar aos Favoritos",
+    "removeFromWishlist": "Remover dos Favoritos",
+    "tags": {
+      "newArrival": "Novidade",
+      "soldOut": "Esgotado",
+      "sale": "Promoção",
+      "bestseller": "Mais vendidos"
+    }
+  }
+}

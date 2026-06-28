@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sinesi Karol — Arquitetura do Marketplace</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0f;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.03em;
+  }
+  .subtitle {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+  }
+  .diagram-container {
+    display: flex;
+    justify-content: center;
+    overflow: auto;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    background: #0f1117;
+    padding: 1rem;
+  }
+  iframe {
+    width: 1400px;
+    height: 900px;
+    border: none;
+    border-radius: 8px;
+  }
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .legend-section {
+    background: #111827;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .legend-section h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #1e293b;
+  }
+  .legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.78rem;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+  .badge-c { background: #7c3aed; color: #fff; }
+  .badge-h { background: #dc2626; color: #fff; }
+  .badge-m { background: #d97706; color: #fff; }
+  .badge-l { background: #059669; color: #fff; }
+  .badge-s { background: #1d4ed8; color: #fff; }
+  .file-path { color: #38bdf8; font-family: 'Consolas', monospace; font-size: 0.72rem; }
+  .desc { color: #94a3b8; line-height: 1.4; }
+</style>
+</head>
+<body>
+<h1>🏗️ Sinesi Karol Marketplace — Arquitetura Completa</h1>
+<p class="subtitle">Next.js 15 · Shopify Storefront API · Redis multi-região · Edge Runtime · TypeScript</p>
+
+<div class="diagram-container">
+<iframe src="architecture.drawio.svg"></iframe>
+</div>
+
+<div class="legend">
+  <div class="legend-section">
+    <h3>🛡️ Camada de Segurança</h3>
+    <div class="legend-item"><span class="badge badge-c">S</span><div><span class="file-path">middleware.ts</span><br><span class="desc">IP spoofing protection, locale redirect, CSP headers</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/security/csp.ts</span><br><span class="desc">Content Security Policy com nonce, frame-ancestors, media-src</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/security/bot-protection.ts</span><br><span class="desc">Rate limiting Lua script atômico, fail-open configurável</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/security/hmac.ts</span><br><span class="desc">HMAC-SHA256 webhook validation (S-02, S-03)</span></div></div>
+    <div class="legend-item"><span class="badge badge-c">S</span><div><span class="file-path">lib/secrets.ts</span><br><span class="desc">XOR + Base64 encryption + SHA-256 integrity check no Redis</span></div></div>
+  </div>
+
+  <div class="legend-section">
+    <h3>🔐 Autenticação OAuth + Sessão</h3>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">app/[locale]/api/auth/oauth/authorize/route.ts</span><br><span class="desc">OAuth authorize + safeRedirectPath (S-04 open redirect fix)</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">app/[locale]/api/auth/oauth/callback/route.ts</span><br><span class="desc">OAuth callback — valida state, cria sessão, tokens JWT-like em cookies</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">app/[locale]/api/auth/logout/route.ts</span><br><span class="desc">Logout: CSRF origin check + Shopify token revoke + cookie cleanup</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">app/[locale]/api/auth/refresh/route.ts</span><br><span class="desc">Refresh token rotation + Redis invalidation (H-12)</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">app/[locale]/api/auth/me/route.ts</span><br><span class="desc"> GET /me — token per região (H-08 fix), shopify_customer_id do cookie</span></div></div>
+  </div>
+
+  <div class="legend-section">
+    <h3>🛒 Carrinho + Shopify Storefront API</h3>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/shopify/client.ts</span><br><span class="desc">Client cacheado por região (Map), GraphQL, circuit breaker, Redis fallback</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/shopify/loader.ts</span><br><span class="desc">getProductByHandle + getProductsByHandles (batch via GraphQL aliases)</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/shopify/queries.ts</span><br><span class="desc">GraphQL queries: SEARCH_PRODUCTS, GET_CART, CART_LINES_ADD, etc.</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/circuit-breaker.ts</span><br><span class="desc">Circuit breaker com cokatiel — 5 falhas → open por 30s</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">actions/cart.ts</span><br><span class="desc">Server Actions: addToCart, updateCartLines, removeFromCart + rate limit</span></div></div>
+  </div>
+
+  <div class="legend-section">
+    <h3>⚡ Redis Multi-Região</h3>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/redis/client.ts</span><br><span class="desc">Map<URL, Redis> — REDIS_URL_US/EU/BR/APAC + fallback REDIS_URL (S-10)</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/cache/stampede.ts</span><br><span class="desc">Cache stampede protection com lock (M-13 try/catch)</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/cache/lock.ts</span><br><span class="desc">Redlock distributed lock — withLock() helper</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/shopify/cache.ts</span><br><span class="desc">pub/sub via LPUSH + LRANGE polling (M-14 fix)</span></div></div>
+  </div>
+
+  <div class="legend-section">
+    <h3>🔔 Webhooks Shopify</h3>
+    <div class="legend-item"><span class="badge badge-c">C</span><div><span class="file-path">app/[locale]/api/webhooks/route.ts</span><br><span class="desc">HMAC validation (S-02), idempotency check (S-03), topics: orders/cancelled, customers/data_request</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">app/[locale]/api/webhooks/route.ts:processWebhook()</span><br><span class="desc">revoke tokens, revoke customer data, invalidate cache on webhook</span></div></div>
+  </div>
+
+  <div class="legend-section">
+    <h3>📋 Compliance + Dados</h3>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">app/[locale]/api/compliance/export/route.ts</span><br><span class="desc">GET export — auth token + hash integrity + userId mismatch check (S-05)</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">app/[locale]/api/compliance/delete/route.ts</span><br><span class="desc">POST delete — auth + userId mismatch (S-06)</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/compliance/consent.ts</span><br><span class="desc">Consent ledger (Redis LPUSH), getConsentState, verifyConsentLedger, atomic writes</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/compliance/audit.ts</span><br><span class="desc">Audit log events (login, logout, consent_recorded, deletion_request)</span></div></div>
+  </div>
+
+  <div class="legend-section">
+    <h3>🌐 Middleware + Rate Limiting</h3>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">middleware.ts</span><br><span class="desc">IP spoofing check (trust x-vercel-forwarded-for, reject private IPs) + locale redirect</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/rate-limit.ts</span><br><span class="desc">Lua script INCR+EXPIRE atômico (H-02), fail-open configurável (H-03)</span></div></div>
+    <div class="legend-item"><span class="badge badge-s">S</span><div><span class="file-path">lib/security/bot-protection.ts</span><br><span class="desc">checkRateLimit() — called em todas server actions e API routes</span></div></div>
+  </div>
+
+  <div class="legend-section">
+    <h3>🔄 Loops de Dados</h3>
+    <div class="legend-item"><span class="badge badge-h">H</span><div><span class="file-path">cart.ts:refreshCart</span><br><span class="desc">useEffect → fetch /api/cart → setCart → re-render</span></div></div>
+    <div class="legend-item"><span class="badge badge-h">H</span><div><span class="file-path">actions/cart.ts</span><br><span class="desc">addToCartAction → Shopify API → Redis del(cart:id) → revalidateTag('cart')</span></div></div>
+    <div class="legend-item"><span class="badge badge-h">H</span><div><span class="file-path">wishlist.ts</span><br><span class="desc">useWishlist → Redis SET wishlist:guest:{uuid} → UUID cookie (H-09 fix)</span></div></div>
+    <div class="legend-item"><span class="badge badge-h">H</span><div><span class="file-path">lib/shopify/cache.ts</span><br><span class="desc">Cache stampede: lock → check Redis → fetch Shopify → set Redis TTL</span></div></div>
+    <div class="legend-item"><span class="badge badge-h">H</span><div><span class="file-path">auth refresh</span><br><span class="desc">Token expiry → POST /api/auth/refresh → new tokens → cookie update</span></div></div>
+  </div>
+</div>
+</body>
+</html>

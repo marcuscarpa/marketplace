@@ -1,0 +1,27 @@
+{
+  "common": {
+    "addToCart": "Add to Cart",
+    "removeFromCart": "Remove from Cart",
+    "checkout": "Checkout",
+    "continue": "Continue Shopping",
+    "loading": "Loading..."
+  },
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "product": {
+    "outOfStock": "Out of Stock",
+    "inStock": "In Stock",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
+    "tags": {
+      "newArrival": "New arrival",
+      "soldOut": "Sold out",
+      "sale": "Sale",
+      "bestseller": "Bestseller"
+    }
+  }
+}

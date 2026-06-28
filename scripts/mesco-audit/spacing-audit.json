@@ -1,0 +1,67 @@
+{
+  "found": [
+    {
+      "name": "Hero",
+      "top": 1,
+      "bottom": 901,
+      "height": 900,
+      "paddingTop": "0px",
+      "paddingBottom": "0px",
+      "marginTop": "0px",
+      "marginBottom": "0px",
+      "gap": "normal"
+    },
+    {
+      "name": "Most popular",
+      "top": 901,
+      "bottom": 2129,
+      "height": 1228,
+      "paddingTop": "120px",
+      "paddingBottom": "120px",
+      "marginTop": "0px",
+      "marginBottom": "0px",
+      "gap": "40px"
+    },
+    {
+      "name": "Our values",
+      "missing": true
+    },
+    {
+      "name": "New arrivals",
+      "top": 3029,
+      "bottom": 3867,
+      "height": 838,
+      "paddingTop": "120px",
+      "paddingBottom": "120px",
+      "marginTop": "0px",
+      "marginBottom": "0px",
+      "gap": "40px"
+    },
+    {
+      "name": "About us",
+      "missing": true
+    },
+    {
+      "name": "Our bestsellers",
+      "missing": true
+    },
+    {
+      "name": "Our articles",
+      "missing": true
+    },
+    {
+      "name": "FAQ's",
+      "missing": true
+    }
+  ],
+  "gaps": [
+    {
+      "from": "Hero",
+      "to": "Most popular",
+      "gapPx": 0
+    }
+  ],
+  "viewport": {
+    "h": 900
+  }
+}

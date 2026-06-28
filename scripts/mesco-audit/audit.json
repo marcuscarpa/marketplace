@@ -1,0 +1,1089 @@
+{
+  "title": "Mesco — E-Commerce Storefront",
+  "bodyFont": "sans-serif",
+  "bodyBg": "rgb(255, 255, 255)",
+  "bodyColor": "rgb(0, 0, 0)",
+  "fonts": [
+    "Instrument Sans 400 normal",
+    "IBM Plex Mono 600 normal",
+    "Playfair Display 400 normal",
+    "Playfair Display 700 normal",
+    "Playfair Display 700 italic",
+    "Playfair Display 400 italic",
+    "Helvetica Neue Regular normal normal",
+    "Helvetica Neue Medium 500 normal",
+    "Helvetica Neue Regular 400 normal",
+    "Helvetica Neue Medium normal normal",
+    "Inter 400 normal",
+    "Inter 900 normal",
+    "Inter 900 italic",
+    "Inter 700 italic",
+    "Inter 700 normal",
+    "Inter 600 normal",
+    "Inter 500 normal",
+    "Instrument Sans Placeholder normal normal",
+    "Playfair Display Placeholder normal normal",
+    "Helvetica Neue Regular Placeholder normal normal",
+    "Helvetica Neue Medium Placeholder normal normal",
+    "Inter Placeholder normal normal"
+  ],
+  "headings": [
+    {
+      "tag": "H1",
+      "text": "Essentials,for everyone.",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "80px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-3.2px"
+    },
+    {
+      "tag": "H3",
+      "text": "Most popular",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H3",
+      "text": "Our values",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(255, 255, 255)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H3",
+      "text": "New arrivals",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H3",
+      "text": "About us",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H2",
+      "text": "New designs to define your look",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "56px",
+      "weight": "400",
+      "color": "rgb(255, 255, 255)",
+      "letterSpacing": "-2.24px"
+    },
+    {
+      "tag": "H2",
+      "text": "Our most-loved picks for her",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "56px",
+      "weight": "400",
+      "color": "rgb(255, 255, 255)",
+      "letterSpacing": "-2.24px"
+    },
+    {
+      "tag": "H3",
+      "text": "Bags",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H3",
+      "text": "Bracelets",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H3",
+      "text": "Accessories",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H3",
+      "text": "Our bestsellers",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H3",
+      "text": "Our articles",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H6",
+      "text": "The art of essentials",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "24px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-0.96px"
+    },
+    {
+      "tag": "H6",
+      "text": "Light to night",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "24px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-0.96px"
+    },
+    {
+      "tag": "H6",
+      "text": "Textures that last",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "24px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-0.96px"
+    },
+    {
+      "tag": "H6",
+      "text": "Parisian minimalism",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "24px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-0.96px"
+    },
+    {
+      "tag": "H3",
+      "text": "\"I’ve carried it everywhere — to work, weekends, and quick trips — and it still looks brand new. This bag isn’t just an accessory — it’s part of how I move through the day\"",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H6",
+      "text": "Follow us on socials",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "24px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-0.96px"
+    },
+    {
+      "tag": "H3",
+      "text": "FAQ's",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.92px"
+    },
+    {
+      "tag": "H4",
+      "text": "Be the first to discover the latest news, collections, and exclusive launches",
+      "font": "\"Playfair Display\", \"Playfair Display Placeholder\", serif",
+      "size": "36px",
+      "weight": "400",
+      "color": "rgb(3, 6, 7)",
+      "letterSpacing": "-1.44px"
+    }
+  ],
+  "imgs": [
+    {
+      "src": "/mesco-assets/images/jdquv9qNfPb8bKqeVKRoPNl3uV0.jpg?width=3200&height=2400",
+      "alt": "",
+      "w": 1440,
+      "h": 1080
+    },
+    {
+      "src": "/mesco-assets/images/0aqTW9mAJfy6HI59dFT6SQ870.png?width=1024&height=1024",
+      "alt": "",
+      "w": 469,
+      "h": 469
+    },
+    {
+      "src": "/mesco-assets/images/Fkq4TQ9cKr8qXNF4YiCA2Sn9J0s.png?width=1024&height=1024",
+      "alt": "",
+      "w": 469,
+      "h": 469
+    },
+    {
+      "src": "/mesco-assets/images/iAKIoxaSufgGZDYzbDfO84Xaks.png?width=1536&height=1024",
+      "alt": "Close-up of a woman resting on a horse’s back under natural sunlight, wearing a black top and gold twisted bracelet.",
+      "w": 690,
+      "h": 460
+    },
+    {
+      "src": "/mesco-assets/images/F71sF9RlHxVktOjXh4LVNMzXxk.jpg?width=1536&height=1200",
+      "alt": "Brown sculptural leather handbag resting on tall ornamental grass during golden hour, evoking a natural, elegant mood.",
+      "w": 1439,
+      "h": 1124
+    },
+    {
+      "src": "/mesco-assets/images/n1U5EILcVOEqcKAwuQOYouOqVk8.png?width=1024&height=1024",
+      "alt": "",
+      "w": 951,
+      "h": 951
+    },
+    {
+      "src": "/mesco-assets/images/0vnAtGCIBym4HlV6uOvla2xsc.png?width=1024&height=1024",
+      "alt": "Cream Bag",
+      "w": 951,
+      "h": 951
+    },
+    {
+      "src": "/mesco-assets/images/2Fkfv0pgZga0hw4QJeXfVhMHw.png?width=1024&height=1024",
+      "alt": "",
+      "w": 951,
+      "h": 951
+    },
+    {
+      "src": "/mesco-assets/images/BcmPlENFBOb3tYEe9Urie0gLM.png?width=1024&height=1024",
+      "alt": "Brown Belt",
+      "w": 951,
+      "h": 951
+    },
+    {
+      "src": "/mesco-assets/images/JLbSOzdi8ek3X2YzUzUCXMjFDlU.jpg?width=1536&height=1024",
+      "alt": "Minimal black leather belt with gold buckle wrapped around gathered beige draped fabric.",
+      "w": 1439,
+      "h": 959
+    },
+    {
+      "src": "/mesco-assets/images/mOaLu1cK2g12LAvtCBtK7ajjO4E.png?width=1024&height=1024",
+      "alt": "Woman in a tailored beige suit holding a structured brown leather handbag, standing in front of a softly lit modern background.",
+      "w": 0,
+      "h": 0
+    },
+    {
+      "src": "/mesco-assets/images/bbm02GgLoJp7yqWis1qKQGi6fjU.jpg?width=1536&height=1200",
+      "alt": "Small brown leather keychain pouch with a gold ring displayed on a sculpted beige fabric surface.",
+      "w": 0,
+      "h": 0
+    },
+    {
+      "src": "/mesco-assets/images/xTaf4V9yVpxl8rSOPggHjX1Litk.png?width=1024&height=1024",
+      "alt": "Brown Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/DRslE52UHyQqe8Mi45WInMrA.png?width=1024&height=1024",
+      "alt": "Brown Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/GFpIu9B8u4cOwHqWyNdHYOg3Wnk.png?width=1024&height=1024",
+      "alt": "Black Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/lkDH4HvpyZRW7lUqiOpPX8jIVOk.png?width=1024&height=1024",
+      "alt": "White Bag",
+      "w": 356,
+      "h": 356
+    },
+    {
+      "src": "/mesco-assets/images/xTaf4V9yVpxl8rSOPggHjX1Litk.png?width=1024&height=1024",
+      "alt": "Brown Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/DRslE52UHyQqe8Mi45WInMrA.png?width=1024&height=1024",
+      "alt": "Brown Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/GFpIu9B8u4cOwHqWyNdHYOg3Wnk.png?width=1024&height=1024",
+      "alt": "Black Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/lkDH4HvpyZRW7lUqiOpPX8jIVOk.png?width=1024&height=1024",
+      "alt": "White Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/xTaf4V9yVpxl8rSOPggHjX1Litk.png?width=1024&height=1024",
+      "alt": "Brown Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/DRslE52UHyQqe8Mi45WInMrA.png?width=1024&height=1024",
+      "alt": "Brown Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/GFpIu9B8u4cOwHqWyNdHYOg3Wnk.png?width=1024&height=1024",
+      "alt": "Black Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/lkDH4HvpyZRW7lUqiOpPX8jIVOk.png?width=1024&height=1024",
+      "alt": "White Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/xTaf4V9yVpxl8rSOPggHjX1Litk.png?width=1024&height=1024",
+      "alt": "Brown Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/DRslE52UHyQqe8Mi45WInMrA.png?width=1024&height=1024",
+      "alt": "Brown Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/GFpIu9B8u4cOwHqWyNdHYOg3Wnk.png?width=1024&height=1024",
+      "alt": "Black Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/lkDH4HvpyZRW7lUqiOpPX8jIVOk.png?width=1024&height=1024",
+      "alt": "White Bag",
+      "w": 296,
+      "h": 296
+    },
+    {
+      "src": "/mesco-assets/images/3TD17Wgz1TPHwhZdGJRfAvdvZGs.jpg?width=1536&height=1024",
+      "alt": "Flat lay of pre-cut brown leather wallet pieces arranged on a green cutting mat, with loose waxed thread placed across them, showcasing handcrafting preparation.",
+      "w": 0,
+      "h": 0
+    },
+    {
+      "src": "/mesco-assets/images/ObCtLY3U4q7Hya6yWTMwBEHon5U.jpg?width=1536&height=1024",
+      "alt": "A person sewing a light beige leather handbag using a sewing machine, with soft natural light casting shadows across the workspace.",
+      "w": 0,
+      "h": 0
+    },
+    {
+      "src": "/mesco-assets/images/qTOw7WJtfNvQ6RmZMKuIfGy7gKc.jpg?width=1536&height=1024",
+      "alt": "Macro close-up of textured brown leather with intricate stitched curves and an oval cutout, highlighting craftsmanship and material quality.",
+      "w": 0,
+      "h": 0
+    },
+    {
+      "src": "/mesco-assets/images/lGP7lMqT9LITD7OP52fQl7biU.jpg?width=1536&height=1024",
+      "alt": "Vintage leatherworking edge creaser tool with a wooden handle resting on a white marble slab, captured in moody studio lighting.",
+      "w": 0,
+      "h": 0
+    },
+    {
+      "src": "/mesco-assets/images/Nfh0PpESVfEuANbuc0DLcls.png?width=1536&height=1024",
+      "alt": "",
+      "w": 0,
+      "h": 0
+    },
+    {
+      "src": "/mesco-assets/images/lkDH4HvpyZRW7lUqiOpPX8jIVOk.png?width=1024&height=1024",
+      "alt": "White Bag",
+      "w": 356,
+      "h": 356
+    },
+    {
+      "src": "/mesco-assets/images/kMTeJujLtRr9m4cZMtpfIRvsNY.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/10AYOLDB5Pm1gmWZMnRjhBNT8o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/QUVr0uhAgeEP4EaZXV1HDyLfi1o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/kMTeJujLtRr9m4cZMtpfIRvsNY.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/10AYOLDB5Pm1gmWZMnRjhBNT8o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/QUVr0uhAgeEP4EaZXV1HDyLfi1o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/kMTeJujLtRr9m4cZMtpfIRvsNY.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/10AYOLDB5Pm1gmWZMnRjhBNT8o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/QUVr0uhAgeEP4EaZXV1HDyLfi1o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/kMTeJujLtRr9m4cZMtpfIRvsNY.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/10AYOLDB5Pm1gmWZMnRjhBNT8o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/QUVr0uhAgeEP4EaZXV1HDyLfi1o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/kMTeJujLtRr9m4cZMtpfIRvsNY.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/10AYOLDB5Pm1gmWZMnRjhBNT8o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/QUVr0uhAgeEP4EaZXV1HDyLfi1o.png?width=1024&height=1024",
+      "alt": "",
+      "w": 280,
+      "h": 280
+    },
+    {
+      "src": "/mesco-assets/images/MZ8vNpExE3iwzh3LhEfoCMswUNU.png?width=3200&height=2400",
+      "alt": "",
+      "w": 142,
+      "h": 106
+    },
+    {
+      "src": "https://www.dropbox.com/scl/fi/liuwd84g4nioi6fmu93e1/fc-free-badge.png?rlkey=yearpo3rkxqalq4mtmabujdk4&raw=1",
+      "alt": "Mesco Commerce",
+      "w": 426,
+      "h": 108
+    }
+  ],
+  "sections": [
+    {
+      "tag": "MAIN",
+      "name": "Main",
+      "text": "Essentials,for everyone.Shop AllMost popular .fc-purchase-button-container :focus-visible {"
+    },
+    {
+      "tag": "DIV",
+      "name": "Navigation trigger",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Dark navigation trigger",
+      "text": ""
+    },
+    {
+      "tag": "SECTION",
+      "name": "Hero",
+      "text": "Essentials,for everyone.Shop All"
+    },
+    {
+      "tag": "DIV",
+      "name": "Wrapper",
+      "text": "Essentials,for everyone.Shop All"
+    },
+    {
+      "tag": "A",
+      "name": "White",
+      "text": "Shop All"
+    },
+    {
+      "tag": "DIV",
+      "name": "BG",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Label",
+      "text": "Shop All"
+    },
+    {
+      "tag": "SECTION",
+      "name": "Most popular",
+      "text": "Most popular .fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0"
+    },
+    {
+      "tag": "DIV",
+      "name": "Wrapper",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "ARTICLE",
+      "name": "Desktop",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Icon",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Default",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Inactive",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Inactive",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Trigger",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Wrapper",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Image",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "A",
+      "name": "Image",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Selector",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Default",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Avaliable",
+      "text": "ADD TO CART"
+    },
+    {
+      "tag": "DIV",
+      "name": "Add to Cart",
+      "text": "ADD TO CART"
+    },
+    {
+      "tag": "A",
+      "name": "Wrapper",
+      "text": "Téré DropAccessories€ 199"
+    },
+    {
+      "tag": "DIV",
+      "name": "Text",
+      "text": "Téré DropAccessories"
+    },
+    {
+      "tag": "DIV",
+      "name": "Title",
+      "text": "Téré Drop"
+    },
+    {
+      "tag": "DIV",
+      "name": "Title",
+      "text": "Accessories"
+    },
+    {
+      "tag": "DIV",
+      "name": "Price",
+      "text": "€ 199"
+    },
+    {
+      "tag": "ARTICLE",
+      "name": "Desktop",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Icon",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Default",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Inactive",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Inactive",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Trigger",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Wrapper",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Image",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "A",
+      "name": "Image",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Selector",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Default",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Avaliable",
+      "text": "ADD TO CART"
+    },
+    {
+      "tag": "DIV",
+      "name": "Add to Cart",
+      "text": "ADD TO CART"
+    },
+    {
+      "tag": "A",
+      "name": "Wrapper",
+      "text": "PendantAccessories€ 199"
+    },
+    {
+      "tag": "DIV",
+      "name": "Text",
+      "text": "PendantAccessories"
+    },
+    {
+      "tag": "DIV",
+      "name": "Title",
+      "text": "Pendant"
+    },
+    {
+      "tag": "DIV",
+      "name": "Title",
+      "text": "Accessories"
+    },
+    {
+      "tag": "DIV",
+      "name": "Price",
+      "text": "€ 199"
+    },
+    {
+      "tag": "DIV",
+      "name": "Image",
+      "text": ""
+    },
+    {
+      "tag": "SECTION",
+      "name": "Desktop",
+      "text": "Our valuesEvery piece is a dialogue between enduring design and contemporary craftsmanship — a harmony of texture, form,"
+    },
+    {
+      "tag": "DIV",
+      "name": "Image Wrapper",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Fade",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Wrapper",
+      "text": "Our valuesEvery piece is a dialogue between enduring design and contemporary craftsmanship — a harmony of texture, form,"
+    },
+    {
+      "tag": "DIV",
+      "name": "Text",
+      "text": "Our valuesEvery piece is a dialogue between enduring design and contemporary craftsmanship — a harmony of texture, form,"
+    },
+    {
+      "tag": "A",
+      "name": "White",
+      "text": "SEE OUR VALUES"
+    },
+    {
+      "tag": "DIV",
+      "name": "BG",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Label",
+      "text": "SEE OUR VALUES"
+    },
+    {
+      "tag": "SECTION",
+      "name": "New arrivals",
+      "text": "New arrivals .fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0"
+    },
+    {
+      "tag": "ARTICLE",
+      "name": "Desktop",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Icon",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Default",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Inactive",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Inactive",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Trigger",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Wrapper",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Image",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "A",
+      "name": "Image",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Selector",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Default",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Avaliable",
+      "text": "ADD TO CART"
+    },
+    {
+      "tag": "DIV",
+      "name": "Add to Cart",
+      "text": "ADD TO CART"
+    },
+    {
+      "tag": "A",
+      "name": "Wrapper",
+      "text": "TéréAccessories€ 199"
+    },
+    {
+      "tag": "DIV",
+      "name": "Text",
+      "text": "TéréAccessories"
+    },
+    {
+      "tag": "DIV",
+      "name": "Title",
+      "text": "Téré"
+    },
+    {
+      "tag": "DIV",
+      "name": "Title",
+      "text": "Accessories"
+    },
+    {
+      "tag": "DIV",
+      "name": "Price",
+      "text": "€ 199"
+    },
+    {
+      "tag": "ARTICLE",
+      "name": "Desktop",
+      "text": ".fc-purchase-button-container :focus-visible { outline: 2px solid rgb(0, 122, 255)"
+    },
+    {
+      "tag": "DIV",
+      "name": "Icon",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Default",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Inactive",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Inactive",
+      "text": ""
+    },
+    {
+      "tag": "DIV",
+      "name": "Trigger",
+      "text": ""
+    }
+  ],
+  "links": [
+    {
+      "text": "Shop All",
+      "href": "./products/shop/all"
+    },
+    {
+      "text": "Téré DropAccessories€ 199",
+      "href": "./products/tere-drop"
+    },
+    {
+      "text": "PendantAccessories€ 199",
+      "href": "./products/pendant"
+    },
+    {
+      "text": "SEE OUR VALUES",
+      "href": "./values"
+    },
+    {
+      "text": "TéréAccessories€ 199",
+      "href": "./products/tere"
+    },
+    {
+      "text": "MeslaBags€ 299",
+      "href": "./products/mesla"
+    },
+    {
+      "text": "UspaBracelets€ 299",
+      "href": "./products/uspa"
+    },
+    {
+      "text": "YemasAccessories€ 99",
+      "href": "./products/yemas"
+    },
+    {
+      "text": "OUR STORY",
+      "href": "./about"
+    },
+    {
+      "text": "Shop New",
+      "href": "./new"
+    },
+    {
+      "text": "Shop Women",
+      "href": "./women"
+    },
+    {
+      "text": "BagsSculpted shapes. Elevated function. Made for everyday an",
+      "href": "./products/shop/bags"
+    },
+    {
+      "text": "BraceletsRefined details. Minimal forms. Pieces that speak q",
+      "href": "./products/shop/bracelets"
+    },
+    {
+      "text": "AccessoriesVersatile essentials. Thoughtful touches. Designe",
+      "href": "./products/shop/accessories"
+    },
+    {
+      "text": "SEE ALL",
+      "href": "./products/shop/all"
+    },
+    {
+      "text": "Civelle€ 329",
+      "href": "./products/civelle"
+    },
+    {
+      "text": "Sauné€ 279",
+      "href": "./products/saune"
+    },
+    {
+      "text": "Lunet€ 299",
+      "href": "./products/lunet"
+    },
+    {
+      "text": "Éloé€ 199",
+      "href": "./products/eloe"
+    },
+    {
+      "text": "Civelle€ 329",
+      "href": "./products/civelle"
+    },
+    {
+      "text": "Sauné€ 279",
+      "href": "./products/saune"
+    },
+    {
+      "text": "Lunet€ 299",
+      "href": "./products/lunet"
+    },
+    {
+      "text": "Éloé€ 199",
+      "href": "./products/eloe"
+    },
+    {
+      "text": "Civelle€ 329",
+      "href": "./products/civelle"
+    },
+    {
+      "text": "Sauné€ 279",
+      "href": "./products/saune"
+    },
+    {
+      "text": "Lunet€ 299",
+      "href": "./products/lunet"
+    },
+    {
+      "text": "Éloé€ 199",
+      "href": "./products/eloe"
+    },
+    {
+      "text": "Civelle€ 329",
+      "href": "./products/civelle"
+    },
+    {
+      "text": "Sauné€ 279",
+      "href": "./products/saune"
+    },
+    {
+      "text": "Lunet€ 299",
+      "href": "./products/lunet"
+    },
+    {
+      "text": "Éloé€ 199",
+      "href": "./products/eloe"
+    },
+    {
+      "text": "DesignArticle",
+      "href": "./newsroom/the-art-of-essentials"
+    },
+    {
+      "text": "The art of essentials",
+      "href": "./newsroom/the-art-of-essentials"
+    },
+    {
+      "text": "MaterialsJournal",
+      "href": "./newsroom/light-to-night"
+    },
+    {
+      "text": "Light to night",
+      "href": "./newsroom/light-to-night"
+    },
+    {
+      "text": "DesignArticle",
+      "href": "./newsroom/textures-that-last"
+    },
+    {
+      "text": "Textures that last",
+      "href": "./newsroom/textures-that-last"
+    },
+    {
+      "text": "DesignJournal",
+      "href": "./newsroom/parisian-minimalism"
+    },
+    {
+      "text": "Parisian minimalism",
+      "href": "./newsroom/parisian-minimalism"
+    },
+    {
+      "text": "ÉloéBags€ 199",
+      "href": "./products/eloe"
+    },
+    {
+      "text": "OUR INSTAGRAM",
+      "href": "https://www.instagram.com/framlixintl/"
+    }
+  ],
+  "htmlLen": 671658
+}

@@ -1,0 +1,703 @@
+{
+  "headerInfo": {
+    "text": "DISCOUNTS FOR NEW CUSTOMERS UNTIL NEXT WEEK!\n\nMENU\n\nLV/EUR\n\nSEARCH\n\nFAVORITES\n\nCART\n\n0",
+    "height": 76,
+    "bg": "rgba(0, 0, 0, 0)",
+    "position": "fixed",
+    "children": [
+      {
+        "tag": "DIV",
+        "name": "Desktop",
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 28,
+          "top": 0,
+          "right": 1440,
+          "bottom": 28,
+          "left": 0
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Default",
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 583.78125,
+          "y": 10,
+          "width": 272.421875,
+          "height": 10,
+          "top": 10,
+          "right": 856.203125,
+          "bottom": 20,
+          "left": 583.78125
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Settings",
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 583.78125,
+          "y": 10,
+          "width": 272.421875,
+          "height": 10,
+          "top": 10,
+          "right": 856.203125,
+          "bottom": 20,
+          "left": 583.78125
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Active",
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 583.78125,
+          "y": 10,
+          "width": 272.421875,
+          "height": 10,
+          "top": 10,
+          "right": 856.203125,
+          "bottom": 20,
+          "left": 583.78125
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 583.78125,
+          "y": 10,
+          "width": 272.421875,
+          "height": 10,
+          "top": 10,
+          "right": 856.203125,
+          "bottom": 20,
+          "left": 583.78125
+        },
+        "styles": {
+          "fontSize": "10px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "0.2px",
+          "textTransform": "uppercase",
+          "fontFamily": "\"Helvetica Neue Regular\", \"Helvetica Neue Regular Placeholder\", sans-serif"
+        }
+      },
+      {
+        "tag": "NAV",
+        "name": "No BG",
+        "text": "MENULV/EURSEARCHFAVORITEScart0",
+        "rect": {
+          "x": 0,
+          "y": 28,
+          "width": 1440,
+          "height": 48,
+          "top": 28,
+          "right": 1440,
+          "bottom": 76,
+          "left": 0
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "NAV",
+        "name": "Desktop",
+        "text": "MENULV/EURSEARCHFAVORITEScart0",
+        "rect": {
+          "x": 0,
+          "y": 28,
+          "width": 1440,
+          "height": 48,
+          "top": 28,
+          "right": 1440,
+          "bottom": 76,
+          "left": 0
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Wrapper",
+        "text": "MENULV/EURSEARCHFAVORITEScart0",
+        "rect": {
+          "x": 20,
+          "y": 28,
+          "width": 1400,
+          "height": 48,
+          "top": 28,
+          "right": 1420,
+          "bottom": 76,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Left",
+        "text": "MENU",
+        "rect": {
+          "x": 20,
+          "y": 28,
+          "width": 658,
+          "height": 48,
+          "top": 28,
+          "right": 678,
+          "bottom": 76,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "A",
+        "name": "White",
+        "text": "MENU",
+        "rect": {
+          "x": 20,
+          "y": 30,
+          "width": 36.0625,
+          "height": 46,
+          "top": 30,
+          "right": 56.0625,
+          "bottom": 76,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "MENU",
+        "rect": {
+          "x": 20,
+          "y": 47,
+          "width": 36.0625,
+          "height": 12,
+          "top": 47,
+          "right": 56.0625,
+          "bottom": 59,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "0.24px",
+          "textTransform": "uppercase",
+          "fontFamily": "\"Helvetica Neue Regular\", \"Helvetica Neue Regular Placeholder\", sans-serif"
+        }
+      },
+      {
+        "tag": "A",
+        "name": "Light",
+        "text": "",
+        "rect": {
+          "x": 678,
+          "y": 43,
+          "width": 84,
+          "height": 18,
+          "top": 43,
+          "right": 762,
+          "bottom": 61,
+          "left": 678
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 238)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Right",
+        "text": "LV/EURSEARCHFAVORITEScart0",
+        "rect": {
+          "x": 762,
+          "y": 28,
+          "width": 658,
+          "height": 48,
+          "top": 28,
+          "right": 1420,
+          "bottom": 76,
+          "left": 762
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Market",
+        "text": "LV/EUR",
+        "rect": {
+          "x": 1138.484375,
+          "y": 30,
+          "width": 52,
+          "height": 46,
+          "top": 30,
+          "right": 1190.484375,
+          "bottom": 76,
+          "left": 1138.484375
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Search",
+        "text": "SEARCH",
+        "rect": {
+          "x": 1210.484375,
+          "y": 30,
+          "width": 49.859375,
+          "height": 46,
+          "top": 30,
+          "right": 1260.34375,
+          "bottom": 76,
+          "left": 1210.484375
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "A",
+        "name": "White",
+        "text": "SEARCH",
+        "rect": {
+          "x": 1210.484375,
+          "y": 30,
+          "width": 49.859375,
+          "height": 46,
+          "top": 30,
+          "right": 1260.34375,
+          "bottom": 76,
+          "left": 1210.484375
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "SEARCH",
+        "rect": {
+          "x": 1210.484375,
+          "y": 47,
+          "width": 49.859375,
+          "height": 12,
+          "top": 47,
+          "right": 1260.34375,
+          "bottom": 59,
+          "left": 1210.484375
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "0.24px",
+          "textTransform": "uppercase",
+          "fontFamily": "\"Helvetica Neue Regular\", \"Helvetica Neue Regular Placeholder\", sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Favorites",
+        "text": "FAVORITES",
+        "rect": {
+          "x": 1280.34375,
+          "y": 30,
+          "width": 65.375,
+          "height": 46,
+          "top": 30,
+          "right": 1345.71875,
+          "bottom": 76,
+          "left": 1280.34375
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "A",
+        "name": "White",
+        "text": "FAVORITES",
+        "rect": {
+          "x": 1280.34375,
+          "y": 30,
+          "width": 65.375,
+          "height": 46,
+          "top": 30,
+          "right": 1345.71875,
+          "bottom": 76,
+          "left": 1280.34375
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 238)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "FAVORITES",
+        "rect": {
+          "x": 1280.34375,
+          "y": 47,
+          "width": 65.375,
+          "height": 12,
+          "top": 47,
+          "right": 1345.71875,
+          "bottom": 59,
+          "left": 1280.34375
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "0.24px",
+          "textTransform": "uppercase",
+          "fontFamily": "\"Helvetica Neue Regular\", \"Helvetica Neue Regular Placeholder\", sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Light",
+        "text": "cart0",
+        "rect": {
+          "x": 1365.71875,
+          "y": 30,
+          "width": 54.28125,
+          "height": 46,
+          "top": 30,
+          "right": 1420,
+          "bottom": 76,
+          "left": 1365.71875
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Wrapper",
+        "text": "cart0",
+        "rect": {
+          "x": 1365.71875,
+          "y": 44,
+          "width": 54.28125,
+          "height": 18,
+          "top": 44,
+          "right": 1420,
+          "bottom": 62,
+          "left": 1365.71875
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "A",
+        "name": "White",
+        "text": "cart",
+        "rect": {
+          "x": 1365.71875,
+          "y": 47,
+          "width": 32.28125,
+          "height": 12,
+          "top": 47,
+          "right": 1398,
+          "bottom": 59,
+          "left": 1365.71875
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 238)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "cart",
+        "rect": {
+          "x": 1365.71875,
+          "y": 47,
+          "width": 32.28125,
+          "height": 12,
+          "top": 47,
+          "right": 1398,
+          "bottom": 59,
+          "left": 1365.71875
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "0.24px",
+          "textTransform": "uppercase",
+          "fontFamily": "\"Helvetica Neue Regular\", \"Helvetica Neue Regular Placeholder\", sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Counter",
+        "text": "0",
+        "rect": {
+          "x": 1404,
+          "y": 44,
+          "width": 16,
+          "height": 18,
+          "top": 44,
+          "right": 1420,
+          "bottom": 62,
+          "left": 1404
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Wrapper",
+        "text": "0",
+        "rect": {
+          "x": 1404,
+          "y": 44,
+          "width": 16,
+          "height": 16,
+          "top": 44,
+          "right": 1420,
+          "bottom": 60,
+          "left": 1404
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "0",
+        "rect": {
+          "x": 1404,
+          "y": 47,
+          "width": 16,
+          "height": 10,
+          "top": 47,
+          "right": 1420,
+          "bottom": 57,
+          "left": 1404
+        },
+        "styles": {
+          "fontSize": "10px",
+          "color": "rgb(3, 6, 7)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "Inter, \"Inter Placeholder\", sans-serif"
+        }
+      }
+    ]
+  },
+  "menuInfo": {
+    "named": [
+      {
+        "name": "Navigation trigger",
+        "text": "",
+        "rect": {
+          "x": 0,
+          "y": 1096,
+          "width": 1440,
+          "height": 1,
+          "top": 1096,
+          "right": 1440,
+          "bottom": 1097,
+          "left": 0
+        },
+        "opacity": "0",
+        "transform": "none",
+        "position": "absolute",
+        "zIndex": "0",
+        "bg": "rgba(0, 0, 0, 0)",
+        "display": "block"
+      },
+      {
+        "name": "Dark navigation trigger",
+        "text": "",
+        "rect": {
+          "x": 0,
+          "y": 20966.46875,
+          "width": 1440,
+          "height": 1,
+          "top": 20966.46875,
+          "right": 1440,
+          "bottom": 20967.46875,
+          "left": 0
+        },
+        "opacity": "0",
+        "transform": "none",
+        "position": "absolute",
+        "zIndex": "0",
+        "bg": "rgba(0, 0, 0, 0)",
+        "display": "block"
+      },
+      {
+        "name": "Close",
+        "text": "CLOSE MENU",
+        "rect": {
+          "x": 20,
+          "y": 30,
+          "width": 80.390625,
+          "height": 46,
+          "top": 30,
+          "right": 100.390625,
+          "bottom": 76,
+          "left": 20
+        },
+        "opacity": "1",
+        "transform": "none",
+        "position": "relative",
+        "zIndex": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "display": "flex"
+      }
+    ],
+    "allVisibleText": [
+      "Essentials,for everyone.",
+      "Essentials,",
+      "for everyone.",
+      "Shop All",
+      "Shop All",
+      "Discounts for new customers until next week!",
+      "close menu",
+      "products",
+      "All",
+      "New",
+      "Bags",
+      "Bracelets",
+      "Accessories",
+      "our brand",
+      "About",
+      "Values",
+      "Locations",
+      "favorites",
+      "favorites",
+      "faq's",
+      "faq's",
+      "contact",
+      "contact",
+      "newsroom",
+      "newsroom",
+      "Get Mesco",
+      "Get Mesco",
+      "Visit Framlix websiteLearn more about our templates",
+      "Visit Framlix website",
+      "Learn more about our templates",
+      "Our website",
+      "External design reference site footer copy.",
+      "External design reference site footer copy."
+    ]
+  }
+}

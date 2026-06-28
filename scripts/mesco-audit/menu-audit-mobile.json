@@ -1,0 +1,573 @@
+{
+  "headerInfo": {
+    "text": "DISCOUNTS FOR NEW CUSTOMERS UNTIL NEXT WEEK!\n\nMENU\n\nCART\n\n0",
+    "height": 80,
+    "bg": "rgba(0, 0, 0, 0)",
+    "position": "fixed",
+    "children": [
+      {
+        "tag": "DIV",
+        "name": "Mobile",
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 32,
+          "top": 0,
+          "right": 390,
+          "bottom": 32,
+          "left": 0
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Default",
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 58.78125,
+          "y": 12,
+          "width": 272.421875,
+          "height": 10,
+          "top": 12,
+          "right": 331.203125,
+          "bottom": 22,
+          "left": 58.78125
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Settings",
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 58.78125,
+          "y": 12,
+          "width": 272.421875,
+          "height": 10,
+          "top": 12,
+          "right": 331.203125,
+          "bottom": 22,
+          "left": 58.78125
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Active",
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 58.78125,
+          "y": 12,
+          "width": 272.421875,
+          "height": 10,
+          "top": 12,
+          "right": 331.203125,
+          "bottom": 22,
+          "left": 58.78125
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "Discounts for new customers until next w",
+        "rect": {
+          "x": 58.78125,
+          "y": 12,
+          "width": 272.421875,
+          "height": 10,
+          "top": 12,
+          "right": 331.203125,
+          "bottom": 22,
+          "left": 58.78125
+        },
+        "styles": {
+          "fontSize": "10px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "0.2px",
+          "textTransform": "uppercase",
+          "fontFamily": "\"Helvetica Neue Regular\", \"Helvetica Neue Regular Placeholder\", sans-serif"
+        }
+      },
+      {
+        "tag": "NAV",
+        "name": "No BG",
+        "text": "MENUcart0",
+        "rect": {
+          "x": 0,
+          "y": 32,
+          "width": 390,
+          "height": 48,
+          "top": 32,
+          "right": 390,
+          "bottom": 80,
+          "left": 0
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "NAV",
+        "name": "Mobile",
+        "text": "MENUcart0",
+        "rect": {
+          "x": 0,
+          "y": 32,
+          "width": 390,
+          "height": 48,
+          "top": 32,
+          "right": 390,
+          "bottom": 80,
+          "left": 0
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Wrapper",
+        "text": "MENUcart0",
+        "rect": {
+          "x": 20,
+          "y": 32,
+          "width": 350,
+          "height": 48,
+          "top": 32,
+          "right": 370,
+          "bottom": 80,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Left",
+        "text": "MENU",
+        "rect": {
+          "x": 20,
+          "y": 32,
+          "width": 133,
+          "height": 48,
+          "top": 32,
+          "right": 153,
+          "bottom": 80,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Menu",
+        "text": "MENU",
+        "rect": {
+          "x": 20,
+          "y": 34,
+          "width": 36.0625,
+          "height": 46,
+          "top": 34,
+          "right": 56.0625,
+          "bottom": 80,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "A",
+        "name": "White",
+        "text": "MENU",
+        "rect": {
+          "x": 20,
+          "y": 34,
+          "width": 36.0625,
+          "height": 46,
+          "top": 34,
+          "right": 56.0625,
+          "bottom": 80,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "MENU",
+        "rect": {
+          "x": 20,
+          "y": 51,
+          "width": 36.0625,
+          "height": 12,
+          "top": 51,
+          "right": 56.0625,
+          "bottom": 63,
+          "left": 20
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "0.24px",
+          "textTransform": "uppercase",
+          "fontFamily": "\"Helvetica Neue Regular\", \"Helvetica Neue Regular Placeholder\", sans-serif"
+        }
+      },
+      {
+        "tag": "A",
+        "name": "Light",
+        "text": "",
+        "rect": {
+          "x": 153,
+          "y": 47,
+          "width": 84,
+          "height": 18,
+          "top": 47,
+          "right": 237,
+          "bottom": 65,
+          "left": 153
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 238)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Right",
+        "text": "cart0",
+        "rect": {
+          "x": 237,
+          "y": 32,
+          "width": 133,
+          "height": 48,
+          "top": 32,
+          "right": 370,
+          "bottom": 80,
+          "left": 237
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Light",
+        "text": "cart0",
+        "rect": {
+          "x": 315.71875,
+          "y": 34,
+          "width": 54.28125,
+          "height": 46,
+          "top": 34,
+          "right": 370,
+          "bottom": 80,
+          "left": 315.71875
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Wrapper",
+        "text": "cart0",
+        "rect": {
+          "x": 315.71875,
+          "y": 48,
+          "width": 54.28125,
+          "height": 18,
+          "top": 48,
+          "right": 370,
+          "bottom": 66,
+          "left": 315.71875
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "A",
+        "name": "White",
+        "text": "cart",
+        "rect": {
+          "x": 315.71875,
+          "y": 51,
+          "width": 32.28125,
+          "height": 12,
+          "top": 51,
+          "right": 348,
+          "bottom": 63,
+          "left": 315.71875
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 238)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "cart",
+        "rect": {
+          "x": 315.71875,
+          "y": 51,
+          "width": 32.28125,
+          "height": 12,
+          "top": 51,
+          "right": 348,
+          "bottom": 63,
+          "left": 315.71875
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "0.24px",
+          "textTransform": "uppercase",
+          "fontFamily": "\"Helvetica Neue Regular\", \"Helvetica Neue Regular Placeholder\", sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Counter",
+        "text": "0",
+        "rect": {
+          "x": 354,
+          "y": 48,
+          "width": 16,
+          "height": 18,
+          "top": 48,
+          "right": 370,
+          "bottom": 66,
+          "left": 354
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "DIV",
+        "name": "Wrapper",
+        "text": "0",
+        "rect": {
+          "x": 354,
+          "y": 48,
+          "width": 16,
+          "height": 16,
+          "top": 48,
+          "right": 370,
+          "bottom": 64,
+          "left": 354
+        },
+        "styles": {
+          "fontSize": "12px",
+          "color": "rgb(0, 0, 0)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "sans-serif"
+        }
+      },
+      {
+        "tag": "P",
+        "name": null,
+        "text": "0",
+        "rect": {
+          "x": 354,
+          "y": 51,
+          "width": 16,
+          "height": 10,
+          "top": 51,
+          "right": 370,
+          "bottom": 61,
+          "left": 354
+        },
+        "styles": {
+          "fontSize": "10px",
+          "color": "rgb(3, 6, 7)",
+          "letterSpacing": "normal",
+          "textTransform": "none",
+          "fontFamily": "Inter, \"Inter Placeholder\", sans-serif"
+        }
+      }
+    ]
+  },
+  "menuInfo": {
+    "named": [
+      {
+        "name": "Navigation trigger",
+        "text": "",
+        "rect": {
+          "x": 0,
+          "y": 1096,
+          "width": 390,
+          "height": 1,
+          "top": 1096,
+          "right": 390,
+          "bottom": 1097,
+          "left": 0
+        },
+        "opacity": "0",
+        "transform": "none",
+        "position": "absolute",
+        "zIndex": "0",
+        "bg": "rgba(0, 0, 0, 0)",
+        "display": "block"
+      },
+      {
+        "name": "Dark navigation trigger",
+        "text": "",
+        "rect": {
+          "x": 0,
+          "y": 19407.171875,
+          "width": 390,
+          "height": 1,
+          "top": 19407.171875,
+          "right": 390,
+          "bottom": 19408.171875,
+          "left": 0
+        },
+        "opacity": "0",
+        "transform": "none",
+        "position": "absolute",
+        "zIndex": "0",
+        "bg": "rgba(0, 0, 0, 0)",
+        "display": "block"
+      },
+      {
+        "name": "Close",
+        "text": "CLOSE MENU",
+        "rect": {
+          "x": 20,
+          "y": 34,
+          "width": 80.390625,
+          "height": 46,
+          "top": 34,
+          "right": 100.390625,
+          "bottom": 80,
+          "left": 20
+        },
+        "opacity": "1",
+        "transform": "none",
+        "position": "relative",
+        "zIndex": "auto",
+        "bg": "rgba(0, 0, 0, 0)",
+        "display": "flex"
+      }
+    ],
+    "allVisibleText": [
+      "Essentials,for everyone.",
+      "Essentials,",
+      "for everyone.",
+      "Shop All",
+      "Shop All",
+      "Most popular",
+      "Discounts for new customers until next week!",
+      "close menu",
+      "products",
+      "All",
+      "New",
+      "Bags",
+      "Bracelets",
+      "Accessories",
+      "our brand",
+      "About",
+      "Values",
+      "Locations",
+      "SEARCH",
+      "favorites",
+      "favorites",
+      "faq's",
+      "faq's",
+      "contact",
+      "contact",
+      "newsroom",
+      "newsroom",
+      "Get Mesco",
+      "Get Mesco",
+      "Visit Framlix websiteLearn more about our templates",
+      "Visit Framlix website",
+      "Learn more about our templates",
+      "Our website",
+      "External design reference site footer copy.",
+      "External design reference site footer copy."
+    ]
+  }
+}

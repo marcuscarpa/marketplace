@@ -1,0 +1,14 @@
+{
+  "id": "gid://shopify/Product/123",
+  "title": "Silk Evening Gown",
+  "handle": "silk-evening-gown",
+  "description": "A luxurious silk evening gown.",
+  "vendor": "Luxury Brand",
+  "images": { "nodes": [{ "url": "https://cdn.shopify.com/s/files/1/0001/gown.jpg", "altText": "Silk Evening Gown" }] },
+  "priceRange": { "minVariantPrice": { "amount": "1200.00", "currencyCode": "USD" } },
+  "variants": { "nodes": [{ "id": "gid://shopify/ProductVariant/456", "price": { "amount": "1200.00" } }] },
+  "metafields": [
+    { "namespace": "luxury", "key": "materials", "value": "[\"Silk\",\"Cashmere\"]", "type": "json" },
+    { "namespace": "luxury", "key": "made_in", "value": "Italy", "type": "single_line_text_field" }
+  ]
+}
