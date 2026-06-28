@@ -116,8 +116,14 @@ export const SEARCH_MODAL_PRODUCTS: CatalogProduct[] = [
 ];
 
 export const POPULAR_PRODUCTS: CatalogProduct[] = [
-  { title: 'Téré Drop', category: 'Accessories', price: '€ 199', handle: 'tere-drop', image: SITE_IMAGES.popular1 },
-  { title: 'Pendant', category: 'Accessories', price: '€ 199', handle: 'pendant', image: SITE_IMAGES.popular2 },
+  { title: 'Cora Bikini Top', category: 'Bikini', price: '$127', handle: 'cora-bikini-top', image: SITE_IMAGES.popular1 },
+  {
+    title: 'Michelle Pareo - Beach Pattern',
+    category: 'Skirts',
+    price: '$380',
+    handle: 'michelle-pareo-poa-pistachio-copy-1',
+    image: SITE_IMAGES.popular2,
+  },
 ];
 
 export const NEW_ARRIVALS: CatalogProduct[] = [
