@@ -158,11 +158,41 @@ export const NEW_ARRIVALS: CatalogProduct[] = [
 ];
 
 export const BESTSELLERS: CatalogProduct[] = [
-  { title: 'Brown Bag', category: 'Civelle', price: '€ 329', handle: 'civelle', image: SITE_IMAGES.bestseller1 },
-  { title: 'Brown Bag', category: 'Sauné', price: '€ 279', handle: 'saune', image: SITE_IMAGES.bestseller2 },
-  { title: 'Black Bag', category: 'Lunet', price: '€ 299', handle: 'lunet', image: SITE_IMAGES.bestseller3 },
-  { title: 'White Bag', category: 'Éloé', price: '€ 199', handle: 'eloe', image: SITE_IMAGES.bestseller4 },
-  { title: 'Tan Bag', category: 'Solé', price: '€ 249', handle: 'sole', image: SITE_IMAGES.bestseller5 },
+  {
+    title: 'Josephine Dress',
+    category: 'Ready-to-Wear',
+    price: '$670',
+    handle: 'josephine-dress',
+    image: SITE_IMAGES.bestseller1,
+  },
+  {
+    title: 'Larissa Romper Off White',
+    category: 'Romper',
+    price: '$460',
+    handle: 'macaquinho-larissa-off-white',
+    image: SITE_IMAGES.bestseller2,
+  },
+  {
+    title: 'Adeline One Piece',
+    category: 'One-Piece',
+    price: '$247',
+    handle: 'adeline-one-piece',
+    image: SITE_IMAGES.bestseller3,
+  },
+  {
+    title: 'Madison One Piece Black',
+    category: 'One-Piece',
+    price: '$262',
+    handle: 'madison-one-piece-offwhite-copy',
+    image: SITE_IMAGES.bestseller4,
+  },
+  {
+    title: 'Emma Linen Pants',
+    category: 'Pants',
+    price: '$440',
+    handle: 'emma-linen-pants',
+    image: SITE_IMAGES.bestseller5,
+  },
 ];
 
 export const CATEGORIES = [
