@@ -13,16 +13,10 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ['shopping', 'lifestyle'],
     icons: [
       {
-        src: '/icons/icon.svg',
-        sizes: 'any',
-        type: 'image/svg+xml',
+        src: '/Favicon_sinesia.ico',
+        sizes: '48x48',
+        type: 'image/x-icon',
         purpose: 'any',
-      },
-      {
-        src: '/icons/icon-maskable.svg',
-        sizes: 'any',
-        type: 'image/svg+xml',
-        purpose: 'maskable',
       },
     ],
   };

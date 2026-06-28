@@ -166,6 +166,10 @@ select {
   background-color: var(--cream);
 }
 
+.hover\:bg-cream:hover {
+  background-color: var(--cream);
+}
+
 .bg-ink {
   background-color: var(--ink);
 }

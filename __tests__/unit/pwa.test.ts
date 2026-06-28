@@ -27,17 +27,13 @@ describe('PWA Manifest', () => {
     expect(result.background_color).toBe('#ffffff');
   });
 
-  it('includes SVG icons with any sizes', () => {
+  it('includes brand favicon for install icon', () => {
     const result = manifest();
-    expect(result.icons).toHaveLength(2);
+    expect(result.icons).toHaveLength(1);
     expect(result.icons![0]).toMatchObject({
-      src: '/icons/icon.svg',
-      sizes: 'any',
-      type: 'image/svg+xml',
-    } as Record<string, string>);
-    expect(result.icons![1]).toMatchObject({
-      src: '/icons/icon-maskable.svg',
-      purpose: 'maskable',
+      src: '/Favicon_sinesia.ico',
+      sizes: '48x48',
+      type: 'image/x-icon',
     } as Record<string, string>);
   });
 });

@@ -22,9 +22,37 @@ const ibmPlex = IBM_Plex_Mono({
   display: 'swap',
 });
 
+const FAVICON = '/Favicon_sinesia.ico';
+const SOCIAL_IMAGE = '/icone-sinesia.png';
+const SITE_DESCRIPTION =
+  'Curated leather goods and accessories — enduring design and contemporary craftsmanship.';
+
 export const metadata: Metadata = {
-  title: 'Timeless Sophistication',
-  description: 'Curated leather goods and accessories — enduring design and contemporary craftsmanship.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://sinesiakarol.us'),
+  title: {
+    default: 'Sinesia Karol — Timeless Sophistication',
+    template: '%s | Sinesia Karol',
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: 'Sinesia Karol',
+  icons: {
+    icon: FAVICON,
+    shortcut: FAVICON,
+    apple: FAVICON,
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'Sinesia Karol',
+    title: 'Sinesia Karol — Timeless Sophistication',
+    description: SITE_DESCRIPTION,
+    images: [{ url: SOCIAL_IMAGE, alt: 'Sinesia Karol' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sinesia Karol — Timeless Sophistication',
+    description: SITE_DESCRIPTION,
+    images: [SOCIAL_IMAGE],
+  },
   other: {
     'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-capable': 'yes',

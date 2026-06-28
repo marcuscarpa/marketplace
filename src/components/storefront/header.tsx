@@ -179,7 +179,7 @@ function MenuUtilityRow({
   trailing?: React.ReactNode;
 }) {
   const className =
-    'flex w-full items-center gap-3 py-3.5 font-sans-ui text-[11px] font-normal uppercase tracking-[0.04em] text-ink transition-opacity hover:opacity-60';
+    'flex w-full items-center gap-3 -mx-8 px-8 py-2 font-sans-ui text-[11px] font-normal uppercase tracking-[0.04em] text-ink transition-colors hover:bg-cream';
 
   const content = (
     <>
@@ -569,7 +569,7 @@ export function Header({ locale }: HeaderProps) {
                       <Link
                         href={`${prefix}/${item.href}`}
                         onClick={() => setMenuOpen(false)}
-                        className={`block py-4 font-sans-ui text-[13px] font-normal uppercase tracking-[0.02em] transition-opacity hover:opacity-60 ${
+                        className={`block -mx-8 px-8 py-2 font-sans-ui text-[13px] font-normal uppercase tracking-[0.02em] transition-colors hover:bg-cream ${
                           'sale' in item && item.sale ? 'text-[#9c4a4a]' : 'text-ink'
                         }`}
                       >
@@ -583,14 +583,14 @@ export function Header({ locale }: HeaderProps) {
                   variants={listVariants}
                   initial="closed"
                   animate="open"
-                  className="space-y-4 px-8 pb-8 pt-2"
+                  className="px-8 pb-6 pt-1"
                 >
                   {menuSections.brand.links.map((link) => (
                     <motion.div key={link.href} variants={itemVariants}>
                       <Link
                         href={`${prefix}/${link.href}`}
                         onClick={() => setMenuOpen(false)}
-                        className="block font-sans-ui text-[13px] font-medium uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
+                        className="block -mx-8 px-8 py-2 font-sans-ui text-[13px] font-medium uppercase tracking-[0.02em] text-ink transition-colors hover:bg-cream"
                       >
                         {link.label}
                       </Link>
@@ -602,7 +602,7 @@ export function Header({ locale }: HeaderProps) {
                   variants={itemVariants}
                   initial="closed"
                   animate="open"
-                  className="bg-[#f2f2f2] px-8 py-5 pb-10"
+                  className="bg-[#f2f2f2] px-8 py-4 pb-8"
                 >
                   <MenuUtilityRow
                     icon={<IconAccount />}
