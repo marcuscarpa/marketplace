@@ -13,3 +13,15 @@ export function formatPriceForLocale(amount: number | string, locale: string): s
     currency: currencyForLocale(locale),
   }).format(Number(amount));
 }
+
+/** Parse catalog strings like "€ 199", "$127", or Shopify "127.00". */
+export function parseCatalogPriceAmount(price: string): number {
+  const normalized = price.replace(/[^\d.,]/g, '').replace(/,/g, '');
+  return parseFloat(normalized) || 0;
+}
+
+/** Storefront card price — locale currency, not hardcoded €. */
+export function formatCatalogPrice(price: string, locale: string): string {
+  const amount = parseCatalogPriceAmount(price);
+  return amount ? formatPriceForLocale(amount, locale) : price;
+}

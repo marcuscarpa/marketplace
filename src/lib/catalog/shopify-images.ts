@@ -1,9 +1,14 @@
-import { formatPrice, type CatalogProduct } from '@/lib/catalog/data';
+import { type CatalogProduct } from '@/lib/catalog/data';
+import { formatPriceForLocale } from '@/lib/locale-currency';
 import { isShopifyConfigured } from '@/lib/shopify/client';
 import { getProductsByHandles } from '@/lib/shopify/loader';
 import type { ShopifyProduct } from '@/lib/shopify/types';
 
-function mergeShopifyProduct(catalog: CatalogProduct, shopify: ShopifyProduct): CatalogProduct {
+function mergeShopifyProduct(
+  catalog: CatalogProduct,
+  shopify: ShopifyProduct,
+  locale: string
+): CatalogProduct {
   const images = shopify.images.nodes;
   const amount = shopify.priceRange.minVariantPrice.amount;
 
@@ -11,7 +16,7 @@ function mergeShopifyProduct(catalog: CatalogProduct, shopify: ShopifyProduct): 
     ...catalog,
     title: shopify.title || catalog.title,
     category: shopify.vendor || catalog.category,
-    price: amount ? formatPrice(amount) : catalog.price,
+    price: amount ? formatPriceForLocale(amount, locale) : catalog.price,
     image: images[0]?.url ?? catalog.image,
     hoverImage: images[1]?.url ?? catalog.hoverImage,
   };
@@ -33,7 +38,7 @@ export async function withShopifyHoverImages(
 
     return products.map((product) => {
       const shopify = byHandle.get(product.handle);
-      return shopify ? mergeShopifyProduct(product, shopify) : product;
+      return shopify ? mergeShopifyProduct(product, shopify, locale) : product;
     });
   } catch {
     return products;
@@ -63,16 +68,17 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
         ],
       },
       options: [],
-      priceRange: { minVariantPrice: { amount: '329.00', currencyCode: 'EUR' } },
+      priceRange: { minVariantPrice: { amount: '329.00', currencyCode: 'USD' } },
       variants: { nodes: [] },
       metafields: [],
-    }
+    },
+    'en'
   );
   if (
     merged.title !== 'Shopify Title' ||
     merged.image !== 'https://cdn.shopify.com/a.jpg' ||
     merged.hoverImage !== 'https://cdn.shopify.com/b.jpg' ||
-    merged.price !== '€ 329'
+    merged.price !== '$329.00'
   ) {
     console.error('[shopify-images] mergeShopifyProduct self-check failed');
   }

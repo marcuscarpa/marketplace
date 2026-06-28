@@ -20,7 +20,7 @@ export function ProductCycler({ locale, products }: ProductCyclerProps) {
     <EntranceView className={`mx-auto w-full max-w-[1310px] ${SECTION_PADDING} lg:px-[50px]`}>
       <div className="mx-auto max-w-[1155px] overflow-hidden">
         <ol
-          className="flex list-none flex-row gap-2 p-0 min-[1440px]:gap-3"
+          className="flex list-none flex-col gap-6 p-0 lg:flex-row lg:gap-2 min-[1440px]:gap-3"
           onMouseLeave={() => setHovered(null)}
         >
           {products.map((product, index) => {
@@ -30,7 +30,7 @@ export function ProductCycler({ locale, products }: ProductCyclerProps) {
             return (
               <li
                 key={product.handle}
-                className="min-w-0 flex-1"
+                className="min-w-0 w-full lg:flex-1"
                 onMouseEnter={() => setHovered(index)}
               >
                 <article className="flex flex-col">
@@ -54,7 +54,7 @@ export function ProductCycler({ locale, products }: ProductCyclerProps) {
                           src={product.image}
                           alt={product.title}
                           fill
-                          sizes="(max-width: 1024px) 33vw, 365px"
+                          sizes="(max-width: 1024px) 100vw, 365px"
                           className="block h-full w-full object-contain object-center"
                         />
                       </figure>
@@ -68,7 +68,7 @@ export function ProductCycler({ locale, products }: ProductCyclerProps) {
                             src={product.hoverImage}
                             alt=""
                             fill
-                            sizes="(max-width: 1024px) 33vw, 365px"
+                            sizes="(max-width: 1024px) 100vw, 365px"
                             className="block h-full w-full object-contain object-center"
                             aria-hidden
                           />

@@ -8,7 +8,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
 import { PRODUCT_IMAGE_HOVER_NESTED } from '@/components/storefront/ui';
-import { formatPrice, type CatalogProduct } from '@/lib/catalog/data';
+import { type CatalogProduct } from '@/lib/catalog/data';
+import { formatCatalogPrice } from '@/lib/locale-currency';
 import { m } from '@/lib/i18n';
 import { resolveCatalogProductTags, type ProductTagKey } from '@/lib/product-tags';
 
@@ -79,7 +80,7 @@ function FavoriteButton({ product }: { product: CatalogProduct }) {
 /** Most-popular product card (mobile + desktop variants). */
 export function PopularCard({ product, locale, badges, index = 0 }: PopularCardProps) {
   const href = `/${locale}/products/${product.handle}`;
-  const price = formatPrice(product.price);
+  const price = formatCatalogPrice(product.price, locale);
   const tags = badges ?? resolveCatalogProductTags(product);
   const addToCartLabel = m(locale).common.addToCart;
   const ref = useRef(null);
@@ -190,7 +191,7 @@ export function StoreProductCard({
           {product.category}
         </p>
         <p className="text-[14px] font-medium leading-[100%] tracking-[0.02em] text-ink">
-          {formatPrice(product.price)}
+          {formatCatalogPrice(product.price, locale)}
         </p>
       </Link>
     ) : null;
@@ -288,7 +289,7 @@ export function StoreProductCard({
               <p className="uppercase text-ink">{product.title}</p>
               <p className="uppercase text-ink/60">{product.category}</p>
             </div>
-            <p className="shrink-0 text-ink">{formatPrice(product.price)}</p>
+            <p className="shrink-0 text-ink">{formatCatalogPrice(product.price, locale)}</p>
           </div>
         </Link>
       )}

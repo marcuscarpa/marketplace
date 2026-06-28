@@ -42,7 +42,7 @@ export function MostPopular({ locale, products }: MostPopularProps) {
 
         <div
           data-entrance-step="3"
-          className="relative hidden h-[440px] shrink-0 overflow-hidden min-[768px]:block min-[768px]:max-[1439px]:left-1/2 min-[768px]:max-[1439px]:w-screen min-[768px]:max-[1439px]:-translate-x-1/2 min-[1440px]:left-auto min-[1440px]:h-[900px] min-[1440px]:w-[690px] min-[1440px]:translate-x-0"
+          className="relative hidden h-[520px] shrink-0 overflow-hidden min-[768px]:block min-[768px]:max-[1439px]:left-1/2 min-[768px]:max-[1439px]:w-screen min-[768px]:max-[1439px]:-translate-x-1/2 min-[1440px]:left-auto min-[1440px]:h-[900px] min-[1440px]:w-[690px] min-[1440px]:translate-x-0"
         >
           <div className="absolute inset-0 min-[1440px]:hidden">
             <Image
@@ -50,7 +50,7 @@ export function MostPopular({ locale, products }: MostPopularProps) {
               alt="Woman in a tropical-print swimsuit seated on coastal rocks by the sea"
               fill
               sizes="100vw"
-              className="block h-full w-full object-contain object-center"
+              className="block h-full w-full object-cover object-top"
             />
           </div>
           <div className="absolute inset-0 hidden min-[1440px]:block">
