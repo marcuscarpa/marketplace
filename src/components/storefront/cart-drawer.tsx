@@ -9,7 +9,7 @@ import { createPortal } from 'react-dom';
 import { removeFromCartAction, type CartActionState } from '@/actions/cart';
 import { useCart } from '@/components/providers/cart-provider';
 import { useWishlist } from '@/hooks/use-wishlist';
-import { formatCartPrice, type CartLineItem } from '@/lib/cart/serialize';
+import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import { currencyForLocale } from '@/lib/locale-currency';
 import { isMockCartId, MINICART_RECOMMENDATIONS } from '@/lib/catalog/minicart-mock';
 
@@ -82,17 +82,17 @@ function CartLineRow({
     <div className="flex gap-4 border-b border-[#03060714] py-5">
       <div className="shrink-0">
         <Link href={`${prefix}/products/${line.handle}`} tabIndex={-1} className="block">
-          {line.imageUrl ? (
-            <Image
-              src={line.imageUrl}
-              alt={line.imageAlt ?? line.productTitle}
-              width={72}
-              height={91}
-              className="h-auto w-[72px] max-w-[72px] object-contain"
-            />
-          ) : (
-            <div className="h-[91px] w-[72px] bg-muted" />
-          )}
+          <div className="relative h-[91px] w-[72px] shrink-0 bg-muted">
+            {line.imageUrl ? (
+              <Image
+                src={line.imageUrl}
+                alt={line.imageAlt ?? line.productTitle}
+                fill
+                sizes="72px"
+                className="object-contain"
+              />
+            ) : null}
+          </div>
         </Link>
       </div>
 

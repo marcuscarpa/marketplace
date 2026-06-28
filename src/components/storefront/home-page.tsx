@@ -19,7 +19,7 @@ interface HomePageProps {
   newArrivals: CatalogProduct[];
   cyclerProducts: CatalogProduct[];
   bestsellerProducts: CatalogProduct[];
-  spotlightProducts: CatalogProduct[];
+  spotlightProduct: CatalogProduct;
 }
 
 const ORCHID_COLLECTION_HANDLE = 'orchid-collection';
@@ -30,7 +30,7 @@ export function HomePage({
   newArrivals,
   cyclerProducts,
   bestsellerProducts,
-  spotlightProducts,
+  spotlightProduct,
 }: HomePageProps) {
   const valuesCollectionHref = isShopifyConfigured(locale)
     ? `/${locale}/collections/${ORCHID_COLLECTION_HANDLE}`
@@ -44,7 +44,7 @@ export function HomePage({
       <OurValues collectionHref={valuesCollectionHref} locale={locale} />
       <ProductCycler locale={locale} products={cyclerProducts} />
       <Bestsellers locale={locale} products={bestsellerProducts} />
-      <CollectionSpotlight locale={locale} products={spotlightProducts} />
+      <CollectionSpotlight locale={locale} product={spotlightProduct} />
       <AboutSection locale={locale} />
       <WhyShopSection locale={locale} />
       <SocialFeed locale={locale} />

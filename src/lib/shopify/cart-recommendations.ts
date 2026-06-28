@@ -1,4 +1,4 @@
-import { formatCartPrice, type CartLineItem } from '@/lib/cart/serialize';
+import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import { getCatalogRecommendations } from '@/lib/catalog/recommendations';
 import { MINICART_RECOMMENDATIONS } from '@/lib/catalog/minicart-mock';
 

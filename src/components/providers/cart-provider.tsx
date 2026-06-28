@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
 import { CartActionState } from '@/actions/cart';
-import type { CartLineItem } from '@/lib/cart/serialize';
+import type { CartLineItem } from '@/lib/cart/display';
 
 interface CartCost {
   totalAmount: { amount: string; currencyCode: string };

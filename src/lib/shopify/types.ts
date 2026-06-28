@@ -62,11 +62,13 @@ export interface CartLine {
   merchandise: {
     id: string;
     title: string;
+    image?: { url: string; altText: string | null } | null;
     selectedOptions?: Array<{ name: string; value: string }>;
     product: {
       id: string;
       title: string;
       handle: string;
+      featuredImage?: { url: string; altText: string | null } | null;
       images: { nodes: Array<{ url: string; altText: string | null }> };
     };
     quantityAvailable?: number | null;

@@ -1,7 +1,8 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-import { serializeCart } from '@/lib/cart/serialize';
+import { serializeCartWithImages } from '@/lib/cart/enrich-images';
+import type { CartLineItem } from '@/lib/cart/display';
 import { getMockCart } from '@/lib/catalog/minicart-mock';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
 import { GET_CART } from '@/lib/shopify/queries';
@@ -15,7 +16,7 @@ const EMPTY = {
   totalQuantity: 0,
   checkoutUrl: null,
   cost: null,
-  lines: [] as ReturnType<typeof serializeCart>['lines'],
+  lines: [] as CartLineItem[],
 };
 
 export async function GET(
@@ -45,7 +46,7 @@ export async function GET(
       return response;
     }
 
-    return Response.json(serializeCart(result.cart));
+    return Response.json(await serializeCartWithImages(result.cart, locale));
   } catch (error) {
     const { locale } = await params;
     logger.error('GET /api/cart failed', { error });

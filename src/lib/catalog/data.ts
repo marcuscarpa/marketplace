@@ -106,23 +106,14 @@ export const SEARCH_MODAL_PRODUCTS: CatalogProduct[] = [
   ...NEW_ARRIVALS,
 ].slice(0, 6);
 
-/** Featured products beside the women collection editorial on the home page. */
-export const SPOTLIGHT_PRODUCTS: CatalogProduct[] = [
-  {
-    title: 'Josephine Dress',
-    category: 'Ready-to-Wear',
-    price: '$670',
-    handle: 'josephine-dress',
-    image: SITE_IMAGES.bestseller1,
-  },
-  {
-    title: 'Larissa Romper Off White',
-    category: 'Romper',
-    price: '$460',
-    handle: 'macaquinho-larissa-off-white',
-    image: SITE_IMAGES.bestseller2,
-  },
-];
+/** Featured product beside the women collection editorial on the home page. */
+export const SPOTLIGHT_PRODUCT: CatalogProduct = {
+  title: 'Josephine Dress',
+  category: 'Ready-to-Wear',
+  price: '$670',
+  handle: 'josephine-dress',
+  image: SITE_IMAGES.bestseller1,
+};
 
 export const BESTSELLERS: CatalogProduct[] = [
   {

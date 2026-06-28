@@ -185,11 +185,13 @@ export const CART_FRAGMENT = `
           ... on ProductVariant {
             id
             title
+            image { url altText }
             selectedOptions { name value }
             product {
               id
               title
               handle
+              featuredImage { url altText }
               images(first: 2) { nodes { url altText } }
             }
             quantityAvailable

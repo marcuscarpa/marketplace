@@ -10,7 +10,8 @@ import { checkRateLimit } from '@/lib/security/bot-protection';
 import { getShopifyClient } from '@/lib/shopify/client';
 import { CART_CREATE, CART_LINES_ADD, CART_LINES_UPDATE, CART_LINES_REMOVE } from '@/lib/shopify/queries';
 import { ShopifyCart } from '@/lib/shopify/types';
-import { serializeCart, type CartLineItem } from '@/lib/cart/serialize';
+import { serializeCartWithImages } from '@/lib/cart/enrich-images';
+import type { CartLineItem } from '@/lib/cart/display';
 import { m } from '@/lib/i18n';
 
 const CART_COOKIE = 'shopify_cart_id';
@@ -127,7 +128,7 @@ export async function addToCartAction(
       const cart = result.cartLinesAdd.cart;
       if (cart) {
         await invalidateCartCache(cart.id);
-        const mapped = serializeCart(cart);
+        const mapped = await serializeCartWithImages(cart, locale);
         return {
           success: true,
           message: cartMsg.added,
@@ -169,7 +170,7 @@ export async function addToCartAction(
       return {
         success: true,
         message: cartMsg.createAndAdded,
-        cart: serializeCart(cart),
+        cart: await serializeCartWithImages(cart, parsed.data.locale),
       };
     }
 
@@ -245,7 +246,7 @@ export async function updateCartLinesAction(
       return {
         success: true,
         message: cartMsg.updated,
-        cart: serializeCart(cart),
+        cart: await serializeCartWithImages(cart, parsed.data.locale),
       };
     }
 
@@ -310,7 +311,7 @@ export async function removeFromCartAction(
       return {
         success: true,
         message: cartMsg.removed,
-        cart: serializeCart(cart),
+        cart: await serializeCartWithImages(cart, parsed.data.locale),
       };
     }
 

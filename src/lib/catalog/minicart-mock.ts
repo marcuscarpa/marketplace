@@ -1,5 +1,5 @@
 import { BESTSELLERS, POPULAR_PRODUCTS, type CatalogProduct } from '@/lib/catalog/data';
-import type { CartLineItem } from '@/lib/cart/serialize';
+import type { CartLineItem } from '@/lib/cart/display';
 import { currencyForLocale } from '@/lib/locale-currency';
 
 export interface MinicartRecommendation {

@@ -10,10 +10,10 @@ import { m } from '@/lib/i18n';
 
 interface CollectionSpotlightProps {
   locale: string;
-  products: CatalogProduct[];
+  product: CatalogProduct;
 }
 
-export function CollectionSpotlight({ locale, products }: CollectionSpotlightProps) {
+export function CollectionSpotlight({ locale, product }: CollectionSpotlightProps) {
   const h = m(locale).home;
   const collectionHref = `/${locale}/collections/women`;
 
@@ -47,17 +47,11 @@ export function CollectionSpotlight({ locale, products }: CollectionSpotlightPro
 
       <div
         data-entrance-step="2"
-        className="flex min-h-0 w-full flex-col gap-7 min-[1440px]:h-full min-[1440px]:flex-1 min-[1440px]:max-w-[calc((100%-28px)/4)]"
+        className="flex w-full min-[1440px]:h-full min-[1440px]:flex-1 min-[1440px]:items-center min-[1440px]:justify-center"
       >
-        {products.slice(0, 2).map((product, index) => (
-          <PopularCard
-            key={product.handle}
-            product={product}
-            locale={locale}
-            index={index}
-            stacked
-          />
-        ))}
+        <div className="mx-auto w-full max-w-[339px]">
+          <PopularCard product={product} locale={locale} />
+        </div>
       </div>
     </EntranceView>
   );

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { CartBagPage } from '@/components/luxury/cart-bag-page';
 import { isCartKillSwitchActive, isCheckoutKillSwitchActive } from '@/lib/feature-flags';
-import { serializeCart, serializeCartLine } from '@/lib/cart/serialize';
+import { serializeCartWithImages } from '@/lib/cart/enrich-images';
 import { getMockCart } from '@/lib/catalog/minicart-mock';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
 import { GET_CART } from '@/lib/shopify/queries';
@@ -60,8 +60,8 @@ export default async function CartPage({ params }: CartPageProps) {
     isCheckoutKillSwitchActive(flagContext),
   ]);
 
-  const serialized = cart ? serializeCart(cart) : null;
-  const lines = cart?.lines.nodes.map(serializeCartLine) ?? [];
+  const serialized = cart ? await serializeCartWithImages(cart, locale) : null;
+  const lines = serialized?.lines ?? [];
 
   return (
     <CartBagPage

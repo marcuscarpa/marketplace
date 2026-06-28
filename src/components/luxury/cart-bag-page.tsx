@@ -7,7 +7,7 @@ import { useCallback, useState, useTransition } from 'react';
 
 import { removeFromCartAction, updateCartLinesAction } from '@/actions/cart';
 import { trackStartedCheckout } from '@/lib/analytics';
-import { formatCartPrice, type CartLineItem } from '@/lib/cart/serialize';
+import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { maxVariantQuantity } from '@/lib/shopify/variants';
 
@@ -149,17 +149,17 @@ function CartTableRow({
       <div className="md:grid md:grid-cols-[minmax(0,1fr)_100px_130px_120px] md:items-start md:gap-4">
         <div className="flex gap-5">
           <Link href={`${prefix}/products/${line.handle}`} tabIndex={-1} className="shrink-0">
-            {line.imageUrl ? (
-              <Image
-                src={line.imageUrl}
-                alt={line.imageAlt ?? line.productTitle}
-                width={100}
-                height={127}
-                className="h-auto w-[100px] max-w-[100px] object-contain"
-              />
-            ) : (
-              <div className="h-[127px] w-[100px] bg-muted" />
-            )}
+            <div className="relative h-[127px] w-[100px] bg-muted">
+              {line.imageUrl ? (
+                <Image
+                  src={line.imageUrl}
+                  alt={line.imageAlt ?? line.productTitle}
+                  fill
+                  sizes="100px"
+                  className="object-contain"
+                />
+              ) : null}
+            </div>
           </Link>
           <div className="min-w-0 pt-1">
             <h2 className="mb-4 text-[11px] font-normal uppercase leading-snug tracking-[0.06em] text-ink">
