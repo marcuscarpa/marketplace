@@ -42,15 +42,26 @@ export function MostPopular({ locale, products }: MostPopularProps) {
 
         <div
           data-entrance-step="3"
-          className="relative hidden h-[520px] w-full shrink-0 overflow-hidden min-[768px]:block min-[1440px]:h-[900px] min-[1440px]:w-[690px]"
+          className="relative hidden h-[520px] shrink-0 overflow-hidden min-[768px]:block min-[768px]:max-[1439px]:left-1/2 min-[768px]:max-[1439px]:w-screen min-[768px]:max-[1439px]:-translate-x-1/2 min-[1440px]:left-auto min-[1440px]:h-[900px] min-[1440px]:w-[690px] min-[1440px]:translate-x-0"
         >
-          <Image
-            src={SITE_IMAGES.popularSide}
-            alt="Woman in a tropical-print swimsuit seated on coastal rocks by the sea"
-            fill
-            sizes="(max-width: 1439px) 100vw, 690px"
-            className="block h-full w-full object-contain object-center min-[1440px]:scale-110 min-[1440px]:object-cover"
-          />
+          <div className="absolute inset-0 min-[1440px]:hidden">
+            <Image
+              src={SITE_IMAGES.popularSideMobile}
+              alt="Woman in a tropical-print swimsuit seated on coastal rocks by the sea"
+              fill
+              sizes="100vw"
+              className="block h-full w-full object-cover object-center"
+            />
+          </div>
+          <div className="absolute inset-0 hidden min-[1440px]:block">
+            <Image
+              src={SITE_IMAGES.popularSide}
+              alt="Woman in a tropical-print swimsuit seated on coastal rocks by the sea"
+              fill
+              sizes="690px"
+              className="block h-full w-full scale-110 object-cover object-center"
+            />
+          </div>
         </div>
       </div>
     </EntranceView>
