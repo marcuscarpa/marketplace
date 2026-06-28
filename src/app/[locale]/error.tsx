@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import * as Sentry from '@sentry/nextjs';
+
+import { m } from '@/lib/i18n';
 
 export default function Error({
   error,
@@ -10,6 +13,11 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const pathname = usePathname();
+  const locale = pathname?.startsWith('/pt') ? 'pt' : 'en';
+  const t = m(locale).error;
+  const c = m(locale).common;
+
   useEffect(() => {
     Sentry.captureException(error, { extra: { digest: error.digest } });
     console.error('Unhandled error:', error, { digest: error.digest });
@@ -18,17 +26,13 @@ export default function Error({
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <h1 className="text-2xl font-light text-gray-900 mb-4">
-          Something went wrong
-        </h1>
-        <p className="text-gray-500 text-sm mb-8">
-          An unexpected error occurred. Our team has been notified.
-        </p>
+        <h1 className="text-2xl font-light text-gray-900 mb-4">{t.title}</h1>
+        <p className="text-gray-500 text-sm mb-8">{t.body}</p>
         <button
           onClick={reset}
           className="px-6 py-3 bg-black text-white font-medium rounded-lg hover:bg-gray-900 transition-colors"
         >
-          Try again
+          {c.tryAgain}
         </button>
       </div>
     </div>

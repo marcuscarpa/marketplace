@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { m } from '@/lib/i18n';
 import {
   CATEGORY_FILTERS,
   COLOR_SWATCHES,
@@ -29,12 +30,6 @@ const panelVariants = {
 const backdropVariants = {
   closed: { opacity: 0 },
   open: { opacity: 1, transition: { duration: 0.35 } },
-};
-
-const SIZE_GROUP_LABELS: Record<SizeGroup, string> = {
-  clothing: 'Clothing',
-  accessories: 'Accessories',
-  shoes: 'Shoes',
 };
 
 function Chevron({ open }: { open: boolean }) {
@@ -142,12 +137,15 @@ function PriceRangeFilter({
   priceMin,
   priceMax,
   onChange,
+  locale,
 }: {
   bounds: PriceBounds;
   priceMin: number | null;
   priceMax: number | null;
   onChange: (min: number | null, max: number | null) => void;
+  locale: string;
 }) {
+  const col = m(locale).collection;
   const floor = bounds.min;
   const ceiling = bounds.max;
   const span = Math.max(ceiling - floor, 1);
@@ -206,7 +204,7 @@ function PriceRangeFilter({
           max={ceiling}
           step={1}
           value={low}
-          aria-label="Minimum price"
+          aria-label={col.minPrice}
           onChange={(e) => {
             const next = Number(e.target.value);
             setLow(Math.min(next, high));
@@ -219,7 +217,7 @@ function PriceRangeFilter({
           max={ceiling}
           step={1}
           value={high}
-          aria-label="Maximum price"
+          aria-label={col.maxPrice}
           onChange={(e) => {
             const next = Number(e.target.value);
             setHigh(Math.max(next, low));
@@ -236,7 +234,7 @@ function PriceRangeFilter({
             max={high}
             step={1}
             value={low}
-            aria-label="Minimum price amount"
+            aria-label={col.minPriceAmount}
             onChange={(e) => setLow(Number(e.target.value))}
             onBlur={() => commit(low, high)}
             onKeyDown={(e) => {
@@ -255,7 +253,7 @@ function PriceRangeFilter({
             max={ceiling}
             step={1}
             value={high}
-            aria-label="Maximum price amount"
+            aria-label={col.maxPriceAmount}
             onChange={(e) => setHigh(Number(e.target.value))}
             onBlur={() => commit(low, high)}
             onKeyDown={(e) => {
@@ -276,6 +274,7 @@ interface FilterDrawerProps {
   facets: ProductFacets;
   filterable: FilterableProduct[];
   collectionTitle: string;
+  locale: string;
 }
 
 function availableCategoryFilters(products: FilterableProduct[]) {
@@ -292,9 +291,14 @@ export function FilterDrawer({
   facets,
   filterable,
   collectionTitle,
+  locale,
 }: FilterDrawerProps) {
   const titleId = useId();
   const [mounted, setMounted] = useState(false);
+  const t = m(locale);
+  const col = t.collection;
+  const flt = t.filter;
+  const sizeGroupLabel = (group: SizeGroup) => flt[group];
 
   useEffect(() => setMounted(true), []);
 
@@ -340,7 +344,7 @@ export function FilterDrawer({
         <div className="fixed inset-0 z-[95]" aria-hidden={!open}>
           <motion.button
             type="button"
-            aria-label="Close filters"
+            aria-label={col.closeFilters}
             className="absolute inset-0 bg-black/20"
             variants={backdropVariants}
             initial="closed"
@@ -367,22 +371,22 @@ export function FilterDrawer({
                   id={titleId}
                   className="font-sans-ui text-[12px] uppercase tracking-[0.02em] text-ink"
                 >
-                  Filter{count > 0 ? ` (${count})` : ''}
+                  {col.filter}{count > 0 ? ` (${count})` : ''}
                 </p>
               </div>
               <button
                 type="button"
-                aria-label="Close"
+                aria-label={t.common.close}
                 onClick={onClose}
                 className="font-sans-ui text-[12px] uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
               >
-                Close
+                {t.common.close}
               </button>
             </header>
 
             <div className="min-h-0 flex-1 overflow-y-auto px-5">
               {categoryOptions.length > 0 && (
-                <FilterSection title="Category" defaultOpen>
+                <FilterSection title={col.category} defaultOpen>
                   <ul className="space-y-3">
                     {categoryOptions.map((cat) => {
                       const checked = filters.category === cat.handle;
@@ -411,7 +415,7 @@ export function FilterDrawer({
               )}
 
               {facets.colors.length > 0 && (
-                <FilterSection title="Colour">
+                <FilterSection title={col.colour}>
                   <ul className="max-h-[280px] space-y-3 overflow-y-auto pr-1">
                     {facets.colors.map((color) => {
                       const checked = filters.colors.some(
@@ -438,14 +442,14 @@ export function FilterDrawer({
               )}
 
               {hasSizes && (
-                <FilterSection title="Size">
+                <FilterSection title={col.size}>
                   {(Object.keys(facets.sizes) as SizeGroup[]).map((group) => {
                     const sizes = facets.sizes[group];
                     if (sizes.length === 0) return null;
                     return (
                       <div key={group} className="mb-5 last:mb-0">
                         <p className="mb-3 font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink">
-                          {SIZE_GROUP_LABELS[group]}
+                          {sizeGroupLabel(group)}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {sizes.map((size) => {
@@ -472,7 +476,7 @@ export function FilterDrawer({
               )}
 
               {facets.materials.length > 0 && (
-                <FilterSection title="Material">
+                <FilterSection title={col.material}>
                   <ul className="space-y-3">
                     {facets.materials.map((material) => {
                       const checked = filters.materials.some(
@@ -498,7 +502,7 @@ export function FilterDrawer({
               )}
 
               {facets.sleeves.length > 0 && (
-                <FilterSection title="Sleeve">
+                <FilterSection title={col.sleeve}>
                   <ul className="space-y-3">
                     {facets.sleeves.map((sleeve) => {
                       const checked = filters.sleeves.some(
@@ -523,18 +527,19 @@ export function FilterDrawer({
                 </FilterSection>
               )}
 
-              <FilterSection title="Price">
+              <FilterSection title={col.price}>
                 <PriceRangeFilter
                   bounds={facets.price}
                   priceMin={filters.priceMin}
                   priceMax={filters.priceMax}
+                  locale={locale}
                   onChange={(priceMin, priceMax) =>
                     onChange({ ...filters, priceMin, priceMax })
                   }
                 />
               </FilterSection>
 
-              <FilterSection title="Availability">
+              <FilterSection title={col.availability}>
                 <button
                   type="button"
                   className="flex w-full items-center gap-3 text-left"
@@ -542,7 +547,7 @@ export function FilterDrawer({
                 >
                   <CheckboxControl checked={filters.inStock} />
                   <span className="font-sans-ui text-[12px] uppercase tracking-[0.02em] text-ink">
-                    In Stock
+                    {t.common.inStock}
                   </span>
                 </button>
               </FilterSection>
@@ -554,14 +559,14 @@ export function FilterDrawer({
                 onClick={clearAll}
                 className="flex-1 border border-[#03060733] py-3 font-sans-ui text-[12px] uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
               >
-                Clear
+                {t.common.clear}
               </button>
               <button
                 type="button"
                 onClick={onClose}
                 className="flex-1 bg-ink py-3 font-sans-ui text-[12px] uppercase tracking-[0.02em] text-white transition-opacity hover:opacity-90"
               >
-                View Results
+                {t.common.viewResults}
               </button>
             </footer>
           </motion.aside>
@@ -575,16 +580,18 @@ export function FilterDrawer({
 interface FilterTriggerProps {
   onClick: () => void;
   count: number;
+  locale: string;
 }
 
-export function FilterTrigger({ onClick, count }: FilterTriggerProps) {
+export function FilterTrigger({ onClick, count, locale }: FilterTriggerProps) {
+  const col = m(locale).collection;
   return (
     <button
       type="button"
       onClick={onClick}
       className="cursor-pointer font-sans-ui text-[12px] font-normal uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
     >
-      Filter{count > 0 ? ` (${count})` : ''}
+      {col.filter}{count > 0 ? ` (${count})` : ''}
     </button>
   );
 }

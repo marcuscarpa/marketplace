@@ -3,19 +3,12 @@
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 
-import { FOOTER_LINKS, instagramHref } from '@/lib/catalog/data';
+import { getFooterLinks, instagramHref } from '@/lib/catalog/data';
+import { m } from '@/lib/i18n';
 
 interface FooterProps {
   locale: string;
 }
-
-const MENU_COLUMNS = [
-  ['Shop', FOOTER_LINKS.shop],
-  ['Company', FOOTER_LINKS.company],
-  ['Customer Service', FOOTER_LINKS.others],
-] as const;
-
-const LEGAL_LINKS = FOOTER_LINKS.legal;
 
 function SocialIcon({ icon }: { icon: 'instagram' }) {
   if (icon !== 'instagram') return null;
@@ -34,14 +27,16 @@ function FooterColumn({
   titleId,
   links,
   locale,
+  className = '',
 }: {
   title: string;
   titleId: string;
   links: readonly { label: string; href: string }[];
   locale: string;
+  className?: string;
 }) {
   return (
-    <div>
+    <div className={className}>
       <h2 id={titleId} className="mb-0.5 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">
         {title}
       </h2>
@@ -61,9 +56,11 @@ function FooterColumn({
   );
 }
 
-function NewsletterBox() {
+function NewsletterBox({ locale }: { locale: string }) {
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
+  const f = m(locale).footer;
+  const c = m(locale).common;
 
   useEffect(() => setMounted(true), []);
 
@@ -72,17 +69,16 @@ function NewsletterBox() {
     setEmail('');
   }
 
-  // ponytail: defer real input until after hydration — LastPass injects nodes into email fields pre-hydration
   if (!mounted) {
     return (
       <div className="mt-3" aria-hidden>
-        <p className="mb-2 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">Stay in the loop</p>
+        <p className="mb-2 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">{f.stayInLoop}</p>
         <div className="flex flex-col gap-2">
           <div className="rounded border border-[#e6e6e6] bg-white px-3 py-2.5">
-            <span className="font-sans-ui text-[15px] text-ink/40">Enter your email</span>
+            <span className="font-sans-ui text-[15px] text-ink/40">{c.emailPlaceholder}</span>
           </div>
           <div className="rounded bg-ink py-2.5 text-center font-sans-ui text-[15px] font-bold text-white">
-            Subscribe
+            {c.subscribe}
           </div>
         </div>
       </div>
@@ -91,7 +87,7 @@ function NewsletterBox() {
 
   return (
     <div className="mt-3">
-      <h2 className="mb-2 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">Stay in the loop</h2>
+      <h2 className="mb-2 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">{f.stayInLoop}</h2>
       <form
         onSubmit={onSubmit}
         className="flex flex-col gap-2"
@@ -106,7 +102,7 @@ function NewsletterBox() {
           name="newsletter"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
+          placeholder={c.emailPlaceholder}
           required
           autoComplete="off"
           data-lpignore="true"
@@ -118,7 +114,7 @@ function NewsletterBox() {
           type="submit"
           className="w-full rounded bg-ink py-2.5 font-sans-ui text-[15px] font-bold text-white transition-opacity hover:opacity-80"
         >
-          Subscribe
+          {c.subscribe}
         </button>
       </form>
     </div>
@@ -126,33 +122,63 @@ function NewsletterBox() {
 }
 
 export function Footer({ locale }: FooterProps) {
+  const f = m(locale).footer;
+  const links = getFooterLinks(locale);
+  const menuColumns = [
+    [f.shop, links.shop],
+    [f.company, links.company],
+    [f.customerService, links.others],
+  ] as const;
+
   return (
     <footer className="bg-cream text-ink">
       <div className="mx-auto max-w-[1440px] px-5 py-[30px] lg:px-5">
         <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-3 lg:grid-cols-4">
-          {MENU_COLUMNS.map(([title, links], index) => (
-            <FooterColumn key={title} title={title} titleId={`footer-${index}`} links={links} locale={locale} />
-          ))}
+          <div className="col-start-1 flex flex-col gap-3 lg:contents">
+            <FooterColumn
+              title={menuColumns[0][0]}
+              titleId="footer-0"
+              links={menuColumns[0][1]}
+              locale={locale}
+              className="lg:order-1"
+            />
+            <FooterColumn
+              title={menuColumns[2][0]}
+              titleId="footer-2"
+              links={menuColumns[2][1]}
+              locale={locale}
+              className="lg:order-3"
+            />
+          </div>
 
-          <div>
-            <h2 id="footer-socials" className="mb-0.5 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">
-              Follow us
-            </h2>
-            <ul aria-labelledby="footer-socials" className="flex items-center gap-1.5">
-              <li>
-                <a
-                  href={instagramHref(locale)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  title="Instagram"
-                  className="inline-flex text-ink transition-opacity hover:opacity-60"
-                >
-                  <SocialIcon icon="instagram" />
-                </a>
-              </li>
-            </ul>
-            <NewsletterBox />
+          <div className="col-start-2 flex flex-col gap-3 lg:contents">
+            <FooterColumn
+              title={menuColumns[1][0]}
+              titleId="footer-1"
+              links={menuColumns[1][1]}
+              locale={locale}
+              className="lg:order-2"
+            />
+            <div className="lg:order-4">
+              <h2 id="footer-socials" className="mb-0.5 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">
+                {f.followUs}
+              </h2>
+              <ul aria-labelledby="footer-socials" className="flex items-center gap-1.5">
+                <li>
+                  <a
+                    href={instagramHref(locale)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    title="Instagram"
+                    className="inline-flex text-ink transition-opacity hover:opacity-60"
+                  >
+                    <SocialIcon icon="instagram" />
+                  </a>
+                </li>
+              </ul>
+              <NewsletterBox locale={locale} />
+            </div>
           </div>
         </nav>
 
@@ -160,7 +186,7 @@ export function Footer({ locale }: FooterProps) {
 
         <div className="pt-1.5">
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
-            {LEGAL_LINKS.map((link) => (
+            {links.legal.map((link) => (
               <li key={link.href}>
                 <Link
                   href={`/${locale}/${link.href}`}
@@ -172,9 +198,7 @@ export function Footer({ locale }: FooterProps) {
             ))}
           </ul>
 
-          <p className="mt-1.5 font-sans-ui text-[13px] leading-[1.31] text-ink/60">
-            © 2026 SINESIA KAROL. All Rights Reserved.
-          </p>
+          <p className="mt-1.5 font-sans-ui text-[13px] leading-[1.31] text-ink/60">{f.copyright}</p>
         </div>
       </div>
     </footer>

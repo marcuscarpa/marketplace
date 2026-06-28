@@ -199,7 +199,7 @@ export async function getProductsByHandles(
   handles: string[],
   locale: string
 ): Promise<Array<ShopifyProduct & { luxury: ReturnType<typeof parseLuxuryMetafields> }>> {
-  if (handles.length === 0) return [];
+  if (handles.length === 0 || !isShopifyConfigured(locale)) return [];
 
   const client = getShopifyClient(locale);
   const variables: Record<string, string> = {};

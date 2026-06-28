@@ -3,11 +3,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import manifest from '@/app/manifest';
 
+vi.mock('next/font/google', () => ({
+  Playfair_Display: () => ({ variable: '--font-playfair' }),
+  Instrument_Sans: () => ({ variable: '--font-instrument' }),
+  IBM_Plex_Mono: () => ({ variable: '--font-ibm-plex' }),
+}));
+
 describe('Root Layout Metadata', () => {
   it('includes themeColor in root layout viewport', async () => {
     const { viewport } = await import('@/app/layout');
     const vp = viewport as Viewport;
-    expect(vp.themeColor).toBe('#000000');
+    expect(vp.themeColor).toBe('#030607');
   });
 });
 
@@ -33,15 +39,6 @@ describe('PWA Manifest', () => {
       src: '/icons/icon-maskable.svg',
       purpose: 'maskable',
     } as Record<string, string>);
-  });
-
-  it('includes search and cart shortcuts', () => {
-    const result = manifest();
-    expect(result.shortcuts).toHaveLength(2);
-    expect(result.shortcuts![0]!.name).toBe('Search Products');
-    expect(result.shortcuts![0]!.url).toBe('/search');
-    expect(result.shortcuts![1]!.name).toBe('Cart');
-    expect(result.shortcuts![1]!.url).toBe('/cart');
   });
 });
 

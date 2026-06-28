@@ -22,20 +22,20 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ locale: string }> }
 ) {
-  const { locale } = await params;
-
-  if (!isShopifyConfigured(locale)) {
-    return Response.json(getMockCart(locale));
-  }
-
-  const cookieStore = await cookies();
-  const cartId = cookieStore.get(CART_COOKIE)?.value;
-
-  if (!cartId) {
-    return Response.json(EMPTY);
-  }
-
   try {
+    const { locale } = await params;
+
+    if (!isShopifyConfigured(locale)) {
+      return Response.json(getMockCart(locale));
+    }
+
+    const cookieStore = await cookies();
+    const cartId = cookieStore.get(CART_COOKIE)?.value;
+
+    if (!cartId) {
+      return Response.json(EMPTY);
+    }
+
     const client = getShopifyClient(locale);
     const result = await client.execute<{ cart: ShopifyCart | null }>(GET_CART, { cartId });
 
@@ -47,7 +47,11 @@ export async function GET(
 
     return Response.json(serializeCart(result.cart));
   } catch (error) {
-    logger.error('GET /api/cart failed', { cartId, error });
+    const { locale } = await params;
+    logger.error('GET /api/cart failed', { error });
+    if (!isShopifyConfigured(locale)) {
+      return Response.json(getMockCart(locale));
+    }
     return Response.json(EMPTY);
   }
 }

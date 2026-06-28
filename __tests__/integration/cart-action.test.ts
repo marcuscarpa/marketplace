@@ -2,14 +2,23 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { addToCartAction, CartActionState } from '@/actions/cart';
 import { ZodError } from 'zod';
 
-const mockCheckRateLimit = vi.hoisted(() => vi.fn().mockResolvedValue(null));
-const mockRedis = vi.hoisted(() => ({
-  del: vi.fn().mockResolvedValue(1),
+const {
+  mockCheckRateLimit,
+  mockRedis,
+  mockRevalidateTag,
+  mockCookiesGet,
+  mockCookiesSet,
+  mockShopifyExecute,
+} = vi.hoisted(() => ({
+  mockCheckRateLimit: vi.fn().mockResolvedValue({ blocked: false }),
+  mockRedis: {
+    del: vi.fn().mockResolvedValue(1),
+  },
+  mockRevalidateTag: vi.fn(),
+  mockCookiesGet: vi.fn(),
+  mockCookiesSet: vi.fn(),
+  mockShopifyExecute: vi.fn(),
 }));
-const mockRevalidateTag = vi.fn();
-const mockCookiesGet = vi.fn();
-const mockCookiesSet = vi.fn();
-const mockShopifyExecute = vi.fn();
 
 vi.mock('@/lib/security/bot-protection', () => ({
   checkRateLimit: mockCheckRateLimit,
@@ -41,7 +50,7 @@ vi.mock('next/headers', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockCheckRateLimit.mockResolvedValue(null);
+  mockCheckRateLimit.mockResolvedValue({ blocked: false });
   mockCookiesGet.mockReturnValue(undefined);
   mockCookiesSet.mockResolvedValue(undefined);
   mockShopifyExecute.mockReset();
@@ -72,7 +81,7 @@ describe('Cart Action', () => {
       const result = await addToCartAction({ success: false, message: '' }, formData);
 
       expect(result.success).toBe(false);
-      expect(result.message).toContain('too_small');
+      expect(result.message).toMatch(/greater than or equal to 1|too_small/i);
     });
 
     it('rejects quantity above 99', async () => {
@@ -84,7 +93,7 @@ describe('Cart Action', () => {
       const result = await addToCartAction({ success: false, message: '' }, formData);
 
       expect(result.success).toBe(false);
-      expect(result.message).toContain('too_big');
+      expect(result.message).toMatch(/less than or equal to 99|too_big/i);
     });
 
     it('rejects negative quantity', async () => {
@@ -110,6 +119,7 @@ describe('Cart Action', () => {
             id: 'gid://shopify/Cart/cart-1',
             totalQuantity: 2,
             checkoutUrl: 'https://checkout.example.com/cart',
+            lines: { nodes: [] },
             cost: {
               totalAmount: { amount: '100.00', currencyCode: 'USD' },
               subtotalAmount: { amount: '100.00', currencyCode: 'USD' },
@@ -130,7 +140,7 @@ describe('Cart Action', () => {
 
   describe('rate limiting', () => {
     it('returns rate limit error when checkRateLimit blocks', async () => {
-      mockCheckRateLimit.mockResolvedValue('Too many requests. Please try again later.');
+      mockCheckRateLimit.mockResolvedValue({ blocked: true });
 
       const formData = new FormData();
       formData.set('variantId', 'gid://shopify/ProductVariant/123');
@@ -139,7 +149,7 @@ describe('Cart Action', () => {
       const result = await addToCartAction({ success: false, message: '' }, formData);
 
       expect(result.success).toBe(false);
-      expect(result.message).toBe('Too many requests. Please try again later.');
+      expect(result.message).toContain('try again');
     });
 
     it('checks rate limit with correct IP header', async () => {
@@ -163,6 +173,7 @@ describe('Cart Action', () => {
             id: 'gid://shopify/Cart/existing-cart',
             totalQuantity: 3,
             checkoutUrl: 'https://checkout.example.com/cart',
+            lines: { nodes: [] },
             cost: {
               totalAmount: { amount: '150.00', currencyCode: 'USD' },
               subtotalAmount: { amount: '150.00', currencyCode: 'USD' },
@@ -214,6 +225,7 @@ describe('Cart Action', () => {
             id: 'gid://shopify/Cart/new-cart',
             totalQuantity: 1,
             checkoutUrl: 'https://checkout.example.com/cart',
+            lines: { nodes: [] },
             cost: {
               totalAmount: { amount: '50.00', currencyCode: 'USD' },
               subtotalAmount: { amount: '50.00', currencyCode: 'USD' },

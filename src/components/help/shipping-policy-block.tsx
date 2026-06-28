@@ -1,27 +1,29 @@
-import { PRODUCT_SHIPPING_POLICY } from '@/lib/help/product-shipping-policy';
+import { getProductShippingPolicy } from '@/lib/help/product-shipping-policy';
 
-export function ShippingPolicyBlock() {
+export function ShippingPolicyBlock({ locale }: { locale: string }) {
+  const policy = getProductShippingPolicy(locale);
+
   return (
     <section
       id="shipping-policy"
       className="scroll-mt-32 border-b border-neutral-200 pb-12 mb-12 max-w-3xl mx-auto font-sans-ui text-sm leading-relaxed text-neutral-700"
     >
       <h2 className="mb-6 text-center font-serif text-xl uppercase tracking-[0.08em] text-neutral-900">
-        {PRODUCT_SHIPPING_POLICY.title}
+        {policy.title}
       </h2>
       <div className="space-y-4">
-        {PRODUCT_SHIPPING_POLICY.paragraphs.map((paragraph) => (
+        {policy.paragraphs.map((paragraph) => (
           <p key={paragraph}>
-            {paragraph.includes(PRODUCT_SHIPPING_POLICY.email) ? (
+            {paragraph.includes(policy.email) ? (
               <>
-                {paragraph.split(PRODUCT_SHIPPING_POLICY.email)[0]}
+                {paragraph.split(policy.email)[0]}
                 <a
-                  href={`mailto:${PRODUCT_SHIPPING_POLICY.email}`}
+                  href={`mailto:${policy.email}`}
                   className="underline underline-offset-2 hover:text-neutral-900"
                 >
-                  {PRODUCT_SHIPPING_POLICY.email}
+                  {policy.email}
                 </a>
-                {paragraph.split(PRODUCT_SHIPPING_POLICY.email)[1]}
+                {paragraph.split(policy.email)[1]}
               </>
             ) : (
               paragraph

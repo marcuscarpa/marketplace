@@ -1,15 +1,17 @@
+import { LEGAL_PROSE_SIMPLE } from '@/lib/help/legal-prose';
+import { MobileTermsContentPt } from '@/lib/help/mobile-terms-content.pt';
+
 const BRAND = 'SINESIA KAROL';
 const SUPPORT_EMAIL = 'admin@sinesiakarol.com';
 const SENDING_NUMBER = '401-847-1087';
 
-const prose =
-  'space-y-6 font-sans-ui text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_a]:underline-offset-2 [&_section]:space-y-3';
-
 export function MobileTermsContent({ locale }: { locale: string }) {
+  if (locale === 'pt') return <MobileTermsContentPt locale={locale} />;
+
   const privacyHref = `/${locale}/privacy`;
 
   return (
-    <article className={prose}>
+    <article className={LEGAL_PROSE_SIMPLE}>
       <p className="text-neutral-500">Last updated: May 27, 2026</p>
 
       <p>

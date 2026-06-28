@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import type { CatalogProduct } from '@/lib/catalog/data';
-import { PRODUCT_IMAGE_HOVER_NESTED } from '@/components/storefront/ui';
+import { PRODUCT_IMAGE_HOVER_NESTED, SECTION_PADDING } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
 
 interface ProductCyclerProps {
@@ -17,8 +17,8 @@ export function ProductCycler({ locale, products }: ProductCyclerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <EntranceView className="mx-auto w-full max-w-[1310px] px-5 lg:px-[50px]">
-      <div className="mx-auto mb-[82px] max-w-[1155px] overflow-hidden pt-[41px]">
+    <EntranceView className={`mx-auto w-full max-w-[1310px] ${SECTION_PADDING} lg:px-[50px]`}>
+      <div className="mx-auto max-w-[1155px] overflow-hidden">
         <ol
           className="flex list-none flex-row gap-2 p-0 min-[1440px]:gap-3"
           onMouseLeave={() => setHovered(null)}

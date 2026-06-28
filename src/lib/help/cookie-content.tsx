@@ -1,12 +1,14 @@
-const prose =
-  'space-y-6 font-sans-ui text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_a]:underline-offset-2 [&_h2]:text-[11px] [&_h2]:font-medium [&_h2]:uppercase [&_h2]:tracking-[0.14em] [&_h2]:text-neutral-900 [&_h3]:font-medium [&_h3]:text-neutral-900 [&_section]:space-y-3 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5';
+import { LEGAL_PROSE } from '@/lib/help/legal-prose';
+import { CookieContentPt } from '@/lib/help/cookie-content.pt';
 
 export function CookieContent({ locale }: { locale: string }) {
+  if (locale === 'pt') return <CookieContentPt locale={locale} />;
+
   const privacyHref = `/${locale}/privacy`;
   const contactHref = `/${locale}/contact`;
 
   return (
-    <article className={prose}>
+    <article className={LEGAL_PROSE}>
       <p className="text-neutral-500">Last Updated: May 27, 2026</p>
 
       <section>

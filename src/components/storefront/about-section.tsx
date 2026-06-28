@@ -5,12 +5,15 @@ import Link from 'next/link';
 
 import { SITE_IMAGES } from '@/lib/catalog/data';
 import { EntranceView } from '@/components/storefront/entrance-view';
+import { m } from '@/lib/i18n';
 
 interface AboutSectionProps {
   locale: string;
 }
 
 export function AboutSection({ locale }: AboutSectionProps) {
+  const h = m(locale).home;
+
   return (
     <EntranceView stagger className="flex w-full flex-col overflow-hidden rounded-[6px]">
       <div
@@ -27,13 +30,13 @@ export function AboutSection({ locale }: AboutSectionProps) {
         />
       </div>
 
-      <div data-entrance-step="2" className="flex flex-col gap-5 bg-white px-5 pt-8 min-[1440px]:gap-7 min-[1440px]:pt-10">
+      <div data-entrance-step="2" className="flex flex-col gap-5 bg-white px-5 pb-10 pt-8 min-[1440px]:gap-7 min-[1440px]:pb-12 min-[1440px]:pt-10">
         <div className="flex max-w-lg flex-col gap-4">
           <h3 className="font-serif text-[32px] font-normal leading-none tracking-[-0.04em] text-ink min-[1440px]:text-[48px]">
-            About us
+            {h.aboutTitle}
           </h3>
           <p className="font-sans-ui text-base leading-normal text-ink/60">
-            We design with care — balancing function, emotion, and beauty.
+            {h.aboutBody}
           </p>
         </div>
 
@@ -41,7 +44,7 @@ export function AboutSection({ locale }: AboutSectionProps) {
           href={`/${locale}/about`}
           className="inline-flex w-min flex-col gap-1 font-sans-ui text-[12px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink no-underline transition-opacity hover:opacity-60"
         >
-          Our story
+          {h.ourStory}
           <span className="block h-px w-full bg-ink" aria-hidden />
         </Link>
       </div>

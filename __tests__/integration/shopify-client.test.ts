@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { isShopifyConfigured } from '@/lib/shopify/client';
+import { resetRegionsCache } from '@/lib/regions';
 
 const mockEnv = vi.hoisted(() => ({
   SHOPIFY_STOREFRONT_ACCESS_TOKEN_US: 'real-token-us',
@@ -28,6 +29,10 @@ vi.mock('@/lib/redis/client', () => ({
 }));
 
 describe('Shopify Client', () => {
+  beforeEach(() => {
+    resetRegionsCache();
+  });
+
   describe('isShopifyConfigured', () => {
     it('returns true when region has valid credentials', () => {
       expect(isShopifyConfigured('en-US')).toBe(true);
@@ -65,7 +70,7 @@ describe('Shopify Client', () => {
 
     it('checks EU region credentials', () => {
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_EU = 'test-token-eu';
-      expect(isShopifyConfigured('pt-PT')).toBe(false);
+      expect(isShopifyConfigured('eu')).toBe(false);
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_EU = 'real-token-eu';
     });
 

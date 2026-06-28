@@ -1,14 +1,16 @@
+import { LEGAL_PROSE } from '@/lib/help/legal-prose';
+import { ReturnsContentPt } from '@/lib/help/returns-content.pt';
+
 const EMAIL = 'business@sinesiakarol.com';
 const PHONE = '401-847-1087';
 
-const prose =
-  'space-y-6 font-sans-ui text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_a]:underline-offset-2 [&_address]:not-italic [&_h2]:text-[11px] [&_h2]:font-medium [&_h2]:uppercase [&_h2]:tracking-[0.14em] [&_h2]:text-neutral-900 [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-5 [&_section]:space-y-3';
-
 export function ReturnsContent({ locale }: { locale: string }) {
+  if (locale === 'pt') return <ReturnsContentPt locale={locale} />;
+
   const termsHref = `/${locale}/terms`;
 
   return (
-    <article className={prose}>
+    <article className={LEGAL_PROSE}>
       <p>
         All defined terms used below shall have the meanings set forth in our{' '}
         <a href={termsHref}>Terms and Conditions</a>.

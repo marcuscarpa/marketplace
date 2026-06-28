@@ -11,7 +11,8 @@ import { CartDrawer } from '@/components/storefront/cart-drawer';
 import { useScroll } from '@/components/providers/scroll-provider';
 import { SearchOverlay } from '@/components/storefront/search-overlay';
 import { useWishlist } from '@/hooks/use-wishlist';
-import { MAIN_NAV, MARKETS, MENU_SECTIONS, getLocaleFromPathname, replaceLocaleInPath, type MarketId } from '@/lib/catalog/menu';
+import { getLocaleFromPathname, getMainNav, getMarkets, getMenuSections, replaceLocaleInPath, type MarketId } from '@/lib/catalog/menu';
+import { m } from '@/lib/i18n';
 
 interface HeaderProps {
   locale: string;
@@ -164,6 +165,45 @@ function NavSeparator({ light }: { light: boolean }) {
   );
 }
 
+function MenuUtilityRow({
+  icon,
+  label,
+  href,
+  onClick,
+  trailing,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  href?: string;
+  onClick?: () => void;
+  trailing?: React.ReactNode;
+}) {
+  const className =
+    'flex w-full items-center gap-3 py-3.5 font-sans-ui text-[11px] font-normal uppercase tracking-[0.04em] text-ink transition-opacity hover:opacity-60';
+
+  const content = (
+    <>
+      <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center">{icon}</span>
+      <span className="flex-1">{label}</span>
+      {trailing}
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} onClick={onClick} className={className}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" onClick={onClick} className={`${className} text-left`}>
+      {content}
+    </button>
+  );
+}
+
 function FlagIcon({ market, clipId }: { market: MarketId; clipId: string }) {
   if (market === 'us') {
     return (
@@ -233,7 +273,9 @@ function MarketChooser({
   const [open, setOpen] = useState(false);
 
   const currentLocale = getLocaleFromPathname(pathname) ?? locale;
-  const current = MARKETS.find((market) => market.locale === currentLocale) ?? MARKETS[0];
+  const markets = getMarkets(locale);
+  const labels = m(locale).header;
+  const current = markets.find((market) => market.locale === currentLocale) ?? markets[0]!;
 
   useEffect(() => {
     if (!open) return;
@@ -245,7 +287,7 @@ function MarketChooser({
   }, [open]);
 
   const selectMarket = (marketId: MarketId) => {
-    const market = MARKETS.find((item) => item.id === marketId);
+    const market = markets.find((item) => item.id === marketId);
     const activeLocale = getLocaleFromPathname(pathname) ?? locale;
     if (!market || market.locale === activeLocale) {
       setOpen(false);
@@ -265,7 +307,7 @@ function MarketChooser({
   if (layout === 'list') {
     return (
       <div className="space-y-0">
-        {MARKETS.map((market) => (
+        {markets.map((market) => (
           <button
             key={market.id}
             type="button"
@@ -290,7 +332,7 @@ function MarketChooser({
         className={`flex items-center gap-2 transition-opacity hover:opacity-60 ${textClass}`}
         aria-expanded={open}
         aria-haspopup="listbox"
-        aria-label={`Select country. Currently ${current.countryLabel}, ${current.currencyLabel}`}
+        aria-label={labels.selectCountry(current.countryLabel, current.currencyLabel)}
       >
         <FlagIcon market={current.id} clipId={`${clipBase}-current`} />
         <NavSeparator light={light} />
@@ -302,10 +344,10 @@ function MarketChooser({
       {open && (
         <div
           role="listbox"
-          aria-label="Country and currency"
+          aria-label={labels.countryCurrency}
           className="absolute left-0 top-full z-[100] mt-2 min-w-[148px] border border-black/10 bg-white py-1 shadow-sm"
         >
-          {MARKETS.map((market) => (
+          {markets.map((market) => (
             <button
               key={market.id}
               type="button"
@@ -351,6 +393,9 @@ export function Header({ locale }: HeaderProps) {
   const blurActive = scrolled && !menuOpen;
 
   const prefix = `/${locale}`;
+  const labels = m(locale).header;
+  const mainNav = getMainNav(locale);
+  const menuSections = getMenuSections(locale);
   const ink = heroNav && !searchOpen && !blurActive ? 'text-white' : 'text-ink';
 
   return (
@@ -368,41 +413,36 @@ export function Header({ locale }: HeaderProps) {
       >
         <header className="relative overflow-visible border-b border-transparent">
           <div id="header-inner" className="relative mx-auto flex h-[52px] max-w-[1440px] items-center px-5">
-            <div className="flex min-w-0 flex-1 items-center gap-1 md:gap-0">
+            <div className="flex min-w-0 flex-1 items-center">
               <button
                 type="button"
                 onClick={() => setMenuOpen((o) => !o)}
                 className={`flex h-9 w-9 items-center justify-center lg:hidden ${ink}`}
                 aria-expanded={menuOpen}
                 aria-controls="site-menu"
-                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+                aria-label={menuOpen ? labels.closeMenu : labels.openMenu}
               >
                 {menuOpen ? <IconClose /> : <IconMenu />}
               </button>
 
-              <div className="flex items-center lg:hidden">
-                <MarketChooser locale={locale} light={heroNav} />
-              </div>
-
               <div className="hidden items-center lg:flex">
                 <MarketChooser locale={locale} light={heroNav} />
                 <span className="mx-3" />
-                <HeaderIcon href={`${prefix}/locations`} label="Boutique locator" light={heroNav}>
+                <HeaderIcon href={`${prefix}/locations`} label={labels.boutiqueLocator} light={heroNav}>
                   <IconPin />
                 </HeaderIcon>
+                <HeaderIcon href={`${prefix}/contact`} label={labels.contactUs} light={heroNav}>
+                  <IconPhone />
+                </HeaderIcon>
+                <HeaderIcon href={`${prefix}/contact`} label={labels.emailUs} light={heroNav}>
+                  <IconEnvelope />
+                </HeaderIcon>
               </div>
-
-              <HeaderIcon href={`${prefix}/contact`} label="Contact us" light={heroNav}>
-                <IconPhone />
-              </HeaderIcon>
-              <HeaderIcon href={`${prefix}/contact`} label="Email us" light={heroNav}>
-                <IconEnvelope />
-              </HeaderIcon>
             </div>
 
             <Link
               href={prefix}
-              aria-label="Home"
+              aria-label={labels.home}
               className="absolute left-1/2 shrink-0 -translate-x-1/2 transition-opacity hover:opacity-80"
             >
               <Image
@@ -418,22 +458,30 @@ export function Header({ locale }: HeaderProps) {
             <div className="relative flex flex-1 items-center justify-end overflow-visible gap-0.5 sm:gap-1">
               {!searchOpen && (
                 <>
-                  <HeaderIcon href={`${prefix}/account`} label="Account" light={heroNav}>
-                    <IconAccount />
-                  </HeaderIcon>
-                  <div className="relative hidden sm:block">
-                    <HeaderIcon href={`${prefix}/account`} label="Wishlist" light={heroNav}>
-                      <IconWishlist />
+                  <div className="hidden items-center lg:flex">
+                    <HeaderIcon href={`${prefix}/account`} label={labels.account} light={heroNav}>
+                      <IconAccount />
                     </HeaderIcon>
-                    {wishlistCount > 0 && (
-                      <span className="pointer-events-none absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-ink px-0.5 text-[8px] font-normal text-white">
-                        {wishlistCount}
-                      </span>
-                    )}
+                    <div className="relative">
+                      <HeaderIcon href={`${prefix}/account`} label={labels.wishlist} light={heroNav}>
+                        <IconWishlist />
+                      </HeaderIcon>
+                      {wishlistCount > 0 && (
+                        <span className="pointer-events-none absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-ink px-0.5 text-[8px] font-normal text-white">
+                          {wishlistCount}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="relative">
+                  <SearchOverlay
+                    locale={locale}
+                    light={heroNav}
+                    open={searchOpen}
+                    onOpenChange={setSearchOpen}
+                  />
+                  <div className="relative flex items-center">
                     <HeaderIcon
-                      label={cartCount > 0 ? `Shopping bag - ${cartCount} items` : 'Shopping bag'}
+                      label={cartCount > 0 ? labels.shoppingBagCount(cartCount) : labels.shoppingBag}
                       light={heroNav}
                       onClick={openCart}
                       expanded={isCartOpen}
@@ -442,7 +490,7 @@ export function Header({ locale }: HeaderProps) {
                     </HeaderIcon>
                     {cartCount > 0 && (
                       <span
-                        className={`pointer-events-none absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-0.5 text-[8px] font-normal ${
+                        className={`pointer-events-none absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-0.5 text-[8px] font-normal tabular-nums ${
                           heroNav ? 'bg-white text-ink' : 'bg-ink text-white'
                         }`}
                       >
@@ -452,24 +500,26 @@ export function Header({ locale }: HeaderProps) {
                   </div>
                 </>
               )}
-              <SearchOverlay
-                locale={locale}
-                light={heroNav}
-                open={searchOpen}
-                onOpenChange={setSearchOpen}
-              />
+              {searchOpen && (
+                <SearchOverlay
+                  locale={locale}
+                  light={heroNav}
+                  open={searchOpen}
+                  onOpenChange={setSearchOpen}
+                />
+              )}
             </div>
           </div>
         </header>
 
         <nav
-          aria-label="Main navigation"
+          aria-label={labels.mainNav}
           className={`hidden border-t lg:block ${
             heroNav && !blurActive && !searchOpen ? 'border-white/15' : 'border-black/8'
           }`}
         >
           <ul className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center px-5 py-3">
-            {MAIN_NAV.map((item, index) => (
+            {mainNav.map((item, index) => (
               <li key={item.href + item.label} className="flex items-center">
                 {index > 0 && <NavSeparator light={heroNav} />}
                 <Link
@@ -492,14 +542,14 @@ export function Header({ locale }: HeaderProps) {
             id="site-menu"
             role="dialog"
             aria-modal="true"
-            aria-label="Navigation menu"
-            className="fixed inset-0 z-[70] flex lg:hidden"
+            aria-label={labels.navMenu}
+            className="fixed inset-0 z-[70] flex h-[100dvh] lg:hidden"
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
           >
             <motion.div
-              className="flex h-full w-full max-w-[min(100vw,420px)] flex-col bg-white"
+              className="flex h-full min-h-0 w-full max-w-[min(100vw,420px)] flex-col overflow-hidden bg-white"
               variants={panelVariants}
               initial="closed"
               animate="open"
@@ -507,14 +557,19 @@ export function Header({ locale }: HeaderProps) {
             >
               <div className="h-[84px] shrink-0" />
 
-              <div className="flex flex-1 flex-col overflow-y-auto px-5 pb-10 pt-2">
-                <motion.ul variants={listVariants} initial="closed" animate="open" className="space-y-0">
-                  {MAIN_NAV.map((item) => (
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
+                <motion.ul
+                  variants={listVariants}
+                  initial="closed"
+                  animate="open"
+                  className="px-8 pb-2 pt-0"
+                >
+                  {mainNav.map((item) => (
                     <motion.li key={item.href + item.label} variants={itemVariants}>
                       <Link
                         href={`${prefix}/${item.href}`}
                         onClick={() => setMenuOpen(false)}
-                        className={`flex items-center border-b border-black/8 py-4 font-sans-ui text-[12px] font-normal uppercase tracking-[0.02em] transition-opacity hover:opacity-60 ${
+                        className={`block py-4 font-sans-ui text-[13px] font-normal uppercase tracking-[0.02em] transition-opacity hover:opacity-60 ${
                           'sale' in item && item.sale ? 'text-[#9c4a4a]' : 'text-ink'
                         }`}
                       >
@@ -525,22 +580,17 @@ export function Header({ locale }: HeaderProps) {
                 </motion.ul>
 
                 <motion.div
-                  variants={itemVariants}
+                  variants={listVariants}
                   initial="closed"
                   animate="open"
-                  className="my-6 border-t border-black/10"
-                />
-
-                <motion.div variants={listVariants} initial="closed" animate="open" className="space-y-0">
-                  <motion.p variants={itemVariants} className="pb-3 font-sans-ui text-[10px] font-medium uppercase tracking-[0.2em] text-ink/45">
-                    {MENU_SECTIONS.brand.label}
-                  </motion.p>
-                  {MENU_SECTIONS.brand.links.map((link) => (
+                  className="space-y-4 px-8 pb-8 pt-2"
+                >
+                  {menuSections.brand.links.map((link) => (
                     <motion.div key={link.href} variants={itemVariants}>
                       <Link
                         href={`${prefix}/${link.href}`}
                         onClick={() => setMenuOpen(false)}
-                        className="flex items-center border-b border-black/8 py-4 font-sans-ui text-[12px] font-normal uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
+                        className="block font-sans-ui text-[13px] font-medium uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
                       >
                         {link.label}
                       </Link>
@@ -552,38 +602,73 @@ export function Header({ locale }: HeaderProps) {
                   variants={itemVariants}
                   initial="closed"
                   animate="open"
-                  className="my-6 border-t border-black/10"
-                />
+                  className="bg-[#f2f2f2] px-8 py-5 pb-10"
+                >
+                  <MenuUtilityRow
+                    icon={<IconAccount />}
+                    label={labels.loginCreateAccount}
+                    href={`${prefix}/account/login`}
+                    onClick={() => setMenuOpen(false)}
+                  />
+                  <MenuUtilityRow
+                    icon={<IconCart />}
+                    label={labels.shoppingBag}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      openCart();
+                    }}
+                    trailing={
+                      cartCount > 0 ? (
+                        <span className="font-sans-ui text-[11px] font-light tabular-nums">{cartCount}</span>
+                      ) : undefined
+                    }
+                  />
+                  <MenuUtilityRow
+                    icon={<IconWishlist />}
+                    label={labels.wishlist}
+                    href={`${prefix}/account`}
+                    onClick={() => setMenuOpen(false)}
+                    trailing={
+                      wishlistCount > 0 ? (
+                        <span className="font-sans-ui text-[11px] font-light tabular-nums">{wishlistCount}</span>
+                      ) : undefined
+                    }
+                  />
+                  <MenuUtilityRow
+                    icon={<IconEnvelope />}
+                    label={labels.newsletter}
+                    href={`${prefix}/contact`}
+                    onClick={() => setMenuOpen(false)}
+                  />
+                  <MenuUtilityRow
+                    icon={<IconPin />}
+                    label={labels.boutiqueLocator}
+                    href={`${prefix}/locations`}
+                    onClick={() => setMenuOpen(false)}
+                  />
+                  <MenuUtilityRow
+                    icon={<IconPhone />}
+                    label={labels.contactUs}
+                    href={`${prefix}/contact`}
+                    onClick={() => setMenuOpen(false)}
+                  />
 
-                <motion.div variants={listVariants} initial="closed" animate="open" className="mt-auto space-y-0 pt-2">
-                  {MENU_SECTIONS.utility.map((link) => (
-                    <motion.div key={link.href} variants={itemVariants}>
-                      <Link
-                        href={`${prefix}/${link.href}`}
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center border-b border-black/8 py-4 font-sans-ui text-[12px] font-normal uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
-                      >
-                        {link.label}
-                      </Link>
-                    </motion.div>
-                  ))}
-
-                  <motion.div variants={itemVariants}>
+                  <div className="mt-4 border-t border-black/10 pt-4">
                     <MarketChooser
                       locale={locale}
                       light={false}
-                      layout="list"
+                      layout="compact"
                       onSelect={() => setMenuOpen(false)}
                     />
-                  </motion.div>
+                  </div>
                 </motion.div>
               </div>
             </motion.div>
 
             <button
               type="button"
-              aria-label="Dismiss menu"
-              className="hidden flex-1 cursor-default bg-black/20 sm:block"
+              aria-label={labels.dismissMenu}
+              className="flex-1 cursor-default bg-black/20"
               onClick={() => setMenuOpen(false)}
             />
           </motion.div>

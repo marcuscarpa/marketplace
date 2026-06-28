@@ -26,34 +26,69 @@ export type Env = z.infer<typeof envSchema>;
 
 let _env: Env | null = null;
 
-// ponytail: satisfies Zod during `next build` when modules load without deploy secrets;
-// never cached — runtime still validates real env on first request.
-const BUILD_STUBS: Record<string, string> = {
-  SHOPIFY_STORE_DOMAIN_US: 'build-placeholder.myshopify.com',
-  SHOPIFY_STOREFRONT_ACCESS_TOKEN_US: 'build-placeholder',
-  SHOPIFY_STORE_DOMAIN_EU: 'build-placeholder.myshopify.com',
-  SHOPIFY_STOREFRONT_ACCESS_TOKEN_EU: 'build-placeholder',
-  SHOPIFY_STORE_DOMAIN_BR: 'build-placeholder.myshopify.com',
-  SHOPIFY_STOREFRONT_ACCESS_TOKEN_BR: 'build-placeholder',
-  SHOPIFY_STORE_DOMAIN_APAC: 'build-placeholder.myshopify.com',
-  SHOPIFY_STOREFRONT_ACCESS_TOKEN_APAC: 'build-placeholder',
-  REDIS_URL: 'https://localhost:6379',
-  SHOPIFY_CLIENT_ID: 'build-placeholder',
-  SHOPIFY_CLIENT_SECRET: 'build-placeholder',
-  SHOPIFY_WEBHOOK_SECRET: 'build-placeholder',
+// ponytail: placeholder creds for build, local dev, and preview deploys without Shopify/Redis yet
+const INTEGRATION_STUBS: Record<string, string> = {
+  SHOPIFY_STORE_DOMAIN_US: 'dev-placeholder.myshopify.com',
+  SHOPIFY_STOREFRONT_ACCESS_TOKEN_US: 'dev-placeholder',
+  SHOPIFY_STORE_DOMAIN_EU: 'dev-placeholder.myshopify.com',
+  SHOPIFY_STOREFRONT_ACCESS_TOKEN_EU: 'dev-placeholder',
+  SHOPIFY_STORE_DOMAIN_BR: 'dev-placeholder.myshopify.com',
+  SHOPIFY_STOREFRONT_ACCESS_TOKEN_BR: 'dev-placeholder',
+  SHOPIFY_STORE_DOMAIN_APAC: 'dev-placeholder.myshopify.com',
+  SHOPIFY_STOREFRONT_ACCESS_TOKEN_APAC: 'dev-placeholder',
+  REDIS_URL: 'redis://127.0.0.1:6379',
+  SHOPIFY_CLIENT_ID: 'dev-placeholder',
+  SHOPIFY_CLIENT_SECRET: 'dev-placeholder',
+  SHOPIFY_WEBHOOK_SECRET: 'dev-placeholder',
+  RATE_LIMIT_FAIL_OPEN: 'true',
 };
 
 function isBuildPhase(): boolean {
   return process.env.NEXT_PHASE === 'phase-production-build';
 }
 
+/** True when real Shopify storefront credentials are configured (not placeholders). */
+export function hasRealShopifyCredentials(): boolean {
+  const domain = process.env.SHOPIFY_STORE_DOMAIN_US ?? '';
+  const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US ?? '';
+  if (!domain || !token) return false;
+  if (domain.includes('dev-placeholder') || domain.includes('your-store')) return false;
+  if (token === 'dev-placeholder' || token.startsWith('your_') || token.startsWith('test-token')) {
+    return false;
+  }
+  return true;
+}
+
+function canUseIntegrationStubs(): boolean {
+  return (
+    isBuildPhase() ||
+    process.env.NODE_ENV === 'development' ||
+    process.env.ALLOW_INTEGRATION_STUBS === 'true' ||
+    // ponytail: Vercel preview/prod without Shopify yet — merge stub env at runtime
+    (process.env.VERCEL === '1' && !hasRealShopifyCredentials())
+  );
+}
+
+/** Mock catalog / no Redis / no Shopify — local dev and Vercel staging. */
+export function isIntegrationStubMode(): boolean {
+  try {
+    getEnv();
+  } catch {
+    return canUseIntegrationStubs();
+  }
+  return canUseIntegrationStubs() && !hasRealShopifyCredentials();
+}
+
 export function getEnv(): Env {
   if (_env) return _env;
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
-    if (isBuildPhase()) {
-      const stubResult = envSchema.safeParse({ ...BUILD_STUBS, ...process.env });
-      if (stubResult.success) return stubResult.data;
+    if (canUseIntegrationStubs()) {
+      const stubResult = envSchema.safeParse({ ...INTEGRATION_STUBS, ...process.env });
+      if (stubResult.success) {
+        _env = stubResult.data;
+        return _env;
+      }
     }
     const missing = result.error.issues.map((e) => e.path.join('.')).join(', ');
     throw new Error(`Missing required environment variables: ${missing}`);

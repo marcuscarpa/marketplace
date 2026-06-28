@@ -4,6 +4,7 @@ import { HelpAccordion } from '@/components/help/help-accordion';
 import { HelpIcon } from '@/components/help/help-icons';
 import { HelpPageLayout } from '@/components/help/help-page-layout';
 import { CONTACT_SECTIONS, getContactChannels } from '@/lib/help/contact-content';
+import { m } from '@/lib/i18n';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -20,14 +21,15 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function ContactPage({ params }: PageProps) {
   const { locale } = await params;
   const channels = getContactChannels(locale);
+  const help = m(locale).help;
 
   return (
     <HelpPageLayout
       locale={locale}
       currentSlug="contact"
-      breadcrumbLabel="Contact Us"
-      title="Contact Us"
-      subtitle="Contact information for client and business enquiries"
+      breadcrumbLabel={help.contact}
+      title={help.contact}
+      subtitle={help.contactSubtitle}
       showContactCta={false}
     >
       <div className="mb-10 grid grid-cols-3 gap-4 border-b border-neutral-200 pb-10">

@@ -7,6 +7,7 @@ import { PopularCard } from '@/components/storefront/product-card';
 import { PRODUCT_GAP } from '@/components/storefront/ui';
 import { ProductCard } from '@/components/ui/product-card';
 import type { CatalogProduct } from '@/lib/catalog/data';
+import { m } from '@/lib/i18n';
 import { resolveCatalogProductTags, resolveShopifyProductTags } from '@/lib/product-tags';
 import {
   activeFilterCount,
@@ -43,22 +44,25 @@ function CollectionGridShell({
   count,
   activeCount,
   onOpenFilters,
+  locale,
   children,
   toolbarClassName = 'mb-8',
 }: {
   count: number;
   activeCount: number;
   onOpenFilters: () => void;
+  locale: string;
   children: React.ReactNode;
   toolbarClassName?: string;
 }) {
+  const col = m(locale).collection;
   return (
     <>
       <div className={`flex items-center justify-between ${toolbarClassName}`}>
         <p className="font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799]">
-          {count} {count === 1 ? 'product' : 'products'}
+          {col.productCount(count)}
         </p>
-        <FilterTrigger onClick={onOpenFilters} count={activeCount} />
+        <FilterTrigger onClick={onOpenFilters} count={activeCount} locale={locale} />
       </div>
       {children}
     </>
@@ -81,7 +85,7 @@ function useProductGrid<T extends { handle: string }>(
     const byHandle = new Map(products.map((p) => [p.handle, p]));
     return filterAndSortProducts(filterable, clean, facets.price)
       .map((p) => byHandle.get(p.handle))
-      .filter((p): p is T => p != null);
+      .filter((p): p is T => p !== null && p !== undefined);
   }, [filterable, clean, facets.price, products]);
 
   return { facets, clean, activeCount, visibleProducts };
@@ -101,6 +105,7 @@ export function ShopifyCollectionProducts({
     filterable,
     filters
   );
+  const col = m(locale).collection;
 
   return (
     <>
@@ -108,6 +113,7 @@ export function ShopifyCollectionProducts({
         count={visibleProducts.length}
         activeCount={activeCount}
         onOpenFilters={() => setDrawerOpen(true)}
+        locale={locale}
       >
         {visibleProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -124,13 +130,13 @@ export function ShopifyCollectionProducts({
           </div>
         ) : (
           <p className="py-20 text-center font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799]">
-            No products match your filters.{' '}
+            {col.noMatch}{' '}
             <button
               type="button"
               onClick={() => setFilters(DEFAULT_FILTER_STATE)}
               className="underline underline-offset-2"
             >
-              Clear filters
+              {col.clearFilters}
             </button>
           </p>
         )}
@@ -144,6 +150,7 @@ export function ShopifyCollectionProducts({
         facets={facets}
         filterable={filterable}
         collectionTitle={collectionTitle}
+        locale={locale}
       />
     </>
   );
@@ -162,6 +169,7 @@ export function CollectionProducts({
     filterable,
     filters
   );
+  const col = m(locale).collection;
 
   return (
     <>
@@ -169,6 +177,7 @@ export function CollectionProducts({
         count={visibleProducts.length}
         activeCount={activeCount}
         onOpenFilters={() => setDrawerOpen(true)}
+        locale={locale}
         toolbarClassName="mb-10"
       >
         {visibleProducts.length > 0 ? (
@@ -184,13 +193,13 @@ export function CollectionProducts({
           </div>
         ) : (
           <p className="py-20 text-center font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799]">
-            No products match your filters.{' '}
+            {col.noMatch}{' '}
             <button
               type="button"
               onClick={() => setFilters(DEFAULT_FILTER_STATE)}
               className="underline underline-offset-2"
             >
-              Clear filters
+              {col.clearFilters}
             </button>
           </p>
         )}
@@ -204,6 +213,7 @@ export function CollectionProducts({
         facets={facets}
         filterable={filterable}
         collectionTitle={collectionTitle}
+        locale={locale}
       />
     </>
   );

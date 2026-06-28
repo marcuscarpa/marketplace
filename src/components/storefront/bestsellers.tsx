@@ -1,14 +1,10 @@
-'use client';
-
-import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'motion/react';
 
-import { formatPrice, type CatalogProduct } from '@/lib/catalog/data';
-import { resolveCatalogProductTags } from '@/lib/product-tags';
-import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
-import { PRODUCT_IMAGE_HOVER, SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
+import type { CatalogProduct } from '@/lib/catalog/data';
+import { PopularCard } from '@/components/storefront/product-card';
+import { PRODUCT_GAP, SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
+import { m } from '@/lib/i18n';
 
 interface BestsellersProps {
   locale: string;
@@ -16,77 +12,25 @@ interface BestsellersProps {
 }
 
 export function Bestsellers({ locale, products }: BestsellersProps) {
-  const items = [...products, ...products];
+  const h = m(locale).home;
+  const c = m(locale).common;
 
   return (
-    <EntranceView className={`bg-cream ${SECTION_PADDING}`}>
-      <div className="mx-auto mb-10 flex max-w-[1440px] items-end justify-between">
-        <SectionHeading>Our bestsellers</SectionHeading>
+    <EntranceView className={`mx-auto max-w-[1440px] bg-cream ${SECTION_PADDING}`}>
+      <div className="mx-auto mb-6 flex max-w-[1440px] items-end justify-between lg:mb-8">
+        <SectionHeading>{h.bestsellers}</SectionHeading>
         <Link
           href={`/${locale}/collections/all`}
-          className="text-[12px] uppercase tracking-[0.02em] text-ink font-sans-ui transition-opacity hover:opacity-60"
+          className="font-sans-ui text-[12px] uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
         >
-          See all
+          {c.seeAll}
         </Link>
       </div>
 
-      <div className="overflow-x-clip">
-        <motion.div
-          className="mx-auto flex max-w-[1440px] cursor-grab gap-8 active:cursor-grabbing"
-          drag="x"
-          dragConstraints={{ left: -800, right: 0 }}
-          dragElastic={0.08}
-        >
-          {items.map((product, i) => (
-            <Link
-              key={`${product.handle}-${i}`}
-              href={`/${locale}/products/${product.handle}`}
-              className="group shrink-0"
-            >
-              <div className="relative h-56 w-56 overflow-hidden bg-white lg:h-72 lg:w-72">
-                <ProductTags
-                  tags={resolveCatalogProductTags(product)}
-                  locale={locale}
-                  className={PRODUCT_TAGS_OVERLAY_CLASS}
-                />
-                <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER}`}>
-                  <figure
-                    className={`absolute inset-0 m-0 transition-opacity duration-300 ${
-                      product.hoverImage ? 'group-hover:opacity-0' : ''
-                    }`}
-                  >
-                    <Image
-                      src={product.image}
-                      alt={product.title}
-                      fill
-                      sizes="288px"
-                      className="object-contain p-6"
-                    />
-                  </figure>
-                  {product.hoverImage && (
-                    <figure className="absolute inset-0 m-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <Image
-                        src={product.hoverImage}
-                        alt=""
-                        fill
-                        sizes="288px"
-                        className="object-contain p-6"
-                        aria-hidden
-                      />
-                    </figure>
-                  )}
-                </div>
-              </div>
-              <div className="mt-4 flex justify-between gap-4 font-sans-ui text-[12px]">
-                <div>
-                  <p className="uppercase text-ink">{product.title}</p>
-                  <p className="uppercase text-ink/60">{product.category}</p>
-                </div>
-                <p className="text-ink">{formatPrice(product.price)}</p>
-              </div>
-            </Link>
-          ))}
-        </motion.div>
+      <div className={`mx-auto grid max-w-[1440px] grid-cols-2 ${PRODUCT_GAP} lg:grid-cols-5`}>
+        {products.map((product, index) => (
+          <PopularCard key={product.handle} product={product} locale={locale} index={index} />
+        ))}
       </div>
     </EntranceView>
   );

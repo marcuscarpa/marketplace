@@ -106,23 +106,23 @@ describe('updateRequestContext', () => {
 });
 
 describe('logger', () => {
-  let stdoutSpy: ReturnType<typeof vi.spyOn>;
-  let stderrSpy: ReturnType<typeof vi.spyOn>;
+  let logSpy: ReturnType<typeof vi.spyOn>;
+  let errorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    stdoutSpy = (vi.spyOn(process.stdout, 'write') as any).mockImplementation(() => true);
-    stderrSpy = (vi.spyOn(process.stderr, 'write') as any).mockImplementation(() => true);
+    logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    stdoutSpy.mockRestore();
-    stderrSpy.mockRestore();
+    logSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 
   it('logs info messages as JSON to stdout', () => {
     logger.info('Test message', { key: 'value' });
-    expect(stdoutSpy).toHaveBeenCalled();
-    const output = stdoutSpy.mock.calls[0]?.[0] as string;
+    expect(logSpy).toHaveBeenCalled();
+    const output = logSpy.mock.calls[0]?.[0] as string;
     const parsed = JSON.parse(output);
     expect(parsed.level).toBe('info');
     expect(parsed.message).toBe('Test message');
@@ -132,8 +132,8 @@ describe('logger', () => {
 
   it('logs error messages to stderr', () => {
     logger.error('Error occurred', { code: 500 });
-    expect(stderrSpy).toHaveBeenCalled();
-    const output = stderrSpy.mock.calls[0]?.[0] as string;
+    expect(errorSpy).toHaveBeenCalled();
+    const output = errorSpy.mock.calls[0]?.[0] as string;
     const parsed = JSON.parse(output);
     expect(parsed.level).toBe('error');
     expect(parsed.message).toBe('Error occurred');
@@ -145,8 +145,7 @@ describe('logger', () => {
     runWithContext(ctx, () => {
       logger.info('With context');
     });
-    const calls = stdoutSpy.mock.calls as unknown as string[][];
-    const output = calls.map((c) => c[0]).find((s) => s?.includes('With context'));
+    const output = logSpy.mock.calls.map((c) => c[0] as string).find((s) => s.includes('With context'));
     expect(output).toBeDefined();
     const parsed = JSON.parse(output as string);
     expect(parsed.requestId).toBe('log-test-id');
@@ -161,8 +160,7 @@ describe('logger', () => {
     runWithContext(ctx, () => {
       logger.info('With trace');
     });
-    const calls = stdoutSpy.mock.calls as unknown as string[][];
-    const output = calls.map((c) => c[0]).find((s) => s?.includes('With trace'));
+    const output = logSpy.mock.calls.map((c) => c[0] as string).find((s) => s.includes('With trace'));
     const parsed = JSON.parse(output as string);
     expect(parsed.traceId).toBe('trace-xyz');
     expect(parsed.spanId).toBe('span-abc');
@@ -173,8 +171,7 @@ describe('logger', () => {
     runWithContext(ctx, () => {
       logger.info('With user');
     });
-    const calls = stdoutSpy.mock.calls as unknown as string[][];
-    const output = calls.map((c) => c[0]).find((s) => s?.includes('With user'));
+    const output = logSpy.mock.calls.map((c) => c[0] as string).find((s) => s.includes('With user'));
     const parsed = JSON.parse(output as string);
     expect(parsed.userId).toBe('user-789');
   });
@@ -182,31 +179,29 @@ describe('logger', () => {
   it('creates child logger with extra context', () => {
     const child = logger.child({ locale: 'en' } as Partial<import('@/lib/context').RequestContext>);
     child.info('Child message');
-    const calls = stdoutSpy.mock.calls as unknown as string[][];
-    const output = calls.map((c) => c[0]).find((s) => s?.includes('Child message'));
+    const output = logSpy.mock.calls.map((c) => c[0] as string).find((s) => s.includes('Child message'));
     const parsed = JSON.parse(output as string);
     expect(parsed.locale).toBe('en');
   });
 
   it('logs warn level messages', () => {
     logger.warn('Warning message');
-    const calls = stdoutSpy.mock.calls as unknown as string[][];
-    const output = calls.map((c) => c[0]).find((s) => s?.includes('Warning message'));
+    const output = logSpy.mock.calls.map((c) => c[0] as string).find((s) => s.includes('Warning message'));
     const parsed = JSON.parse(output as string);
     expect(parsed.level).toBe('warn');
   });
 
   it('logs fatal level messages to stderr', () => {
     logger.fatal('Fatal error');
-    expect(stderrSpy).toHaveBeenCalled();
-    const output = stderrSpy.mock.calls[0]?.[0] as string;
+    expect(errorSpy).toHaveBeenCalled();
+    const output = errorSpy.mock.calls[0]?.[0] as string;
     const parsed = JSON.parse(output);
     expect(parsed.level).toBe('fatal');
   });
 
   it('produces valid JSON output', () => {
     logger.info('JSON test', { nested: { value: 1 } });
-    const output = stdoutSpy.mock.calls[0]?.[0] as string;
+    const output = logSpy.mock.calls[0]?.[0] as string;
     expect(() => JSON.parse(output)).not.toThrow();
     const parsed = JSON.parse(output);
     expect(parsed.nested.value).toBe(1);
@@ -216,8 +211,7 @@ describe('logger', () => {
     const origLevel = process.env.LOG_LEVEL;
     process.env.LOG_LEVEL = 'debug';
     logger.debug('Debug test');
-    const calls = stdoutSpy.mock.calls as unknown as string[][];
-    const output = calls.map((c) => c[0]).find((s) => s?.includes('Debug test'));
+    const output = logSpy.mock.calls.map((c) => c[0] as string).find((s) => s.includes('Debug test'));
     expect(output).toBeDefined();
     process.env.LOG_LEVEL = origLevel;
   });
@@ -256,20 +250,15 @@ describe('sentry wrapper', () => {
   });
 
   it('captureException includes context in log', () => {
-    const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
-    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    const errorSpyLocal = vi.spyOn(console, 'error').mockImplementation(() => {});
     const ctx = createRequestContext({ requestId: 'sentry-test' });
     runWithContext(ctx, () => {
       captureException(new Error('captured error'));
     });
-    const allOutput = [
-      ...stdoutSpy.mock.calls.map((c) => c[0] as string),
-      ...stderrSpy.mock.calls.map((c) => c[0] as string),
-    ].join('');
+    const allOutput = errorSpyLocal.mock.calls.map((c) => c[0] as string).join('');
     expect(allOutput).toContain('captured error');
     expect(allOutput).toContain('sentry-test');
-    stdoutSpy.mockRestore();
-    stderrSpy.mockRestore();
+    errorSpyLocal.mockRestore();
   });
 
   it('setUser does not throw without Sentry', () => {

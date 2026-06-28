@@ -9,6 +9,7 @@ import { useWishlist } from '@/hooks/use-wishlist';
 import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
 import { PRODUCT_IMAGE_HOVER_NESTED } from '@/components/storefront/ui';
 import { formatPrice, type CatalogProduct } from '@/lib/catalog/data';
+import { m } from '@/lib/i18n';
 import { resolveCatalogProductTags, type ProductTagKey } from '@/lib/product-tags';
 
 interface StoreProductCardProps {
@@ -80,6 +81,7 @@ export function PopularCard({ product, locale, badges, index = 0 }: PopularCardP
   const href = `/${locale}/products/${product.handle}`;
   const price = formatPrice(product.price);
   const tags = badges ?? resolveCatalogProductTags(product);
+  const addToCartLabel = m(locale).common.addToCart;
   const ref = useRef(null);
   const [mounted, setMounted] = useState(false);
   const inView = useInView(ref, { once: true, margin: '-5% 0px' });
@@ -135,12 +137,12 @@ export function PopularCard({ product, locale, badges, index = 0 }: PopularCardP
             )}
           </div>
         </Link>
-        <Link href={href} className={ADD_TO_CART_BAR}>
-          Add to Cart
+        <Link href={href} className={ADD_TO_CART_BAR} aria-label={addToCartLabel}>
+          {addToCartLabel}
         </Link>
       </div>
 
-      <Link href={href} className="flex flex-col gap-2 font-sans-ui no-underline">
+      <Link href={href} className="flex flex-col gap-2 text-center font-sans-ui no-underline lg:text-left">
         <div className="flex flex-col gap-1">
           <p className="text-[14px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink">
             {product.title}
@@ -169,6 +171,7 @@ export function StoreProductCard({
   const [mounted, setMounted] = useState(false);
   const inView = useInView(ref, { once: true, margin: '-5% 0px' });
   const tags = badges ?? resolveCatalogProductTags(product);
+  const addToCartLabel = m(locale).common.addToCart;
 
   useEffect(() => setMounted(true), []);
 
@@ -179,7 +182,7 @@ export function StoreProductCard({
 
   const textBlock =
     layout === 'compact' ? (
-      <Link href={href} className="mt-4 flex flex-col gap-1 font-sans-ui no-underline">
+      <Link href={href} className="mt-4 flex flex-col gap-1 text-center font-sans-ui no-underline lg:text-left">
         <p className="text-[14px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink">
           {product.title}
         </p>
@@ -242,8 +245,8 @@ export function StoreProductCard({
                 )}
               </div>
             </Link>
-            <Link href={href} className={ADD_TO_CART_BAR}>
-              Add to Cart
+            <Link href={href} className={ADD_TO_CART_BAR} aria-label={addToCartLabel}>
+              {addToCartLabel}
             </Link>
           </div>
           {textBlock}

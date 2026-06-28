@@ -1,8 +1,8 @@
+import { LEGAL_PROSE } from '@/lib/help/legal-prose';
+import { PrivacyContentPt } from '@/lib/help/privacy-content.pt';
+
 const SITE = 'sinesiakarol.us';
 const EMAIL = 'orders@sinesiakarol.us';
-
-const prose =
-  'space-y-6 font-sans-ui text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_a]:underline-offset-2 [&_h2]:text-[11px] [&_h2]:font-medium [&_h2]:uppercase [&_h2]:tracking-[0.14em] [&_h2]:text-neutral-900 [&_h3]:font-medium [&_h3]:text-neutral-900 [&_section]:space-y-3 [&_table]:my-4 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-neutral-200 [&_td]:px-2 [&_td]:py-2 [&_td]:align-top [&_td]:text-xs [&_th]:border [&_th]:border-neutral-200 [&_th]:bg-neutral-50 [&_th]:px-2 [&_th]:py-2 [&_th]:text-left [&_th]:text-[10px] [&_th]:uppercase [&_th]:tracking-wider [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5';
 
 const necessaryCookies = [
   ['_ab', 'Used in connection with access to admin.', '2y'],
@@ -102,10 +102,12 @@ function InfoBlock({
 }
 
 export function PrivacyContent({ locale }: { locale: string }) {
+  if (locale === 'pt') return <PrivacyContentPt locale={locale} />;
+
   const cookiesHref = `/${locale}/cookies`;
 
   return (
-    <article className={prose}>
+    <article className={LEGAL_PROSE}>
       <p className="text-neutral-500">Last Updated: May 27, 2026</p>
 
       <p>

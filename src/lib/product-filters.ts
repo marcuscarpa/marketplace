@@ -106,8 +106,8 @@ export function priceBoundsFromProducts(products: FilterableProduct[]): PriceBou
 }
 
 export function isPriceFilterActive(filters: FilterState, bounds: PriceBounds): boolean {
-  if (filters.priceMin != null && filters.priceMin > bounds.min) return true;
-  if (filters.priceMax != null && filters.priceMax < bounds.max) return true;
+  if (filters.priceMin !== null && filters.priceMin > bounds.min) return true;
+  if (filters.priceMax !== null && filters.priceMax < bounds.max) return true;
   return false;
 }
 
@@ -119,13 +119,13 @@ export function clampPriceFilters(filters: FilterState, bounds: PriceBounds): Fi
   let priceMin = filters.priceMin;
   let priceMax = filters.priceMax;
 
-  if (priceMin != null) {
+  if (priceMin !== null) {
     if (priceMin < bounds.min || priceMin > bounds.max) priceMin = null;
   }
-  if (priceMax != null) {
+  if (priceMax !== null) {
     if (priceMax > bounds.max || priceMax < bounds.min) priceMax = null;
   }
-  if (priceMin != null && priceMax != null && priceMin > priceMax) {
+  if (priceMin !== null && priceMax !== null && priceMin > priceMax) {
     priceMin = null;
     priceMax = null;
   }
@@ -297,8 +297,8 @@ export function applyFilters(products: FilterableProduct[], filters: FilterState
     if (!matchesList(p.materials, filters.materials)) return false;
     if (!matchesList(p.sleeves, filters.sleeves)) return false;
     if (filters.inStock && !p.available) return false;
-    if (filters.priceMin != null && p.price < filters.priceMin) return false;
-    if (filters.priceMax != null && p.price > filters.priceMax) return false;
+    if (filters.priceMin !== null && p.price < filters.priceMin) return false;
+    if (filters.priceMax !== null && p.price > filters.priceMax) return false;
     return true;
   });
 }
@@ -340,7 +340,7 @@ export function toURLSearchParams(
 ): URLSearchParams {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(searchParams)) {
-    if (value == null) continue;
+    if (value === null || value === undefined) continue;
     if (Array.isArray(value)) {
       for (const v of value) params.append(key, v);
     } else {
@@ -392,7 +392,7 @@ export function buildFilterState(
 }
 
 function parsePriceParam(value: string | null): number | null {
-  if (value == null || value === '') return null;
+  if (value === null || value === '') return null;
   const n = Number(value);
   return Number.isFinite(n) ? n : null;
 }
@@ -420,8 +420,8 @@ export function filterStateToParams(filters: FilterState): URLSearchParams {
   if (filters.materials.length) params.set('material', filters.materials.join(','));
   if (filters.sleeves.length) params.set('sleeve', filters.sleeves.join(','));
   if (filters.inStock) params.set('inStock', '1');
-  if (filters.priceMin != null) params.set('priceMin', String(filters.priceMin));
-  if (filters.priceMax != null) params.set('priceMax', String(filters.priceMax));
+  if (filters.priceMin !== null) params.set('priceMin', String(filters.priceMin));
+  if (filters.priceMax !== null) params.set('priceMax', String(filters.priceMax));
   if (filters.sort !== 'featured') params.set('sort', filters.sort);
   return params;
 }
@@ -434,7 +434,7 @@ export function activeFilterCount(filters: FilterState, bounds?: PriceBounds): n
   n += filters.materials.length;
   n += filters.sleeves.length;
   if (filters.inStock) n++;
-  if (bounds ? isPriceFilterActive(filters, bounds) : filters.priceMin != null || filters.priceMax != null) n++;
+  if (bounds ? isPriceFilterActive(filters, bounds) : filters.priceMin !== null || filters.priceMax !== null) n++;
   if (filters.sort !== 'featured') n++;
   return n;
 }

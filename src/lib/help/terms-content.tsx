@@ -1,14 +1,14 @@
+import { LEGAL_PROSE } from '@/lib/help/legal-prose';
+import { TermsContentPt } from '@/lib/help/terms-content.pt';
+
 const COMPANY = 'Sinesia Karol, LLC.';
 const EMAIL = 'business@sinesiakarol.com';
 
-const prose =
-  'space-y-6 font-sans-ui text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_a]:underline-offset-2 [&_h2]:text-[11px] [&_h2]:font-medium [&_h2]:uppercase [&_h2]:tracking-[0.14em] [&_h2]:text-neutral-900 [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-5 [&_section]:space-y-3';
-
 export function TermsContent({ locale }: { locale: string }) {
-  void locale;
+  if (locale === 'pt') return <TermsContentPt locale={locale} />;
 
   return (
-    <article className={prose}>
+    <article className={LEGAL_PROSE}>
       <p className="text-neutral-500">Last Updated: May 27, 2026</p>
 
       <section>

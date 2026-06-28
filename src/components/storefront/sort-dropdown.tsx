@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
 import { ProductCard } from '@/components/ui/product-card';
+import { m } from '@/lib/i18n';
 import { ShopifyProduct } from '@/lib/shopify/types';
 
 interface SortDropdownProps {
@@ -13,12 +14,15 @@ interface SortDropdownProps {
 
 type SortOption = 'featured' | 'price-asc' | 'price-desc' | 'newest';
 
-const SORT_LABELS: Record<SortOption, string> = {
-  featured: 'Featured',
-  'price-asc': 'Price: Low to High',
-  'price-desc': 'Price: High to Low',
-  newest: 'Newest',
-};
+function sortLabels(locale: string): Record<SortOption, string> {
+  const s = m(locale).sort;
+  return {
+    featured: s.featured,
+    'price-asc': s.priceAsc,
+    'price-desc': s.priceDesc,
+    newest: s.newest,
+  };
+}
 
 function applySort(products: ShopifyProduct[], sort: SortOption): ShopifyProduct[] {
   const sorted = [...products];
@@ -43,6 +47,8 @@ export function SortDropdown({ products, locale }: SortDropdownProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [sort, setSort] = useState<SortOption>((searchParams.get('sort') as SortOption) ?? 'featured');
+  const col = m(locale).collection;
+  const labels = sortLabels(locale);
 
   const handleSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const next = e.target.value as SortOption;
@@ -62,15 +68,15 @@ export function SortDropdown({ products, locale }: SortDropdownProps) {
     <>
       <div className="flex items-center justify-between mb-8">
         <p className="text-gray-600">
-          {products.length} {products.length === 1 ? 'product' : 'products'}
+          {col.productCount(products.length)}
         </p>
         <select
           className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-          aria-label="Sort products"
+          aria-label={col.sortBy}
           value={sort}
           onChange={handleSort}
         >
-          {Object.entries(SORT_LABELS).map(([value, label]) => (
+          {Object.entries(labels).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
           ))}
         </select>
@@ -84,7 +90,7 @@ export function SortDropdown({ products, locale }: SortDropdownProps) {
         </div>
       ) : (
         <p className="py-20 text-center font-sans-ui text-sm uppercase tracking-[0.02em] text-ink/60">
-          No products in this collection yet.
+          {col.empty}
         </p>
       )}
     </>

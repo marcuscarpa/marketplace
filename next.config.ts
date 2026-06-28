@@ -21,6 +21,17 @@ const cdnAssetOrigin = process.env.NEXT_PUBLIC_ASSET_ORIGIN ?? 'https://framerus
 const cdnAssetHost = new URL(cdnAssetOrigin).hostname;
 
 const nextConfig: NextConfig = {
+  // ponytail: keep native Node resolution for observability/redis deps so dev
+  // doesn't emit vendor-chunks/*.js references that go missing after build↔dev.
+  serverExternalPackages: [
+    '@opentelemetry/api',
+    '@opentelemetry/sdk-node',
+    '@opentelemetry/instrumentation',
+    '@opentelemetry/instrumentation-http',
+    '@opentelemetry/instrumentation-express',
+    '@sentry/nextjs',
+    'ioredis',
+  ],
   // Lint is run via `npm run lint`; skip during `next build` to avoid
   // build failures from third-party plugin rule lookups that don't
   // ship with the project (e.g. eslint-plugin-react-hooks@6's

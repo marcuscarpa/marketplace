@@ -8,21 +8,20 @@ export function DoNotSellContent({ locale }: { locale: string }) {
     return (
       <div className="space-y-6 font-sans-ui text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_a]:underline-offset-2">
         <p>
-          A {BRAND} <strong>não vende</strong> as suas informações pessoais. Não partilhamos os seus dados com terceiros
-          em troca de compensação monetária, nem vendemos ou alugamos as suas informações a anunciantes ou corretores de
-          dados.
+          A {BRAND} <strong>não vende</strong> suas informações pessoais. Não compartilhamos seus dados com terceiros em
+          troca de compensação monetária, nem vendemos ou alugamos suas informações a anunciantes ou corretores de dados.
         </p>
         <p>
-          Podemos partilhar informações limitadas com prestadores de serviços (pagamentos, envios, alojamento, apoio ao
-          cliente) apenas para operar a loja e cumprir encomendas — nunca como venda das suas informações.
+          Podemos compartilhar informações limitadas com prestadores de serviços (pagamentos, envios, hospedagem, suporte
+          ao cliente) apenas para operar a loja e cumprir pedidos — nunca como venda de suas informações.
         </p>
         <p>
-          Se reside na Califórnia ou noutra jurisdição com direitos semelhantes, pode solicitar confirmação, acesso ou
-          eliminação dos seus dados contactando{' '}
+          Se você reside na Califórnia ou em outra jurisdição com direitos semelhantes, pode solicitar confirmação, acesso
+          ou exclusão de seus dados entrando em contato com{' '}
           <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>. Responderemos dentro dos prazos legais aplicáveis.
         </p>
         <p>
-          Para mais detalhes sobre como tratamos os seus dados, consulte a nossa{' '}
+          Para mais detalhes sobre como tratamos seus dados, consulte nossa{' '}
           <a href={`/${locale}/privacy`}>Política de Privacidade</a>.
         </p>
       </div>

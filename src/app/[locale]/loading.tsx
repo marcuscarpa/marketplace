@@ -1,9 +1,12 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
+
+import { m, resolveLocale } from '@/lib/i18n';
 
 export default function Loading() {
-  const isPt = usePathname().startsWith('/pt');
+  const params = useParams();
+  const locale = resolveLocale(String(params.locale ?? 'en'));
 
   return (
     <div className="flex min-h-[50vh] items-center justify-center px-5">
@@ -12,7 +15,7 @@ export default function Loading() {
           <div className="mkt-loading-bar h-full w-1/3 bg-ink/70" />
         </div>
         <p className="font-sans-ui text-[11px] uppercase tracking-[0.14em] text-ink/50">
-          {isPt ? 'A carregar' : 'Loading'}
+          {m(locale).common.loading}
         </p>
       </div>
     </div>

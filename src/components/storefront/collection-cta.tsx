@@ -2,37 +2,40 @@
 
 import Link from 'next/link';
 
-import { SECTION_PADDING, ButtonShell } from '@/components/storefront/ui';
+import { SECTION_PADDING_FLUSH, ButtonShell } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
+import { m } from '@/lib/i18n';
 
 interface CollectionCtaProps {
   locale: string;
 }
 
-const CTAS = [
-  {
-    label: 'SWIMWEAR',
-    title: 'Redefining Resort-Level Luxury',
-    cta: 'Shop Now',
-    href: 'collections/swimwear',
-    video: '/bloco%205-video%201-esquerda.mp4',
-    imageAlt: 'Swimwear collection — resort-level luxury',
-  },
-  {
-    label: 'READY-TO-WEAR',
-    title: 'From Sunlit Days to Evenings',
-    cta: 'Shop Now',
-    href: 'collections/ready-to-wear',
-    video: '/bloco%205-video%202-direita.mp4',
-    imageAlt: 'Ready-to-wear collection — from day to evening',
-  },
-] as const;
-
 export function CollectionCta({ locale }: CollectionCtaProps) {
+  const h = m(locale).home;
+  const c = m(locale).common;
+  const ctas = [
+    {
+      label: h.swimwearLabel,
+      title: h.swimwearTitle,
+      cta: c.shopNow,
+      href: 'collections/swimwear',
+      video: '/bloco%205-video%201-esquerda.mp4',
+      imageAlt: h.swimwearTitle,
+    },
+    {
+      label: h.rtwLabel,
+      title: h.rtwTitle,
+      cta: c.shopNow,
+      href: 'collections/ready-to-wear',
+      video: '/bloco%205-video%202-direita.mp4',
+      imageAlt: h.rtwTitle,
+    },
+  ] as const;
+
   return (
-    <EntranceView stagger className={`mx-auto max-w-[1440px] ${SECTION_PADDING}`}>
+    <EntranceView stagger className={`mx-auto max-w-[1440px] ${SECTION_PADDING_FLUSH}`}>
       <div className="grid gap-5 lg:grid-cols-2">
-        {CTAS.map((item, index) => (
+        {ctas.map((item, index) => (
           <Link
             key={item.href}
             href={`/${locale}/${item.href}`}

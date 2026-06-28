@@ -11,6 +11,7 @@ import { getShopifyClient } from '@/lib/shopify/client';
 import { CART_CREATE, CART_LINES_ADD, CART_LINES_UPDATE, CART_LINES_REMOVE } from '@/lib/shopify/queries';
 import { ShopifyCart } from '@/lib/shopify/types';
 import { serializeCart, type CartLineItem } from '@/lib/cart/serialize';
+import { m } from '@/lib/i18n';
 
 const CART_COOKIE = 'shopify_cart_id';
 
@@ -66,14 +67,14 @@ async function executeCartMutation<T>(
   return client.execute<T>(query, variables);
 }
 
-async function checkCartRateLimit(): Promise<string | null> {
+async function checkCartRateLimit(locale: string): Promise<string | null> {
   const headersList = await headers();
   const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim()
     ?? headersList.get('x-real-ip')
     ?? 'unknown';
   const result = await checkRateLimit(ip);
   if (result.blocked) {
-    return 'Too many requests. Please try again later.';
+    return m(locale).cart.rateLimit;
   }
   return null;
 }
@@ -82,14 +83,16 @@ export async function addToCartAction(
   prevState: CartActionState,
   formData: FormData
 ): Promise<CartActionState> {
-  const rateLimitMessage = await checkCartRateLimit();
+  const locale = (formData.get('locale') as string) || 'en';
+  const cartMsg = m(locale).cart;
+
+  const rateLimitMessage = await checkCartRateLimit(locale);
   if (rateLimitMessage) {
     return { success: false, message: rateLimitMessage };
   }
 
   const variantId = formData.get('variantId') as string;
   const quantity = formData.get('quantity') as string;
-  const locale = (formData.get('locale') as string) || 'en';
 
   const parsed = addToCartSchema.safeParse({ variantId, quantity, locale });
 
@@ -127,7 +130,7 @@ export async function addToCartAction(
         const mapped = serializeCart(cart);
         return {
           success: true,
-          message: 'Item added to cart',
+          message: cartMsg.added,
           cart: mapped,
         };
       }
@@ -165,18 +168,18 @@ export async function addToCartAction(
 
       return {
         success: true,
-        message: 'Cart created and item added',
+        message: cartMsg.createAndAdded,
         cart: serializeCart(cart),
       };
     }
 
     logger.warn('addToCartAction: cart null after create', { result: result.cartCreate });
-    return { success: false, message: 'Failed to create cart' };
+    return { success: false, message: cartMsg.createFailed };
   } catch (error) {
     logger.error('addToCartAction failed', { variantId: parsed.data.variantId, error });
     return {
       success: false,
-      message: 'Failed to add item to cart. Please try again.',
+      message: cartMsg.addFailed,
     };
   }
 }
@@ -185,14 +188,16 @@ export async function updateCartLinesAction(
   prevState: CartActionState,
   formData: FormData
 ): Promise<CartActionState> {
-  const rateLimitMessage = await checkCartRateLimit();
+  const locale = (formData.get('locale') as string) || 'en';
+  const cartMsg = m(locale).cart;
+
+  const rateLimitMessage = await checkCartRateLimit(locale);
   if (rateLimitMessage) {
     return { success: false, message: rateLimitMessage };
   }
 
   const lineId = formData.get('lineId') as string;
   const quantity = formData.get('quantity') as string;
-  const locale = (formData.get('locale') as string) || 'en';
 
   const parsed = updateCartLinesSchema.safeParse({ lineId, quantity, locale });
 
@@ -214,7 +219,7 @@ export async function updateCartLinesAction(
   const cartId = cookieStore.get(CART_COOKIE)?.value;
 
   if (!cartId) {
-    return { success: false, message: 'No cart found' };
+    return { success: false, message: cartMsg.notFound };
   }
 
   try {
@@ -239,16 +244,16 @@ export async function updateCartLinesAction(
       await invalidateCartCache(cart.id);
       return {
         success: true,
-        message: 'Cart updated',
+        message: cartMsg.updated,
         cart: serializeCart(cart),
       };
     }
 
     logger.warn('updateCartLinesAction: cart null after update', { result: result.cartLinesUpdate });
-    return { success: false, message: 'Failed to update cart' };
+    return { success: false, message: cartMsg.updateFailed };
   } catch (error) {
     logger.error('updateCartLinesAction failed', { lineId: parsed.data.lineId, error });
-    return { success: false, message: 'Failed to update cart. Please try again.' };
+    return { success: false, message: cartMsg.error };
   }
 }
 
@@ -256,13 +261,15 @@ export async function removeFromCartAction(
   prevState: CartActionState,
   formData: FormData
 ): Promise<CartActionState> {
-  const rateLimitMessage = await checkCartRateLimit();
+  const locale = (formData.get('locale') as string) || 'en';
+  const cartMsg = m(locale).cart;
+
+  const rateLimitMessage = await checkCartRateLimit(locale);
   if (rateLimitMessage) {
     return { success: false, message: rateLimitMessage };
   }
 
   const lineId = formData.get('lineId') as string;
-  const locale = (formData.get('locale') as string) || 'en';
 
   const parsed = removeFromCartSchema.safeParse({ lineId, locale });
 
@@ -277,7 +284,7 @@ export async function removeFromCartAction(
   const cartId = cookieStore.get(CART_COOKIE)?.value;
 
   if (!cartId) {
-    return { success: false, message: 'No cart found' };
+    return { success: false, message: cartMsg.notFound };
   }
 
   try {
@@ -302,15 +309,15 @@ export async function removeFromCartAction(
       await invalidateCartCache(cart.id);
       return {
         success: true,
-        message: 'Item removed from cart',
+        message: cartMsg.removed,
         cart: serializeCart(cart),
       };
     }
 
     logger.warn('removeFromCartAction: cart null after remove', { result: result.cartLinesRemove });
-    return { success: false, message: 'Failed to remove item' };
+    return { success: false, message: cartMsg.removeFailed };
   } catch (error) {
     logger.error('removeFromCartAction failed', { lineId: parsed.data.lineId, error });
-    return { success: false, message: 'Failed to remove item from cart. Please try again.' };
+    return { success: false, message: cartMsg.error };
   }
 }

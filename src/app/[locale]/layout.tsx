@@ -6,6 +6,7 @@ import { EdgeConfigProvider } from '@/components/providers/edge-config-provider'
 import { Footer } from '@/components/storefront/footer';
 import { Shell } from '@/components/storefront/shell';
 import { ConsentBanner } from '@/components/ui/consent-banner';
+import { LocaleHtmlLang } from '@/components/ui/locale-html-lang';
 import { DynamicScripts } from '@/components/ui/dynamic-scripts';
 import { ServiceWorkerRegistration } from '@/components/ui/service-worker-registration';
 import { PwaUpdateBanner } from '@/components/ui/pwa-update-banner';
@@ -30,13 +31,14 @@ export default async function LocaleLayout({
             <ScrollProvider>
               {nonce && <DynamicScripts nonce={nonce} />}
               {nonce && <ServiceWorkerRegistration nonce={nonce} />}
+              <LocaleHtmlLang locale={locale} />
               <Shell locale={locale}>
                 <main className="min-h-screen selection:bg-ink selection:text-white">{children}</main>
                 <Footer locale={locale} />
               </Shell>
               <ConsentBanner locale={locale} />
               <PwaUpdateBanner locale={locale} />
-              <PwaInstallPrompt />
+              <PwaInstallPrompt locale={locale} />
             </ScrollProvider>
           </WishlistProvider>
         </CartProvider>

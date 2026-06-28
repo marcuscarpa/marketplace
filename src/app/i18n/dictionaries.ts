@@ -1,16 +1,15 @@
+import type { Locale } from '@/lib/i18n';
+import { en } from '@/lib/i18n/messages/en';
+import { pt } from '@/lib/i18n/messages/pt';
+
 const dictionaries = {
-  en: () => import('./locales/en.json').then((m) => m.default),
-  pt: () => import('./locales/pt.json').then((m) => m.default),
+  en: () => Promise.resolve(en),
+  pt: () => Promise.resolve(pt),
 };
 
-export type Locale = keyof typeof dictionaries;
-
-const VALID_LOCALES = Object.keys(dictionaries) as Locale[];
+export type { Locale };
 
 export async function getDictionary(locale: string) {
-  if (!VALID_LOCALES.includes(locale as Locale)) {
-    console.warn(`Unsupported locale "${locale}", falling back to "en"`);
-    return dictionaries.en();
-  }
-  return dictionaries[locale as Locale]();
+  if (locale === 'pt') return dictionaries.pt();
+  return dictionaries.en();
 }

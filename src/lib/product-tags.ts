@@ -41,13 +41,13 @@ function isWithinNewArrivalWindow(publishedAt: string | null | undefined): boole
 }
 
 function isOnSale(price: string | number, compareAtPrice: string | number | null | undefined): boolean {
-  if (compareAtPrice == null || compareAtPrice === '') return false;
+  if (compareAtPrice === null || compareAtPrice === undefined || compareAtPrice === '') return false;
   return Number(compareAtPrice) > Number(price);
 }
 
 function isSoldOut(availableForSale: boolean | undefined, totalInventory: number | null | undefined): boolean {
   if (availableForSale === false) return true;
-  if (totalInventory != null && totalInventory <= 0) return true;
+  if (totalInventory !== null && totalInventory !== undefined && totalInventory <= 0) return true;
   return false;
 }
 

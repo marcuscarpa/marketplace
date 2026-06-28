@@ -4,19 +4,22 @@ interface Lock {
   release(): Promise<void>;
 }
 
-interface RedlockModule {
+interface RedlockInstance {
   acquire(keys: string[], duration: number): Promise<Lock>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new (clients: any[], options: { retryCount?: number; retryDelay?: number; retryJitter?: number }): RedlockModule;
 }
 
-let redlockInstance: RedlockModule | null = null;
+type RedlockConstructor = new (
+  clients: unknown[],
+  options: { retryCount?: number; retryDelay?: number; retryJitter?: number }
+) => RedlockInstance;
 
-export function getRedlockInstance(): RedlockModule {
+let redlockInstance: RedlockInstance | null = null;
+
+export function getRedlockInstance(): RedlockInstance {
   if (!redlockInstance) {
     const redis = getRedisClient();
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const Redlock = require('redlock') as RedlockModule;
+    const Redlock = require('redlock') as RedlockConstructor;
     redlockInstance = new Redlock([redis], {
       retryCount: 5,
       retryDelay: 200,

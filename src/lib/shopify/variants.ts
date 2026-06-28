@@ -46,7 +46,7 @@ export function maxVariantQuantity(
 ): number {
   if (variant.availableForSale === false) return 0;
   const stock = variant.quantityAvailable;
-  if (stock != null && stock >= 0) return Math.min(stock, CART_QTY_MAX);
+  if (stock !== null && stock !== undefined && stock >= 0) return Math.min(stock, CART_QTY_MAX);
   return CART_QTY_MAX;
 }
 

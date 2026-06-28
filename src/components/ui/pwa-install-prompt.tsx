@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
+import { m } from '@/lib/i18n';
+
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
@@ -9,9 +11,10 @@ interface BeforeInstallPromptEvent extends Event {
 
 const DISMISSED_KEY = 'pwa-install-dismissed';
 
-export function PwaInstallPrompt() {
+export function PwaInstallPrompt({ locale = 'en' }: { locale?: string }) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
+  const t = m(locale).pwa;
 
   useEffect(() => {
     const dismissed = localStorage.getItem(DISMISSED_KEY);
@@ -57,23 +60,23 @@ export function PwaInstallPrompt() {
   return (
     <div
       role="dialog"
-      aria-label="Install app"
+      aria-label={t.installTitle}
       className="fixed bottom-20 right-6 z-50 flex w-72 flex-col gap-3 rounded-lg border border-neutral-200 bg-white p-5 shadow-lg"
     >
-      <p className="text-sm font-medium text-neutral-900">Install Luxury Store</p>
-      <p className="text-xs text-neutral-500">Add to your home screen for the best experience.</p>
+      <p className="text-sm font-medium text-neutral-900">{t.installTitle}</p>
+      <p className="text-xs text-neutral-500">{t.installBody}</p>
       <div className="flex gap-2">
         <button
           onClick={handleInstall}
           className="flex-1 rounded bg-black px-3 py-2 text-xs font-medium tracking-wider text-white transition-colors hover:bg-neutral-800"
         >
-          Install
+          {t.install}
         </button>
         <button
           onClick={handleDismiss}
           className="rounded border border-neutral-200 px-3 py-2 text-xs text-neutral-600 transition-colors hover:bg-neutral-50"
         >
-          Not now
+          {t.dismiss}
         </button>
       </div>
     </div>

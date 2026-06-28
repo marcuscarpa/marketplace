@@ -26,6 +26,7 @@ export const metadata: Metadata = {
   title: 'Timeless Sophistication',
   description: 'Curated leather goods and accessories — enduring design and contemporary craftsmanship.',
   other: {
+    'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black',
   },

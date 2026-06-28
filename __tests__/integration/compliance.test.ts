@@ -8,16 +8,25 @@ import {
   verifyConsentLedger,
 } from '@/lib/compliance/consent';
 
-const { mockRedis } = vi.hoisted(() => ({
-  mockRedis: {
-    rpush: vi.fn().mockResolvedValue(1),
-    set: vi.fn().mockResolvedValue('OK'),
-    get: vi.fn().mockResolvedValue(null),
-    setex: vi.fn().mockResolvedValue('OK'),
-    lrange: vi.fn().mockResolvedValue([]),
-    exists: vi.fn().mockResolvedValue(0),
-  },
-}));
+const { mockRedis } = vi.hoisted(() => {
+  const chain = {
+    rpush: vi.fn().mockReturnThis(),
+    ltrim: vi.fn().mockReturnThis(),
+    set: vi.fn().mockReturnThis(),
+    exec: vi.fn().mockResolvedValue([]),
+  };
+  return {
+    mockRedis: {
+      rpush: vi.fn().mockResolvedValue(1),
+      set: vi.fn().mockResolvedValue('OK'),
+      get: vi.fn().mockResolvedValue(null),
+      setex: vi.fn().mockResolvedValue('OK'),
+      lrange: vi.fn().mockResolvedValue([]),
+      exists: vi.fn().mockResolvedValue(0),
+      multi: vi.fn(() => chain),
+    },
+  };
+});
 
 vi.mock('@/lib/redis/client', () => ({
   getRedisClient: () => mockRedis,
@@ -37,8 +46,7 @@ describe('recordConsent', () => {
     expect(record.version).toBe('1.0');
     expect(record.id).toBeDefined();
     expect(record.timestamp).toBeDefined();
-    expect(mockRedis.rpush).toHaveBeenCalled();
-    expect(mockRedis.set).toHaveBeenCalled();
+    expect(mockRedis.multi).toHaveBeenCalled();
   });
 
   it('records declined consent', async () => {
@@ -110,7 +118,7 @@ describe('verifyConsentLedger', () => {
     mockRedis.get.mockResolvedValue(null);
     mockRedis.lrange.mockResolvedValue([]);
     const result = await verifyConsentLedger('user-empty');
-    expect(result.valid).toBe(true);
+    expect(result.valid).toBe(false);
     expect(result.recordCount).toBe(0);
   });
 
@@ -132,7 +140,7 @@ describe('logAuditEvent', () => {
     expect(event.type).toBe('consent_recorded');
     expect(event.userId).toBe('user-a');
     expect(event.id).toBeDefined();
-    expect(mockRedis.rpush).toHaveBeenCalledTimes(2);
+    expect(mockRedis.multi).toHaveBeenCalled();
   });
 
   it('logs without details', async () => {
@@ -174,7 +182,7 @@ describe('createDeletionRequest', () => {
 
   it('logs audit event for deletion request', async () => {
     await createDeletionRequest('user-del-2');
-    expect(mockRedis.rpush).toHaveBeenCalled();
+    expect(mockRedis.multi).toHaveBeenCalled();
   });
 });
 

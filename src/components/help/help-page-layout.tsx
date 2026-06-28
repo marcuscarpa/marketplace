@@ -1,7 +1,8 @@
 import Link from 'next/link';
 
 import { HelpIcon, type HelpIconName } from '@/components/help/help-icons';
-import { HELP_MENU, HELP_QUICK_LINKS } from '@/lib/help/nav';
+import { getHelpMenu, getHelpQuickLinks } from '@/lib/help/nav';
+import { m } from '@/lib/i18n';
 
 interface HelpPageLayoutProps {
   locale: string;
@@ -25,6 +26,10 @@ export function HelpPageLayout({
   showContactCta = true,
 }: HelpPageLayoutProps) {
   const prefix = `/${locale}`;
+  const help = m(locale).help;
+  const common = m(locale).common;
+  const helpMenu = getHelpMenu(locale);
+  const quickLinks = getHelpQuickLinks(locale);
 
   return (
     <div className="bg-white pb-24 pt-[calc(84px+50px)] lg:pt-[calc(121px+50px)]">
@@ -33,7 +38,7 @@ export function HelpPageLayout({
           <ol className="flex flex-wrap items-center gap-2">
             <li>
               <Link href={prefix} className="transition-opacity hover:opacity-60">
-                Home
+                {common.home}
               </Link>
             </li>
             <li aria-hidden className="text-neutral-300">
@@ -68,9 +73,9 @@ export function HelpPageLayout({
         <div className="grid gap-12 lg:grid-cols-[220px_1fr] lg:gap-16">
           <aside className="space-y-10 lg:sticky lg:top-28 lg:self-start">
             <div>
-              <p className="mb-4 text-[10px] uppercase tracking-[0.16em] text-neutral-500">Help Menu</p>
+              <p className="mb-4 text-[10px] uppercase tracking-[0.16em] text-neutral-500">{help.menu}</p>
               <ul className="space-y-3">
-                {HELP_MENU.map((link) => (
+                {helpMenu.map((link) => (
                   <li key={link.slug}>
                     <Link
                       href={`${prefix}/${link.slug}`}
@@ -87,9 +92,9 @@ export function HelpPageLayout({
               </ul>
             </div>
             <div>
-              <p className="mb-4 text-[10px] uppercase tracking-[0.16em] text-neutral-500">Quick Links</p>
+              <p className="mb-4 text-[10px] uppercase tracking-[0.16em] text-neutral-500">{help.quickLinks}</p>
               <ul className="space-y-3">
-                {HELP_QUICK_LINKS.map((link) => (
+                {quickLinks.map((link) => (
                   <li key={link.slug}>
                     <Link
                       href={`${prefix}/${link.slug}`}
@@ -109,12 +114,12 @@ export function HelpPageLayout({
 
         {showContactCta && (
           <div className="mt-20 border-t border-neutral-200 pt-12 text-center">
-            <p className="font-serif text-lg text-neutral-900">Questions we have not answered?</p>
+            <p className="font-serif text-lg text-neutral-900">{help.unanswered}</p>
             <Link
               href={`${prefix}/contact`}
               className="mt-4 inline-block text-[11px] uppercase tracking-[0.14em] text-neutral-900 underline underline-offset-4 transition-opacity hover:opacity-60"
             >
-              Contact us
+              {help.contactCta}
             </Link>
           </div>
         )}

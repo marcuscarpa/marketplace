@@ -2,6 +2,7 @@
 
 import { SITE_IMAGES } from '@/lib/catalog/data';
 import { Button } from '@/components/storefront/ui';
+import { m } from '@/lib/i18n';
 import { useLayoutEffect, useState } from 'react';
 
 interface HeroProps {
@@ -17,6 +18,8 @@ function prefersReducedMotion() {
 
 export function Hero({ locale }: HeroProps) {
   const [copyInView, setCopyInView] = useState(false);
+  const h = m(locale).home;
+  const c = m(locale).common;
 
   useLayoutEffect(() => {
     if (prefersReducedMotion()) {
@@ -61,8 +64,8 @@ export function Hero({ locale }: HeroProps) {
             copyInView ? ' mkt-headline--in-view' : ''
           }`}
         >
-          <span className="mkt-headline__line text-white">Timeless</span>
-          <span className="mkt-headline__line text-white">Sophistication</span>
+          <span className="mkt-headline__line text-white">{h.heroLine1}</span>
+          <span className="mkt-headline__line text-white">{h.heroLine2}</span>
         </h1>
         <div
           className={`mkt-hero-editorial mt-6 max-w-[1400px] overflow-visible min-[768px]:mt-8 min-[1440px]:mt-10${
@@ -70,7 +73,7 @@ export function Hero({ locale }: HeroProps) {
           }`}
         >
           <Button href={`/${locale}/collections/all`} variant="outline-white">
-            Shop All
+            {c.shopAll}
           </Button>
         </div>
       </div>

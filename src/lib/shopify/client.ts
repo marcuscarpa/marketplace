@@ -6,13 +6,17 @@ import { getRegion } from '@/lib/regions';
 import { getEnv } from '@/lib/env';
 
 export function isShopifyConfigured(locale: string): boolean {
-  const region = getRegion(locale);
-  const token = getTokenForRegion(region.code);
-  const domain = region.shopifyDomain;
-  // ponytail: skip API when .env.local still has placeholder test-* credentials
-  if (!domain || !token) return false;
-  if (domain.includes('test-') || token.startsWith('test-token')) return false;
-  return true;
+  try {
+    const region = getRegion(locale);
+    const token = getTokenForRegion(region.code);
+    const domain = region.shopifyDomain;
+    // ponytail: skip API when env still has placeholder credentials
+    if (!domain || !token) return false;
+    if (domain.includes('test-') || domain.includes('dev-placeholder') || token.startsWith('test-token') || token === 'dev-placeholder') return false;
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function getTokenForRegion(regionCode: string): string {

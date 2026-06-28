@@ -1,8 +1,10 @@
 import { AboutSection } from '@/components/storefront/about-section';
+import { WhyShopSection } from '@/components/storefront/why-shop-section';
 import { Bestsellers } from '@/components/storefront/bestsellers';
 import { ProductCycler } from '@/components/storefront/product-cycler';
 import { CollectionCta } from '@/components/storefront/collection-cta';
 import { Hero } from '@/components/storefront/hero';
+import { HeroCurtainStage } from '@/components/storefront/hero-curtain-stage';
 import { MostPopular } from '@/components/storefront/most-popular';
 import { NewArrivals } from '@/components/storefront/new-arrivals';
 import { OurValues } from '@/components/storefront/our-values';
@@ -32,16 +34,16 @@ export function HomePage({
     : `/${locale}/collections/swimwear`;
 
   return (
-    <>
-      <Hero locale={locale} />
+    <HeroCurtainStage hero={<Hero locale={locale} />}>
       <MostPopular locale={locale} products={popularProducts} />
       <CollectionCta locale={locale} />
-      <OurValues collectionHref={valuesCollectionHref} />
       <NewArrivals locale={locale} products={newArrivals} />
+      <OurValues collectionHref={valuesCollectionHref} locale={locale} />
       <ProductCycler locale={locale} products={cyclerProducts} />
       <Bestsellers locale={locale} products={bestsellerProducts} />
       <AboutSection locale={locale} />
+      <WhyShopSection locale={locale} />
       <SocialFeed locale={locale} />
-    </>
+    </HeroCurtainStage>
   );
 }

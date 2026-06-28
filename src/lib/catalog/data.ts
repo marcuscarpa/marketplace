@@ -1,4 +1,5 @@
 import { cdnAsset } from '@/lib/catalog/assets';
+import { m } from '@/lib/i18n';
 
 export const SITE_IMAGES = {
   hero: '/banner-hero.png',
@@ -199,35 +200,42 @@ export const CYCLER_PRODUCTS: CatalogProduct[] = [
   },
 ];
 
-export const FOOTER_LINKS = {
-  shop: [
-    { label: 'All', href: 'collections/all' },
-    { label: 'Women', href: 'collections/women' },
-    { label: 'New', href: 'collections/new' },
-    { label: 'Swimwear', href: 'collections/swimwear' },
-    { label: 'Ready-to-Wear', href: 'collections/ready-to-wear' },
-    { label: 'Collections', href: 'collections/collections' },
-    { label: 'Accessories', href: 'collections/accessories' },
-  ],
-  company: [
-    { label: 'About', href: 'about' },
-    { label: 'Locations', href: 'locations' },
-  ],
-  others: [
-    { label: "FAQ's", href: 'faq' },
-    { label: 'Orders & Shipping', href: 'shipping' },
-    { label: 'Size Guide', href: 'size-chart' },
-    { label: 'Contact', href: 'contact' },
-  ],
-  legal: [
-    { label: 'Privacy Policy', href: 'privacy' },
-    { label: 'Cookie Policy', href: 'cookies' },
-    { label: 'Terms of use', href: 'terms' },
-    { label: 'Mobile Terms of Service', href: 'mobile-terms' },
-    { label: 'Do not sell or share my info', href: 'do-not-sell' },
-    { label: 'Return Policy', href: 'returns' },
-  ],
-} as const;
+export function getFooterLinks(locale: string) {
+  const n = m(locale).nav;
+  const f = m(locale).footer;
+  return {
+    shop: [
+      { label: n.all, href: 'collections/all' },
+      { label: n.women, href: 'collections/women' },
+      { label: n.new, href: 'collections/new' },
+      { label: n.swimwear, href: 'collections/swimwear' },
+      { label: n.readyToWear, href: 'collections/ready-to-wear' },
+      { label: n.collections, href: 'collections/collections' },
+      { label: n.accessories, href: 'collections/accessories' },
+    ],
+    company: [
+      { label: n.about, href: 'about' },
+      { label: n.locations, href: 'locations' },
+    ],
+    others: [
+      { label: n.faqs, href: 'faq' },
+      { label: f.ordersShipping, href: 'shipping' },
+      { label: f.sizeGuide, href: 'size-chart' },
+      { label: n.contact, href: 'contact' },
+    ],
+    legal: [
+      { label: f.privacyPolicy, href: 'privacy' },
+      { label: f.cookiePolicy, href: 'cookies' },
+      { label: f.termsOfUse, href: 'terms' },
+      { label: f.mobileTerms, href: 'mobile-terms' },
+      { label: f.doNotSell, href: 'do-not-sell' },
+      { label: f.returnPolicy, href: 'returns' },
+    ],
+  };
+}
+
+/** @deprecated use getFooterLinks(locale) */
+export const FOOTER_LINKS = getFooterLinks('en');
 
 export const MENU_LINKS = [
   { label: 'Shop All', href: 'collections/all' },

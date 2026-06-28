@@ -144,14 +144,14 @@ export async function searchProductsWithFormatting(
   first = 20
 ): Promise<SearchResultEnriched[]> {
   const results = await searchProducts(query, locale, first);
-  const currency = locale === 'pt' ? 'BRL' : 'USD';
   const localeFormat = locale === 'pt' ? 'pt-BR' : 'en-US';
 
   return results.map((product) => ({
     ...product,
     formattedPrice: new Intl.NumberFormat(localeFormat, {
       style: 'currency',
-      currency: product.priceRange.minVariantPrice.currencyCode ?? currency,
+      currency:
+        locale === 'pt' ? 'BRL' : (product.priceRange.minVariantPrice.currencyCode ?? 'USD'),
     }).format(Number(product.priceRange.minVariantPrice.amount)),
   }));
 }

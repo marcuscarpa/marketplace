@@ -47,7 +47,6 @@ export function updateRequestContext(updates: Partial<RequestContext>): RequestC
   if (!current) {
     return createRequestContext(updates);
   }
-  const updated = { ...current, ...updates };
-  asyncLocalStorage.run(updated, () => {});
-  return updated;
+  Object.assign(current, updates);
+  return current;
 }

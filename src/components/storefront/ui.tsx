@@ -98,10 +98,12 @@ export function SectionHeading({ children, className = '', light = false }: Sect
   );
 }
 
-/** catalog design spec: 120px vertical padding, 20px horizontal, sections flush. */
-export const SECTION_PADDING = 'px-5 py-[120px]';
-export const HEADING_MB = 'mb-10';
-export const GRID_GAP = 'gap-10';
+/** Section rhythm: 40px mobile / 64px desktop — common luxury retail spacing. */
+export const SECTION_PADDING = 'px-5 py-10 lg:py-16';
+/** Stacked between two padded sections — vertical spacing comes from neighbors. */
+export const SECTION_PADDING_FLUSH = 'px-5 py-0';
+export const HEADING_MB = 'mb-6 lg:mb-8';
+export const GRID_GAP = 'gap-6 lg:gap-8';
 export const PRODUCT_GAP = 'gap-3';
 
 /** Matches Our bestsellers image hover (scale on parent `group` or `group/image`). */

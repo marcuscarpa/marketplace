@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { SITE_IMAGES, type CatalogProduct } from '@/lib/catalog/data';
 import { PopularCard } from '@/components/storefront/product-card';
 import { EntranceView } from '@/components/storefront/entrance-view';
+import { m } from '@/lib/i18n';
 
 interface MostPopularProps {
   locale: string;
@@ -12,22 +13,24 @@ interface MostPopularProps {
 }
 
 export function MostPopular({ locale, products }: MostPopularProps) {
+  const h = m(locale).home;
+
   return (
     <EntranceView
       id="most-popular"
       stagger
-      className="flex w-full flex-col gap-8 px-5 py-[60px] min-[1440px]:gap-10 min-[1440px]:py-[120px]"
+      className="flex w-full flex-col gap-6 px-5 py-10 min-[1440px]:gap-8 min-[1440px]:py-16"
     >
       <h3
         data-entrance-step="1"
         className="font-serif text-[32px] font-normal leading-none tracking-[-0.04em] text-ink min-[1440px]:text-[48px]"
       >
-        Most popular
+        {h.mostPopular}
       </h3>
 
       <div
         data-entrance-step="2"
-        className="relative flex w-full flex-col gap-[60px] min-[1440px]:flex-row min-[1440px]:items-start min-[1440px]:gap-5"
+        className="relative flex w-full flex-col gap-8 min-[1440px]:flex-row min-[1440px]:items-start min-[1440px]:gap-5"
       >
         <ol className="flex w-full flex-row gap-2 min-[1440px]:sticky min-[1440px]:top-[100px] min-[1440px]:w-[690px] min-[1440px]:shrink-0 min-[1440px]:gap-3">
           {products.map((product, index) => (
@@ -39,7 +42,7 @@ export function MostPopular({ locale, products }: MostPopularProps) {
 
         <div
           data-entrance-step="3"
-          className="relative h-[840px] w-full overflow-hidden min-[1440px]:h-[900px] min-[1440px]:w-[690px] min-[1440px]:shrink-0"
+          className="relative h-[520px] w-full overflow-hidden min-[1440px]:h-[900px] min-[1440px]:w-[690px] min-[1440px]:shrink-0"
         >
           <div className="absolute inset-0 min-[1440px]:hidden">
             <Image

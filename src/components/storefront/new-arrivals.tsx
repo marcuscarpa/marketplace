@@ -7,6 +7,7 @@ import {
 } from '@/components/storefront/ui';
 import { PopularCard } from '@/components/storefront/product-card';
 import { EntranceView } from '@/components/storefront/entrance-view';
+import { m } from '@/lib/i18n';
 
 interface NewArrivalsProps {
   locale: string;
@@ -14,9 +15,11 @@ interface NewArrivalsProps {
 }
 
 export function NewArrivals({ locale, products }: NewArrivalsProps) {
+  const h = m(locale).home;
+
   return (
     <EntranceView className={`mx-auto max-w-[1440px] ${SECTION_PADDING}`}>
-      <SectionHeading className={HEADING_MB}>New arrivals</SectionHeading>
+      <SectionHeading className={HEADING_MB}>{h.newArrivals}</SectionHeading>
       <div className={`grid grid-cols-2 ${PRODUCT_GAP} lg:grid-cols-4`}>
         {products.map((product, index) => (
           <PopularCard key={product.handle} product={product} locale={locale} index={index} />

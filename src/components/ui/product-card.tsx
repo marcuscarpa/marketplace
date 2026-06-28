@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
 import { ProductCardProps } from '@/components/ui/types';
+import { m } from '@/lib/i18n';
 import { resolveShopifyProductTags } from '@/lib/product-tags';
 
 export function ProductCard({ product, locale }: ProductCardProps) {
@@ -16,6 +17,7 @@ export function ProductCard({ product, locale }: ProductCardProps) {
   const hoverImage = product.images?.nodes?.[1];
   const tags = product.badges ?? resolveShopifyProductTags(product);
   const href = `/${locale}/products/${product.handle}`;
+  const viewDetails = m(locale).common.viewDetails;
 
   useEffect(() => setMounted(true), []);
 
@@ -90,7 +92,7 @@ export function ProductCard({ product, locale }: ProductCardProps) {
           href={href}
           className="w-full px-4 py-2 bg-black text-white text-sm font-medium rounded-lg text-center hover:bg-gray-900 transition-colors"
         >
-          View Details
+          {viewDetails}
         </Link>
       </div>
     </motion.article>

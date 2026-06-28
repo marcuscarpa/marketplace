@@ -6,8 +6,7 @@ import { buildCspHeader, buildSecurityHeaders } from '@/lib/security/csp';
 const { mockRedis } = vi.hoisted(() => ({
   mockRedis: {
     exists: vi.fn(),
-    incr: vi.fn(),
-    expire: vi.fn(),
+    eval: vi.fn(),
     setex: vi.fn(),
   },
 }));
@@ -159,10 +158,10 @@ describe('getClientIp', () => {
     const request = {
       headers: {
         get: (key: string) =>
-          key === 'x-forwarded-for' ? '192.168.1.1, 10.0.0.1' : null,
+          key === 'x-forwarded-for' ? '203.0.113.1, 10.0.0.1' : null,
       },
     };
-    expect(getClientIp(request)).toBe('192.168.1.1');
+    expect(getClientIp(request)).toBe('203.0.113.1');
   });
 
   it('falls back to x-real-ip when x-forwarded-for is missing', () => {
@@ -188,10 +187,23 @@ describe('getClientIp', () => {
     const request = {
       headers: {
         get: (key: string) =>
-          key === 'x-forwarded-for' ? '172.16.0.1' : null,
+          key === 'x-forwarded-for' ? '203.0.113.50' : null,
       },
     };
-    expect(getClientIp(request)).toBe('172.16.0.1');
+    expect(getClientIp(request)).toBe('203.0.113.50');
+  });
+
+  it('skips private IPs in x-forwarded-for and falls back to x-real-ip', () => {
+    const request = {
+      headers: {
+        get: (key: string) => {
+          if (key === 'x-forwarded-for') return '192.168.1.1';
+          if (key === 'x-real-ip') return '203.0.113.99';
+          return null;
+        },
+      },
+    };
+    expect(getClientIp(request)).toBe('203.0.113.99');
   });
 });
 
@@ -203,9 +215,9 @@ describe('checkRateLimit', () => {
 
   it('allows request when under rate limit', async () => {
     mockRedis.exists.mockResolvedValue(0);
-    mockRedis.incr.mockResolvedValue(1);
+    mockRedis.eval.mockResolvedValue(1);
     const { checkRateLimit } = await import('@/lib/security/bot-protection');
-    const result = await checkRateLimit('192.168.1.1');
+    const result = await checkRateLimit('203.0.113.1');
     expect(result.blocked).toBe(false);
   });
 
@@ -219,9 +231,9 @@ describe('checkRateLimit', () => {
 
   it('blocks request when rate limit exceeded', async () => {
     mockRedis.exists.mockResolvedValue(0);
-    mockRedis.incr.mockResolvedValue(101);
+    mockRedis.eval.mockResolvedValue(101);
     const { checkRateLimit } = await import('@/lib/security/bot-protection');
-    const result = await checkRateLimit('192.168.1.3');
+    const result = await checkRateLimit('203.0.113.3');
     expect(result.blocked).toBe(true);
     expect(result.reason).toBe('rate_limit_exceeded');
   });
