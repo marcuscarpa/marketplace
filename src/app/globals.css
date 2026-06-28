@@ -384,8 +384,63 @@ select {
   opacity: 1;
 }
 
+@property --btn-outline-border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .btn--outline-white {
   border: 1px solid var(--btn-white-60);
+}
+
+.btn-container:has(.btn--outline-white)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 1px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--btn-outline-border-angle),
+    var(--btn-white-60) 0deg,
+    var(--btn-white-60) 275deg,
+    var(--btn-white-80) 295deg,
+    var(--btn-white) 312deg,
+    #fff 330deg,
+    var(--btn-white) 348deg,
+    var(--btn-white-80) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: btn-outline-border-flow 2.8s linear infinite;
+}
+
+.btn-container:has(.btn--outline-white) .btn--outline-white {
+  border-color: transparent;
+}
+
+@keyframes btn-outline-border-flow {
+  to {
+    --btn-outline-border-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-container:has(.btn--outline-white)::before {
+    animation: none;
+    background: none;
+  }
+
+  .btn-container:has(.btn--outline-white) .btn--outline-white {
+    border-color: var(--btn-white-60);
+  }
 }
 
 .btn__bg {

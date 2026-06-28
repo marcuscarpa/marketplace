@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 
-import { SITE_IMAGES } from '@/lib/catalog/data';
 import { SECTION_PADDING, ButtonShell } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
 
@@ -17,7 +16,6 @@ const CTAS = [
     cta: 'Shop Now',
     href: 'collections/swimwear',
     video: '/bloco%205-video%201-esquerda.mp4',
-    poster: SITE_IMAGES.collectionNew,
     imageAlt: 'Swimwear collection — resort-level luxury',
   },
   {
@@ -26,7 +24,6 @@ const CTAS = [
     cta: 'Shop Now',
     href: 'collections/ready-to-wear',
     video: '/bloco%205-video%202-direita.mp4',
-    poster: SITE_IMAGES.collectionWomen,
     imageAlt: 'Ready-to-wear collection — from day to evening',
   },
 ] as const;
@@ -38,23 +35,26 @@ export function CollectionCta({ locale }: CollectionCtaProps) {
         {CTAS.map((item, index) => (
           <Link
             key={item.href}
-            data-entrance-step={String(index + 1)}
             href={`/${locale}/${item.href}`}
             className="group relative block h-[520px] overflow-hidden lg:h-[900px]"
           >
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster={item.poster}
-              aria-label={item.imageAlt}
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] motion-safe:transition-[opacity,transform] motion-safe:duration-[520ms] motion-safe:ease-[cubic-bezier(0.33,1,0.68,1)]"
-            >
-              <source src={item.video} type="video/mp4" />
-            </video>
+            <div className="absolute inset-0 overflow-hidden bg-neutral-900">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                aria-label={item.imageAlt}
+                className="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover object-center transition-transform duration-700 group-hover:scale-[1.03] motion-safe:transition-[opacity,transform] motion-safe:duration-[520ms] motion-safe:ease-[cubic-bezier(0.33,1,0.68,1)]"
+              >
+                <source src={item.video} type="video/mp4" />
+              </video>
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-8 lg:p-10">
+            <div
+              data-entrance-step={String(index + 1)}
+              className="absolute inset-x-0 bottom-0 p-8 lg:p-10"
+            >
               <p className="mb-3 text-[12px] uppercase tracking-[0.02em] text-white/80 font-sans-ui">
                 {item.label}
               </p>

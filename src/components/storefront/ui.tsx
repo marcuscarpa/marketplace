@@ -7,6 +7,7 @@ interface ButtonProps {
   children: React.ReactNode;
   variant?: ButtonVariant;
   className?: string;
+  newTab?: boolean;
 }
 
 const bgClass: Record<ButtonVariant, string> = {
@@ -43,12 +44,14 @@ export function Button({
   children,
   variant = 'white',
   className = '',
+  newTab = false,
 }: ButtonProps) {
   return (
     <div className={`btn-container ${className}`}>
       <Link
         href={href}
         className={`btn ${variant === 'outline-white' ? 'btn--outline-white' : ''}`}
+        {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       >
         <ButtonInner variant={variant}>{children}</ButtonInner>
       </Link>

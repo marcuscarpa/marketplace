@@ -11,21 +11,33 @@ export const SITE_IMAGES = {
   arrival2: '/Bloco4%20imagem%202.png',
   arrival3: '/Bloco4%20imagem%203.png',
   arrival4: '/Bloco4%20imagem%204.webp',
-  about: cdnAsset('images/JLbSOzdi8ek3X2YzUzUCXMjFDlU.jpg?width=1536&height=1024'),
+  about: '/banner%208.png',
   collectionNew: cdnAsset('images/mOaLu1cK2g12LAvtCBtK7ajjO4E.png?width=1024&height=1024'),
   collectionWomen: cdnAsset('images/bbm02GgLoJp7yqWis1qKQGi6fjU.jpg?width=1536&height=1200'),
   cycler1: '/bloco%206%2C%20imagem%20da%20esquerda%20.jpg',
   cycler2: '/bloco%206%2C%20imagem%20do%20meio%20.jpg',
   cycler3: '/bloco%206%2C%20imagem%20da%20direita.jpg',
-  bestseller1: cdnAsset('images/xTaf4V9yVpxl8rSOPggHjX1Litk.png?width=1024&height=1024'),
-  bestseller2: cdnAsset('images/DRslE52UHyQqe8Mi45WInMrA.png?width=1024&height=1024'),
-  bestseller3: cdnAsset('images/GFpIu9B8u4cOwHqWyNdHYOg3Wnk.png?width=1024&height=1024'),
-  bestseller4: cdnAsset('images/lkDH4HvpyZRW7lUqiOpPX8jIVOk.png?width=1024&height=1024'),
-  social1: cdnAsset('images/kMTeJujLtRr9m4cZMtpfIRvsNY.png?width=1024&height=1024'),
-  social2: cdnAsset('images/10AYOLDB5Pm1gmWZMnRjhBNT8o.png?width=1024&height=1024'),
-  social3: cdnAsset('images/QUVr0uhAgeEP4EaZXV1HDyLfi1o.png?width=1024&height=1024'),
+  bestseller1: '/bloco%207%2C%20imagem%201.jpg',
+  bestseller2: '/bloco%207%2C%20imagem%202.png',
+  bestseller3: '/bloco%207%2C%20imagem%203.jpg',
+  bestseller4: '/bloco%207%2C%20imagem%204.jpg',
+  bestseller5: '/bloco%207%2C%20imagem%205.jpg',
+  social1: '/bloco%209%2C%20imagem%201.png?v=20260628',
+  social2: '/bloco%209%2C%20imagem%202.png?v=20260628',
+  social3: '/bloco%209%2C%20imagem%203.png?v=20260628',
+  social4: '/bloco%209%2C%20imagem%204.png?v=20260628',
+  social5: '/bloco%209%2C%20imagem%205.png?v=20260628',
   footerLogo: cdnAsset('images/MZ8vNpExE3iwzh3LhEfoCMswUNU.png?width=3200&height=2400'),
 } as const;
+
+export const INSTAGRAM_HREF = {
+  pt: 'https://www.instagram.com/sinesiakarol/',
+  en: 'https://www.instagram.com/sinesiakarolusa?igsh=MXF3dmUxcGE2YzRhZw==',
+} as const;
+
+export function instagramHref(locale: string) {
+  return locale === 'pt' ? INSTAGRAM_HREF.pt : INSTAGRAM_HREF.en;
+}
 
 export interface CatalogProduct {
   title: string;
@@ -142,6 +154,7 @@ export const BESTSELLERS: CatalogProduct[] = [
   { title: 'Brown Bag', category: 'Sauné', price: '€ 279', handle: 'saune', image: SITE_IMAGES.bestseller2 },
   { title: 'Black Bag', category: 'Lunet', price: '€ 299', handle: 'lunet', image: SITE_IMAGES.bestseller3 },
   { title: 'White Bag', category: 'Éloé', price: '€ 199', handle: 'eloe', image: SITE_IMAGES.bestseller4 },
+  { title: 'Tan Bag', category: 'Solé', price: '€ 249', handle: 'sole', image: SITE_IMAGES.bestseller5 },
 ];
 
 export const CATEGORIES = [

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 
-import { FOOTER_LINKS } from '@/lib/catalog/data';
+import { FOOTER_LINKS, instagramHref } from '@/lib/catalog/data';
 
 interface FooterProps {
   locale: string;
@@ -16,15 +16,6 @@ const MENU_COLUMNS = [
 ] as const;
 
 const LEGAL_LINKS = FOOTER_LINKS.legal;
-
-const INSTAGRAM_HREF = {
-  pt: 'https://www.instagram.com/sinesiakarol/',
-  en: 'https://www.instagram.com/sinesiakarolusa?igsh=MXF3dmUxcGE2YzRhZw==',
-} as const;
-
-function instagramHref(locale: string) {
-  return locale === 'pt' ? INSTAGRAM_HREF.pt : INSTAGRAM_HREF.en;
-}
 
 function SocialIcon({ icon }: { icon: 'instagram' }) {
   if (icon !== 'instagram') return null;

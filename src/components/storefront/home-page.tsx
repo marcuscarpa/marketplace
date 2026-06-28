@@ -41,7 +41,7 @@ export function HomePage({
       <ProductCycler locale={locale} products={cyclerProducts} />
       <Bestsellers locale={locale} products={bestsellerProducts} />
       <AboutSection locale={locale} />
-      <SocialFeed />
+      <SocialFeed locale={locale} />
     </>
   );
 }
