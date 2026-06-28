@@ -14,9 +14,9 @@ export const SITE_IMAGES = {
   about: cdnAsset('images/JLbSOzdi8ek3X2YzUzUCXMjFDlU.jpg?width=1536&height=1024'),
   collectionNew: cdnAsset('images/mOaLu1cK2g12LAvtCBtK7ajjO4E.png?width=1024&height=1024'),
   collectionWomen: cdnAsset('images/bbm02GgLoJp7yqWis1qKQGi6fjU.jpg?width=1536&height=1200'),
-  cycler1: '/bloco%206%2C%20imagem%20da%20esquerda.jpg',
-  cycler2: '/bloco%206%2C%20imagem%20do%20meio.png',
-  cycler3: '/bloco%206%2C%20imagem%20da%20direita.png',
+  cycler1: '/bloco%206%2C%20imagem%20da%20esquerda%20.jpg',
+  cycler2: '/bloco%206%2C%20imagem%20do%20meio%20.jpg',
+  cycler3: '/bloco%206%2C%20imagem%20da%20direita.jpg',
   bestseller1: cdnAsset('images/xTaf4V9yVpxl8rSOPggHjX1Litk.png?width=1024&height=1024'),
   bestseller2: cdnAsset('images/DRslE52UHyQqe8Mi45WInMrA.png?width=1024&height=1024'),
   bestseller3: cdnAsset('images/GFpIu9B8u4cOwHqWyNdHYOg3Wnk.png?width=1024&height=1024'),
@@ -164,24 +164,24 @@ export const CATEGORIES = [
 
 export const CYCLER_PRODUCTS: CatalogProduct[] = [
   {
-    title: 'AnaVitoria Dress Poá Pistachio',
+    title: 'Bikinis',
     category: 'Swimwear',
     price: '€ 199',
-    handle: 'anavitoria-dress-poa-pistachio',
+    handle: 'bikinis',
     image: SITE_IMAGES.cycler1,
   },
   {
-    title: 'Thais Poa Pistachio Bikini Bottom',
+    title: 'One Piece',
     category: 'Swimwear',
     price: '€ 199',
-    handle: 'thais-poa-pistachio-bikini-bottom',
+    handle: 'one-piece',
     image: SITE_IMAGES.cycler2,
   },
   {
-    title: 'Michelle Pareo - Poa Pistachio',
+    title: 'Pants + Shorts',
     category: 'Swimwear',
     price: '€ 199',
-    handle: 'michelle-pareo-poa-pistachio',
+    handle: 'pants-shorts',
     image: SITE_IMAGES.cycler3,
   },
 ];

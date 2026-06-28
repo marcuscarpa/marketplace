@@ -2,15 +2,16 @@
 
 import Image from 'next/image';
 
-import { POPULAR_PRODUCTS, SITE_IMAGES } from '@/lib/catalog/data';
+import { SITE_IMAGES, type CatalogProduct } from '@/lib/catalog/data';
 import { PopularCard } from '@/components/storefront/product-card';
 import { EntranceView } from '@/components/storefront/entrance-view';
 
 interface MostPopularProps {
   locale: string;
+  products: CatalogProduct[];
 }
 
-export function MostPopular({ locale }: MostPopularProps) {
+export function MostPopular({ locale, products }: MostPopularProps) {
   return (
     <EntranceView
       id="most-popular"
@@ -29,7 +30,7 @@ export function MostPopular({ locale }: MostPopularProps) {
         className="relative flex w-full flex-col gap-[60px] min-[1440px]:flex-row min-[1440px]:items-start min-[1440px]:gap-5"
       >
         <ol className="flex w-full flex-row gap-2 min-[1440px]:sticky min-[1440px]:top-[100px] min-[1440px]:w-[690px] min-[1440px]:shrink-0 min-[1440px]:gap-3">
-          {POPULAR_PRODUCTS.map((product, index) => (
+          {products.map((product, index) => (
             <li key={product.handle} className="min-w-0 flex-1">
               <PopularCard product={product} locale={locale} index={index} />
             </li>

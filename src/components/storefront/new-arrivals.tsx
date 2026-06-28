@@ -1,4 +1,4 @@
-import { NEW_ARRIVALS } from '@/lib/catalog/data';
+import type { CatalogProduct } from '@/lib/catalog/data';
 import {
   HEADING_MB,
   PRODUCT_GAP,
@@ -10,14 +10,15 @@ import { EntranceView } from '@/components/storefront/entrance-view';
 
 interface NewArrivalsProps {
   locale: string;
+  products: CatalogProduct[];
 }
 
-export function NewArrivals({ locale }: NewArrivalsProps) {
+export function NewArrivals({ locale, products }: NewArrivalsProps) {
   return (
     <EntranceView className={`mx-auto max-w-[1440px] ${SECTION_PADDING}`}>
       <SectionHeading className={HEADING_MB}>New arrivals</SectionHeading>
       <div className={`grid grid-cols-2 ${PRODUCT_GAP} lg:grid-cols-4`}>
-        {NEW_ARRIVALS.map((product, index) => (
+        {products.map((product, index) => (
           <PopularCard key={product.handle} product={product} locale={locale} index={index} />
         ))}
       </div>

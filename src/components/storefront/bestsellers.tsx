@@ -4,18 +4,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 
-import { BESTSELLERS, formatPrice } from '@/lib/catalog/data';
+import { formatPrice, type CatalogProduct } from '@/lib/catalog/data';
 import { resolveCatalogProductTags } from '@/lib/product-tags';
 import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
-import { SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
+import { PRODUCT_IMAGE_HOVER, SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
 
 interface BestsellersProps {
   locale: string;
+  products: CatalogProduct[];
 }
 
-export function Bestsellers({ locale }: BestsellersProps) {
-  const items = [...BESTSELLERS, ...BESTSELLERS];
+export function Bestsellers({ locale, products }: BestsellersProps) {
+  const items = [...products, ...products];
 
   return (
     <EntranceView className={`bg-cream ${SECTION_PADDING}`}>
@@ -48,13 +49,33 @@ export function Bestsellers({ locale }: BestsellersProps) {
                   locale={locale}
                   className={PRODUCT_TAGS_OVERLAY_CLASS}
                 />
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  fill
-                  sizes="288px"
-                  className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
-                />
+                <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER}`}>
+                  <figure
+                    className={`absolute inset-0 m-0 transition-opacity duration-300 ${
+                      product.hoverImage ? 'group-hover:opacity-0' : ''
+                    }`}
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.title}
+                      fill
+                      sizes="288px"
+                      className="object-contain p-6"
+                    />
+                  </figure>
+                  {product.hoverImage && (
+                    <figure className="absolute inset-0 m-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <Image
+                        src={product.hoverImage}
+                        alt=""
+                        fill
+                        sizes="288px"
+                        className="object-contain p-6"
+                        aria-hidden
+                      />
+                    </figure>
+                  )}
+                </div>
               </div>
               <div className="mt-4 flex justify-between gap-4 font-sans-ui text-[12px]">
                 <div>

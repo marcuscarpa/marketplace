@@ -82,7 +82,7 @@ export const PRODUCT_RECOMMENDATIONS = `
       id
       title
       handle
-      images(first: 1) { nodes { url altText } }
+      images(first: 2) { nodes { url altText } }
       priceRange { minVariantPrice { amount currencyCode } }
     }
   }
@@ -106,7 +106,7 @@ export const GET_COLLECTION_BY_HANDLE = `
           tags
           publishedAt
           totalInventory
-          images(first: 1) { nodes { url altText } }
+          images(first: 2) { nodes { url altText } }
           options { name values }
           priceRange { minVariantPrice { amount currencyCode } }
           variants(first: 50) {
@@ -163,7 +163,7 @@ export const GET_PRODUCTS_BY_COLLECTION = `
           title
           handle
           vendor
-          images(first: 1) { nodes { url altText } }
+          images(first: 2) { nodes { url altText } }
           priceRange { minVariantPrice { amount currencyCode } }
           variants(first: 1) { nodes { id price { amount } } }
         }
@@ -190,7 +190,7 @@ export const CART_FRAGMENT = `
               id
               title
               handle
-              images(first: 1) { nodes { url altText } }
+              images(first: 2) { nodes { url altText } }
             }
             quantityAvailable
             price { amount currencyCode }

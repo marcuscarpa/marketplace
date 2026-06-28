@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { PRODUCT_IMAGE_HOVER } from '@/components/storefront/ui';
 import { useDebounce } from '@/hooks/use-debounce';
 import {
   POPULAR_SEARCHES,
@@ -61,13 +62,15 @@ function SearchResultCard({
     <article className="group">
       <Link href={href} className="search-autocomplete__product-image block">
         {product.image ? (
-          <>
+          <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER}`}>
             <Image
               src={product.image}
               alt={product.title}
               fill
               sizes="(max-width: 900px) 28vw, 128px"
-              className="object-cover object-top transition-opacity duration-300 group-hover:opacity-0"
+              className={`object-cover object-top transition-opacity duration-300 ${
+                product.hoverImage ? 'group-hover:opacity-0' : ''
+              }`}
             />
             {product.hoverImage && (
               <Image
@@ -79,7 +82,7 @@ function SearchResultCard({
                 aria-hidden
               />
             )}
-          </>
+          </div>
         ) : (
           <div className="absolute inset-0 bg-[#f7f7f7]" />
         )}

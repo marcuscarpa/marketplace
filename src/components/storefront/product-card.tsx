@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useWishlist } from '@/hooks/use-wishlist';
 import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
+import { PRODUCT_IMAGE_HOVER_NESTED } from '@/components/storefront/ui';
 import { formatPrice, type CatalogProduct } from '@/lib/catalog/data';
 import { resolveCatalogProductTags, type ProductTagKey } from '@/lib/product-tags';
 
@@ -106,31 +107,33 @@ export function PopularCard({ product, locale, badges, index = 0 }: PopularCardP
           />
         )}
         <Link href={href} className="absolute inset-0 z-0 block">
-          <figure
-            className={`absolute inset-0 m-0 transition-opacity duration-300 ${
-              product.hoverImage ? 'group-hover/image:opacity-0' : ''
-            }`}
-          >
-            <Image
-              src={product.image}
-              alt={product.title}
-              fill
-              sizes="(max-width: 1024px) 34vw, 339px"
-              className="block h-full w-full object-cover object-center"
-            />
-          </figure>
-          {product.hoverImage && (
-            <figure className="absolute inset-0 m-0 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100">
+          <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER_NESTED}`}>
+            <figure
+              className={`absolute inset-0 m-0 transition-opacity duration-300 ${
+                product.hoverImage ? 'group-hover/image:opacity-0' : ''
+              }`}
+            >
               <Image
-                src={product.hoverImage}
-                alt=""
+                src={product.image}
+                alt={product.title}
                 fill
                 sizes="(max-width: 1024px) 34vw, 339px"
                 className="block h-full w-full object-cover object-center"
-                aria-hidden
               />
             </figure>
-          )}
+            {product.hoverImage && (
+              <figure className="absolute inset-0 m-0 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100">
+                <Image
+                  src={product.hoverImage}
+                  alt=""
+                  fill
+                  sizes="(max-width: 1024px) 34vw, 339px"
+                  className="block h-full w-full object-cover object-center"
+                  aria-hidden
+                />
+              </figure>
+            )}
+          </div>
         </Link>
         <Link href={href} className={ADD_TO_CART_BAR}>
           Add to Cart
@@ -172,7 +175,7 @@ export function StoreProductCard({
   const imageClass =
     layout === 'compact'
       ? 'group/image relative aspect-[171/221] w-full overflow-hidden bg-cream'
-      : 'relative aspect-square overflow-hidden bg-muted';
+      : 'group/image relative aspect-square overflow-hidden bg-muted';
 
   const textBlock =
     layout === 'compact' ? (
@@ -211,31 +214,33 @@ export function StoreProductCard({
           <div className={imageClass}>
             {imageTags}
             <Link href={href} className="absolute inset-0 block no-underline">
-              <figure
-                className={`absolute inset-x-[16%] inset-y-[22%] m-0 transition-opacity duration-300 ${
-                  product.hoverImage ? 'group-hover/image:opacity-0' : ''
-                }`}
-              >
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  fill
-                  sizes="(max-width: 809.98px) calc((100vw - 40px) * 0.68), 339px"
-                  className="block h-full w-full object-cover object-center"
-                />
-              </figure>
-              {product.hoverImage && (
-                <figure className="absolute inset-0 m-0 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100">
+              <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER_NESTED}`}>
+                <figure
+                  className={`absolute inset-x-[16%] inset-y-[22%] m-0 transition-opacity duration-300 ${
+                    product.hoverImage ? 'group-hover/image:opacity-0' : ''
+                  }`}
+                >
                   <Image
-                    src={product.hoverImage}
-                    alt=""
+                    src={product.image}
+                    alt={product.title}
                     fill
-                    sizes="(max-width: 809.98px) calc(100vw - 40px), 339px"
+                    sizes="(max-width: 809.98px) calc((100vw - 40px) * 0.68), 339px"
                     className="block h-full w-full object-cover object-center"
-                    aria-hidden
                   />
                 </figure>
-              )}
+                {product.hoverImage && (
+                  <figure className="absolute inset-0 m-0 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100">
+                    <Image
+                      src={product.hoverImage}
+                      alt=""
+                      fill
+                      sizes="(max-width: 809.98px) calc(100vw - 40px), 339px"
+                      className="block h-full w-full object-cover object-center"
+                      aria-hidden
+                    />
+                  </figure>
+                )}
+              </div>
             </Link>
             <Link href={href} className={ADD_TO_CART_BAR}>
               Add to Cart
@@ -247,13 +252,33 @@ export function StoreProductCard({
         <Link href={href} className="block">
           <div className={imageClass}>
             {imageTags}
-            <Image
-              src={product.image}
-              alt={product.title}
-              fill
-              sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-            />
+            <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER_NESTED}`}>
+              <figure
+                className={`absolute inset-0 m-0 transition-opacity duration-300 ${
+                  product.hoverImage ? 'group-hover/image:opacity-0' : ''
+                }`}
+              >
+                <Image
+                  src={product.image}
+                  alt={product.title}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover"
+                />
+              </figure>
+              {product.hoverImage && (
+                <figure className="absolute inset-0 m-0 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100">
+                  <Image
+                    src={product.hoverImage}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="object-cover"
+                    aria-hidden
+                  />
+                </figure>
+              )}
+            </div>
           </div>
           <div className="mt-4 flex items-start justify-between gap-3 font-sans-ui text-[12px]">
             <div>

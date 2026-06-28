@@ -110,7 +110,7 @@ function catalogFallbackResults(query: string, first: number): SearchResultForma
     title: product.title,
     handle: product.handle,
     image: product.image,
-    hoverImage: null,
+    hoverImage: product.hoverImage ?? null,
     price: product.price.startsWith('$') ? product.price : formatPrice(product.price),
     compareAtPrice: product.compareAtPrice ?? null,
     onSale: Boolean(product.compareAtPrice),

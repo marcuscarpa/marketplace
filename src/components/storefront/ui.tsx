@@ -100,3 +100,7 @@ export const SECTION_PADDING = 'px-5 py-[120px]';
 export const HEADING_MB = 'mb-10';
 export const GRID_GAP = 'gap-10';
 export const PRODUCT_GAP = 'gap-3';
+
+/** Matches Our bestsellers image hover (scale on parent `group` or `group/image`). */
+export const PRODUCT_IMAGE_HOVER = 'transition-transform duration-500 group-hover:scale-105';
+export const PRODUCT_IMAGE_HOVER_NESTED = 'transition-transform duration-500 group-hover/image:scale-105';

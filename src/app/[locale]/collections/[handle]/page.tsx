@@ -8,6 +8,7 @@ import {
 } from '@/components/storefront/collection-products';
 import { SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
 import { getCatalogCollection } from '@/lib/catalog/catalog';
+import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
 import { getBestsellerHandles } from '@/lib/shopify/bestsellers';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
 import { GET_COLLECTION_BY_HANDLE } from '@/lib/shopify/queries';
@@ -94,6 +95,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
 
   if (result.source === 'catalog') {
     const { collection } = result;
+    const products = await withShopifyHoverImages(collection.products, locale);
 
     return (
       <section className={`mx-auto max-w-[1440px] ${SECTION_PADDING}`}>
@@ -115,9 +117,9 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
             {collection.description}
           </p>
         )}
-        {collection.products.length > 0 ? (
+        {products.length > 0 ? (
           <CollectionProducts
-            products={collection.products}
+            products={products}
             locale={locale}
             collectionTitle={collection.title}
           />

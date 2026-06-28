@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
@@ -12,7 +13,9 @@ export function ProductCard({ product, locale }: ProductCardProps) {
   const [mounted, setMounted] = useState(false);
   const price = product.priceRange?.minVariantPrice;
   const image = product.images?.nodes?.[0];
+  const hoverImage = product.images?.nodes?.[1];
   const tags = product.badges ?? resolveShopifyProductTags(product);
+  const href = `/${locale}/products/${product.handle}`;
 
   useEffect(() => setMounted(true), []);
 
@@ -23,7 +26,7 @@ export function ProductCard({ product, locale }: ProductCardProps) {
       transition={{ duration: 0.4 }}
       className="group relative flex flex-col bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl"
     >
-      <div className="relative aspect-square overflow-hidden bg-gray-50">
+      <div className="relative aspect-square overflow-hidden bg-gray-50 group/image">
         {tags.length > 0 && (
           <ProductTags
             tags={tags}
@@ -31,16 +34,40 @@ export function ProductCard({ product, locale }: ProductCardProps) {
             className={PRODUCT_TAGS_OVERLAY_CLASS}
           />
         )}
-        {image && (
-          <Image
-            src={image.url}
-            alt={image.altText || product.title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-            loading="lazy"
-          />
+        <Link href={href} className="absolute inset-0 block">
+          <div className="absolute inset-0 transition-transform duration-500 group-hover/image:scale-105">
+            {image && (
+              <figure
+                className={`absolute inset-0 m-0 ${
+                  hoverImage ? 'transition-opacity duration-300 group-hover/image:opacity-0' : ''
+                }`}
+              >
+                <Image
+                  src={image.url}
+                  alt={image.altText || product.title}
+                  fill
+                  className="object-cover"
+                  loading="lazy"
+                />
+              </figure>
+            )}
+            {hoverImage && (
+              <figure className="absolute inset-0 m-0 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100">
+                <Image
+                  src={hoverImage.url}
+                  alt={hoverImage.altText || ''}
+                  fill
+                  className="object-cover"
+                  loading="lazy"
+                  aria-hidden={!hoverImage.altText}
+                />
+              </figure>
+            )}
+          </div>
+        </Link>
+        {!hoverImage && (
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
       <div className="p-5 flex flex-col flex-1">
@@ -59,12 +86,12 @@ export function ProductCard({ product, locale }: ProductCardProps) {
       </div>
 
       <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 translate-y-2 group-hover:translate-y-0 group-focus-within:translate-y-0 transition-all duration-300">
-        <a
-          href={`/${locale}/products/${product.handle}`}
+        <Link
+          href={href}
           className="w-full px-4 py-2 bg-black text-white text-sm font-medium rounded-lg text-center hover:bg-gray-900 transition-colors"
         >
           View Details
-        </a>
+        </Link>
       </div>
     </motion.article>
   );

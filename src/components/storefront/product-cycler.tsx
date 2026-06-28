@@ -4,14 +4,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { CYCLER_PRODUCTS } from '@/lib/catalog/data';
+import type { CatalogProduct } from '@/lib/catalog/data';
+import { PRODUCT_IMAGE_HOVER_NESTED } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
 
 interface ProductCyclerProps {
   locale: string;
+  products: CatalogProduct[];
 }
 
-export function ProductCycler({ locale }: ProductCyclerProps) {
+export function ProductCycler({ locale, products }: ProductCyclerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
@@ -21,8 +23,9 @@ export function ProductCycler({ locale }: ProductCyclerProps) {
           className="flex list-none flex-row gap-2 p-0 min-[1440px]:gap-3"
           onMouseLeave={() => setHovered(null)}
         >
-          {CYCLER_PRODUCTS.map((product, index) => {
+          {products.map((product, index) => {
             const dimmed = hovered !== null && hovered !== index;
+            const isHovered = hovered === index;
 
             return (
               <li
@@ -35,15 +38,43 @@ export function ProductCycler({ locale }: ProductCyclerProps) {
                     href={`/${locale}/products/${product.handle}`}
                     className="group/image relative block aspect-[581/755] w-full overflow-hidden bg-white no-underline"
                   >
-                    <Image
-                      src={product.image}
-                      alt={product.title}
-                      fill
-                      sizes="(max-width: 1024px) 33vw, 365px"
-                      className={`block h-full w-full object-contain object-center transition-[opacity,filter,transform] duration-700 ease-out ${
-                        dimmed ? 'scale-[0.98] opacity-40 blur-[0.5px]' : 'opacity-100'
-                      }`}
-                    />
+                    <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER_NESTED}`}>
+                      <figure
+                        className={`absolute inset-0 m-0 transition-[opacity,filter,transform] duration-500 ease-out ${
+                          product.hoverImage ? 'group-hover/image:opacity-0' : ''
+                        } ${
+                          dimmed
+                            ? 'scale-[0.98] opacity-40 blur-[0.5px]'
+                            : isHovered
+                              ? 'scale-105 opacity-100'
+                              : 'opacity-100'
+                        }`}
+                      >
+                        <Image
+                          src={product.image}
+                          alt={product.title}
+                          fill
+                          sizes="(max-width: 1024px) 33vw, 365px"
+                          className="block h-full w-full object-contain object-center"
+                        />
+                      </figure>
+                      {product.hoverImage && (
+                        <figure
+                          className={`absolute inset-0 m-0 opacity-0 transition-[opacity,filter,transform] duration-500 ease-out group-hover/image:opacity-100 ${
+                            dimmed ? 'scale-[0.98] blur-[0.5px]' : isHovered ? 'scale-105' : ''
+                          }`}
+                        >
+                          <Image
+                            src={product.hoverImage}
+                            alt=""
+                            fill
+                            sizes="(max-width: 1024px) 33vw, 365px"
+                            className="block h-full w-full object-contain object-center"
+                            aria-hidden
+                          />
+                        </figure>
+                      )}
+                    </div>
                     <div
                       className={`pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/25 to-white transition-opacity duration-700 ease-out ${
                         dimmed ? 'opacity-100' : 'opacity-0'
