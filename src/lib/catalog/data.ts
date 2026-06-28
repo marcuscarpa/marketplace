@@ -6,7 +6,6 @@ export const SITE_IMAGES = {
   popular1: '/imagem%20bloco%202%20still%20(1).jpg',
   popular2: '/Imagem%20Bloco%202%20still.jpg',
   popularSide: '/imagem-bloco-2.png',
-  popularSideMobile: '/Boco2-mobile.png',
   values: '/bloco%203.1.png',
   valuesVideo: '/banner%20alta%20costura%20.mp4',
   arrival1: '/Bloco4%20imagem%201.webp',
