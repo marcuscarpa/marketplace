@@ -58,63 +58,6 @@ export function formatPrice(price: string): string {
   return amount ? `€ ${amount}` : price;
 }
 
-const ZIM_PRODUCT_IMG =
-  '?quality=100&bg-color=255,255,255&fit=bounds&height=755&width=581&canvas=581:755';
-
-/** Curated grid for search modal (Zimmermann-style denim reference). */
-export const SEARCH_MODAL_PRODUCTS: CatalogProduct[] = [
-  {
-    title: 'Denim Cargo Jean',
-    category: 'Denim',
-    price: '$625',
-    compareAtPrice: '$895',
-    handle: 'denim-cargo-jean',
-    image:
-      'https://www.zimmermann.com/media/catalog/product/1/_/1.7482ps26r.hbbl.harbour-blue.jpg' + ZIM_PRODUCT_IMG,
-  },
-  {
-    title: 'Luna Denim Utility Bomber',
-    category: 'Denim',
-    price: '$1,425',
-    handle: 'luna-denim-utility-bomber',
-    image:
-      'https://www.zimmermann.com/media/catalog/product/1/_/1.7722js261.hbbl.harbour-blue.jpg' + ZIM_PRODUCT_IMG,
-  },
-  {
-    title: 'Indra Cropped Flare Jean',
-    category: 'Denim',
-    price: '$650',
-    handle: 'indra-cropped-flare-jean',
-    image:
-      'https://www.zimmermann.com/media/catalog/product/1/_/1.2726pss252.skylk.skylark_1.jpg' + ZIM_PRODUCT_IMG,
-  },
-  {
-    title: 'Denim Flare Jean',
-    category: 'Denim',
-    price: '$455',
-    compareAtPrice: '$650',
-    handle: 'denim-flare-jean',
-    image:
-      'https://www.zimmermann.com/media/catalog/product/1/_/1.8712ps26r.hbbl.harbour-blue.jpg' + ZIM_PRODUCT_IMG,
-  },
-  {
-    title: 'Luna Utility Flare Jean',
-    category: 'Denim',
-    price: '$995',
-    handle: 'luna-utility-flare-jean',
-    image:
-      'https://www.zimmermann.com/media/catalog/product/1/_/1.7724ps261.hbbl.harbour-blue.jpg' + ZIM_PRODUCT_IMG,
-  },
-  {
-    title: 'Indra Denim Relaxed Flare Jean',
-    category: 'Denim',
-    price: '$675',
-    handle: 'indra-denim-relaxed-flare-jean',
-    image:
-      'https://www.zimmermann.com/media/catalog/product/1/_/1.9156pss262.skylk.skylark.jpg' + ZIM_PRODUCT_IMG,
-  },
-];
-
 export const POPULAR_PRODUCTS: CatalogProduct[] = [
   { title: 'Cora Bikini Top', category: 'Bikini', price: '$127', handle: 'cora-bikini-top', image: SITE_IMAGES.popular1 },
   {
@@ -154,6 +97,30 @@ export const NEW_ARRIVALS: CatalogProduct[] = [
     price: '$107',
     handle: 'ava-bikini-bottom-astral',
     image: SITE_IMAGES.arrival4,
+  },
+];
+
+/** Default grid for search modal — same products as home (popular + new arrivals). */
+export const SEARCH_MODAL_PRODUCTS: CatalogProduct[] = [
+  ...POPULAR_PRODUCTS,
+  ...NEW_ARRIVALS,
+].slice(0, 6);
+
+/** Featured products beside the women collection editorial on the home page. */
+export const SPOTLIGHT_PRODUCTS: CatalogProduct[] = [
+  {
+    title: 'Josephine Dress',
+    category: 'Ready-to-Wear',
+    price: '$670',
+    handle: 'josephine-dress',
+    image: SITE_IMAGES.bestseller1,
+  },
+  {
+    title: 'Larissa Romper Off White',
+    category: 'Romper',
+    price: '$460',
+    handle: 'macaquinho-larissa-off-white',
+    image: SITE_IMAGES.bestseller2,
   },
 ];
 

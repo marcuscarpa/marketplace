@@ -4,6 +4,7 @@ import {
   CYCLER_PRODUCTS,
   NEW_ARRIVALS,
   POPULAR_PRODUCTS,
+  SPOTLIGHT_PRODUCTS,
 } from '@/lib/catalog/data';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
 
@@ -16,12 +17,14 @@ interface HomePageProps {
 export default async function LocaleHomePage({ params }: HomePageProps) {
   const { locale } = await params;
 
-  const [popularProducts, newArrivals, cyclerProducts, bestsellerProducts] = await Promise.all([
-    withShopifyHoverImages(POPULAR_PRODUCTS, locale),
-    withShopifyHoverImages(NEW_ARRIVALS, locale),
-    withShopifyHoverImages(CYCLER_PRODUCTS, locale),
-    withShopifyHoverImages(BESTSELLERS, locale),
-  ]);
+  const [popularProducts, newArrivals, cyclerProducts, bestsellerProducts, spotlightProducts] =
+    await Promise.all([
+      withShopifyHoverImages(POPULAR_PRODUCTS, locale),
+      withShopifyHoverImages(NEW_ARRIVALS, locale),
+      withShopifyHoverImages(CYCLER_PRODUCTS, locale),
+      withShopifyHoverImages(BESTSELLERS, locale),
+      withShopifyHoverImages(SPOTLIGHT_PRODUCTS, locale),
+    ]);
 
   return (
     <HomePage
@@ -30,6 +33,7 @@ export default async function LocaleHomePage({ params }: HomePageProps) {
       newArrivals={newArrivals}
       cyclerProducts={cyclerProducts}
       bestsellerProducts={bestsellerProducts}
+      spotlightProducts={spotlightProducts}
     />
   );
 }

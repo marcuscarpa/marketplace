@@ -1,4 +1,4 @@
-import { BESTSELLERS, SEARCH_MODAL_PRODUCTS, type CatalogProduct } from '@/lib/catalog/data';
+import { BESTSELLERS, POPULAR_PRODUCTS, type CatalogProduct } from '@/lib/catalog/data';
 import type { CartLineItem } from '@/lib/cart/serialize';
 import { currencyForLocale } from '@/lib/locale-currency';
 
@@ -13,10 +13,7 @@ export interface MinicartRecommendation {
 export const MOCK_CART_ID = 'mock-cart';
 
 /** ponytail: local catalog handles — Zimmermann URLs 404 on /products/ */
-const picks = [
-  SEARCH_MODAL_PRODUCTS.find((p) => p.handle === 'alight-wedge-100'),
-  ...BESTSELLERS.slice(0, 4),
-].filter(Boolean) as Array<{ handle: string; title: string; price: string; image: string }>;
+const picks = [...POPULAR_PRODUCTS.slice(0, 1), ...BESTSELLERS.slice(0, 4)].filter(Boolean) as Array<{ handle: string; title: string; price: string; image: string }>;
 
 export const MINICART_RECOMMENDATIONS: MinicartRecommendation[] = picks.map((p) => ({
   handle: p.handle,
@@ -56,7 +53,7 @@ function mockLine(
 
 /** Demo bag while Shopify credentials are placeholders / missing */
 export function getMockCart(locale: string) {
-  const [first, second] = SEARCH_MODAL_PRODUCTS;
+  const [first, second] = POPULAR_PRODUCTS;
   if (!first || !second) {
     return {
       id: MOCK_CART_ID,

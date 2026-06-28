@@ -897,3 +897,136 @@ select {
     display: none;
   }
 }
+
+/* Cookie consent bar */
+.cookie-policy__bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 50;
+  display: grid;
+  gap: 16px;
+  padding: 20px 20px 24px;
+  background: #fff;
+  border-top: 1px solid rgb(3 6 7 / 0.12);
+  box-shadow: 0 -4px 24px rgb(3 6 7 / 0.08);
+}
+
+.cookie-policy__bar-close {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cookie-policy__bar-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cookie-policy__bar-text p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgb(3 6 7 / 0.85);
+}
+
+.cookie-policy__bar-text a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cookie-policy__bar-btns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+.cookie-policy__bar .cta {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--ink);
+}
+
+.btn--clear {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.btn--close {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex: none;
+}
+
+.btn--close::before,
+.btn--close::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 1px;
+  background: var(--ink);
+}
+
+.btn--close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.btn--close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.btn--accept {
+  padding: 10px 32px;
+  background: var(--btn-ink);
+  border: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 12px;
+  letter-spacing: 0.24px;
+  text-transform: uppercase;
+  color: var(--btn-white);
+  white-space: nowrap;
+}
+
+.btn--accept:hover {
+  background: rgb(3 6 7 / 0.88);
+}
+
+@media (min-width: 1024px) {
+  .cookie-policy__bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'close close'
+      'text btns';
+    align-items: center;
+    gap: 12px 40px;
+    padding: 24px 32px 28px;
+  }
+
+  .cookie-policy__bar-close {
+    grid-area: close;
+  }
+
+  .cookie-policy__bar-text {
+    grid-area: text;
+  }
+
+  .cookie-policy__bar-btns {
+    grid-area: btns;
+    justify-content: flex-end;
+  }
+}

@@ -1,6 +1,7 @@
 import { AboutSection } from '@/components/storefront/about-section';
 import { WhyShopSection } from '@/components/storefront/why-shop-section';
 import { Bestsellers } from '@/components/storefront/bestsellers';
+import { CollectionSpotlight } from '@/components/storefront/collection-spotlight';
 import { ProductCycler } from '@/components/storefront/product-cycler';
 import { CollectionCta } from '@/components/storefront/collection-cta';
 import { Hero } from '@/components/storefront/hero';
@@ -18,6 +19,7 @@ interface HomePageProps {
   newArrivals: CatalogProduct[];
   cyclerProducts: CatalogProduct[];
   bestsellerProducts: CatalogProduct[];
+  spotlightProducts: CatalogProduct[];
 }
 
 const ORCHID_COLLECTION_HANDLE = 'orchid-collection';
@@ -28,6 +30,7 @@ export function HomePage({
   newArrivals,
   cyclerProducts,
   bestsellerProducts,
+  spotlightProducts,
 }: HomePageProps) {
   const valuesCollectionHref = isShopifyConfigured(locale)
     ? `/${locale}/collections/${ORCHID_COLLECTION_HANDLE}`
@@ -41,6 +44,7 @@ export function HomePage({
       <OurValues collectionHref={valuesCollectionHref} locale={locale} />
       <ProductCycler locale={locale} products={cyclerProducts} />
       <Bestsellers locale={locale} products={bestsellerProducts} />
+      <CollectionSpotlight locale={locale} products={spotlightProducts} />
       <AboutSection locale={locale} />
       <WhyShopSection locale={locale} />
       <SocialFeed locale={locale} />

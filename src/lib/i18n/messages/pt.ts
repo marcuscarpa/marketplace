@@ -118,6 +118,9 @@ export const pt: Messages = {
     securePaymentBody: 'Protegemos suas informações de pagamento.',
     easyReturns: 'Devolução em 14 dias',
     easyReturnsBody: 'Acreditamos que você vai amar. Se não amar, fale conosco!',
+    womenCollectionBadge: 'Feminino 2025',
+    womenCollectionImageAlt: 'Mulher em look resort elegante com bolsa estruturada',
+    selectVariantOnPage: 'Selecione a cor na página do produto',
   },
   collection: {
     notFound: 'Coleção não encontrada',

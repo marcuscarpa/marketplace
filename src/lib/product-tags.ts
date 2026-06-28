@@ -124,7 +124,7 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
     title: 'x',
     category: 'y',
     price: '€ 100',
-    handle: 'denim-cargo-jean',
+    handle: 'sale-fixture',
     image: '/x.jpg',
     compareAtPrice: '€ 200',
   });

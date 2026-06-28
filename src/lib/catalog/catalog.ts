@@ -45,9 +45,10 @@ function uniqueProducts(products: CatalogProduct[]): CatalogProduct[] {
 }
 
 const CURATED_SEARCH_TRIGGERS = [
-  'denim',
-  'jean',
-  'jeans',
+  'bikini',
+  'swimwear',
+  'bags',
+  'bracelets',
   'women',
   'new',
   'sale',
@@ -62,7 +63,6 @@ function matchesCuratedSearch(query: string): boolean {
 
 export function getAllCatalogProducts(): CatalogProduct[] {
   return uniqueProducts([
-    ...SEARCH_MODAL_PRODUCTS,
     ...POPULAR_PRODUCTS,
     ...NEW_ARRIVALS,
     ...BESTSELLERS,
@@ -81,10 +81,7 @@ export function searchCatalogProducts(query: string, first = 6): CatalogProduct[
 
   if (matchesCuratedSearch(q)) {
     if (q.includes('sale')) {
-      return [
-        ...SEARCH_MODAL_PRODUCTS.filter((p) => p.compareAtPrice),
-        ...SEARCH_MODAL_PRODUCTS.filter((p) => !p.compareAtPrice),
-      ].slice(0, first);
+      return getAllCatalogProducts().filter((p) => p.compareAtPrice).slice(0, first);
     }
     return SEARCH_MODAL_PRODUCTS.slice(0, first);
   }

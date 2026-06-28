@@ -2,17 +2,15 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-interface WishlistItem {
-  id: string;
-  handle: string;
-  title: string;
-  price: string;
-  image: string;
-}
+import {
+  WISHLIST_SEED_ITEMS,
+  normalizeWishlistItems,
+  type WishlistStoredItem,
+} from '@/lib/catalog/wishlist-seed';
 
 interface WishlistContextType {
-  items: WishlistItem[];
-  addItem: (item: WishlistItem) => void;
+  items: WishlistStoredItem[];
+  addItem: (item: WishlistStoredItem) => void;
   removeItem: (id: string) => void;
   isInWishlist: (id: string) => boolean;
   clearWishlist: () => void;
@@ -20,32 +18,45 @@ interface WishlistContextType {
 
 const WishlistContext = createContext<WishlistContextType | null>(null);
 
-const EMPTY_WISHLIST: WishlistItem[] = [];
+const EMPTY_WISHLIST: WishlistStoredItem[] = [];
+const STORAGE_KEY = 'wishlist';
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<WishlistItem[]>(EMPTY_WISHLIST);
+  const [items, setItems] = useState<WishlistStoredItem[]>(EMPTY_WISHLIST);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('wishlist');
-if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as WishlistItem[];
-        setItems(parsed.length > 0 ? parsed : EMPTY_WISHLIST);
-      } catch {
-        setItems(EMPTY_WISHLIST);
-      }
+    if (typeof window === 'undefined') return;
+
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) {
+      // ponytail: demo favorites — same 6 products as search modal; upgrade path: account sync
+      setItems(WISHLIST_SEED_ITEMS);
+      setHydrated(true);
+      return;
     }
+
+    try {
+      const parsed = JSON.parse(stored) as WishlistStoredItem[];
+      const normalized = normalizeWishlistItems(parsed);
+      setItems(normalized.length > 0 ? normalized : WISHLIST_SEED_ITEMS);
+    } catch {
+      setItems(WISHLIST_SEED_ITEMS);
+      localStorage.removeItem(STORAGE_KEY);
     }
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && items !== EMPTY_WISHLIST) {
-      localStorage.setItem('wishlist', JSON.stringify(items));
+    if (!hydrated || typeof window === 'undefined') return;
+    if (items.length === 0) {
+      localStorage.removeItem(STORAGE_KEY);
+      return;
     }
-  }, [items]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }, [items, hydrated]);
 
-  const addItem = (item: WishlistItem) => {
+  const addItem = (item: WishlistStoredItem) => {
     setItems((prev) => {
       if (prev.some((i) => i.id === item.id)) return prev;
       return [...prev, item];

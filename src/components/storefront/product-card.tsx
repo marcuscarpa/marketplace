@@ -26,6 +26,8 @@ interface PopularCardProps {
   locale: string;
   badges?: ProductTagKey[];
   index?: number;
+  /** Split vertical space evenly beside a tall editorial image (collection spotlight). */
+  stacked?: boolean;
 }
 
 const ADD_TO_CART_BAR =
@@ -78,7 +80,7 @@ function FavoriteButton({ product }: { product: CatalogProduct }) {
 }
 
 /** Most-popular product card (mobile + desktop variants). */
-export function PopularCard({ product, locale, badges, index = 0 }: PopularCardProps) {
+export function PopularCard({ product, locale, badges, index = 0, stacked = false }: PopularCardProps) {
   const href = `/${locale}/products/${product.handle}`;
   const price = formatCatalogPrice(product.price, locale);
   const tags = badges ?? resolveCatalogProductTags(product);
@@ -95,13 +97,19 @@ export function PopularCard({ product, locale, badges, index = 0 }: PopularCardP
       initial={{ opacity: 0, y: 24 }}
       animate={mounted && inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="relative flex w-full flex-col gap-4"
+      className={`relative flex w-full flex-col gap-4 ${
+        stacked ? 'min-h-0 min-[1440px]:h-full min-[1440px]:flex-1' : ''
+      }`}
     >
       <div className="absolute inset-x-0 top-0 z-10 flex h-12 justify-end p-2">
         <FavoriteButton product={product} />
       </div>
 
-      <div className="group/image relative aspect-[171/221] w-full overflow-hidden bg-cream">
+      <div
+        className={`group/image relative aspect-[171/221] w-full overflow-hidden bg-cream ${
+          stacked ? 'min-[1440px]:aspect-auto min-[1440px]:min-h-0 min-[1440px]:flex-1' : ''
+        }`}
+      >
         {tags.length > 0 && (
           <ProductTags
             tags={tags}
@@ -143,7 +151,7 @@ export function PopularCard({ product, locale, badges, index = 0 }: PopularCardP
         </Link>
       </div>
 
-      <Link href={href} className="flex flex-col gap-2 text-center font-sans-ui no-underline lg:text-left">
+      <Link href={href} className="flex shrink-0 flex-col gap-2 text-center font-sans-ui no-underline lg:text-left">
         <div className="flex flex-col gap-1">
           <p className="text-[14px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink">
             {product.title}
