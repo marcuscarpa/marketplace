@@ -100,6 +100,9 @@ export function SectionHeading({ children, className = '', light = false }: Sect
 
 /** Section rhythm: 40px mobile / 64px desktop — common luxury retail spacing. */
 export const SECTION_PADDING = 'px-5 py-10 lg:py-16';
+/** Like SECTION_PADDING but clears the fixed announcement bar + header + desktop nav. */
+export const SECTION_PADDING_BELOW_HEADER =
+  'px-5 pb-10 pt-[calc(84px+2.5rem)] lg:pb-16 lg:pt-[calc(121px+4rem)]';
 /** Stacked between two padded sections — vertical spacing comes from neighbors. */
 export const SECTION_PADDING_FLUSH = 'px-5 py-0';
 export const HEADING_MB = 'mb-6 lg:mb-8';

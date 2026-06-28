@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
 import {
   CollectionProducts,
   ShopifyCollectionProducts,
 } from '@/components/storefront/collection-products';
-import { SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
+import { SECTION_PADDING_BELOW_HEADER, SectionHeading } from '@/components/storefront/ui';
 import { getCatalogCollection } from '@/lib/catalog/catalog';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
 import { getBestsellerHandles } from '@/lib/shopify/bestsellers';
@@ -98,19 +97,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
     const products = await withShopifyHoverImages(collection.products, locale);
 
     return (
-      <section className={`mx-auto max-w-[1440px] ${SECTION_PADDING}`}>
-        {collection.image && (
-          <div className="relative mb-10 aspect-[16/7] overflow-hidden bg-cream">
-            <Image
-              src={collection.image}
-              alt={collection.title}
-              fill
-              sizes="(max-width: 1440px) 100vw, 1440px"
-              className="object-cover"
-              priority
-            />
-          </div>
-        )}
+      <section className={`mx-auto max-w-[1440px] ${SECTION_PADDING_BELOW_HEADER}`}>
         <SectionHeading className="mb-4">{collection.title}</SectionHeading>
         {collection.description && (
           <p className="mb-10 max-w-2xl font-sans-ui text-[14px] uppercase leading-[140%] tracking-[0.02em] text-ink/60">
@@ -137,21 +124,9 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   const bestsellerHandles = await getBestsellerHandles(locale);
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white pt-[calc(84px+2.5rem)] lg:pt-[calc(121px+4rem)]">
       <header className="bg-gray-950 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {collection.image && (
-            <div className="relative mb-8">
-              <Image
-                src={collection.image.url}
-                alt={collection.image.altText || collection.title}
-                width={1280}
-                height={256}
-                className="w-full h-64 object-cover rounded-xl"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-950/60 to-transparent rounded-xl" />
-            </div>
-          )}
           <h1 className="text-4xl lg:text-5xl font-light tracking-tight mb-4">{collection.title}</h1>
           {collection.description && (
             <p className="text-lg text-gray-300 max-w-2xl">{collection.description}</p>

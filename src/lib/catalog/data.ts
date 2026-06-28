@@ -8,6 +8,7 @@ export const SITE_IMAGES = {
   popularSide: '/imagem-bloco-2.png',
   popularSideMobile: '/Boco2-mobile.png',
   values: '/bloco%203.1.png',
+  valuesVideo: '/banner%20alta%20costura%20.mp4',
   arrival1: '/Bloco4%20imagem%201.webp',
   arrival2: '/Bloco4%20imagem%202.png',
   arrival3: '/Bloco4%20imagem%203.png',
