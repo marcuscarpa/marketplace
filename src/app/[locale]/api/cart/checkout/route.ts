@@ -30,7 +30,7 @@ export async function GET(
     const result = await client.execute<{ cart: ShopifyCart | null }>(GET_CART, { cartId });
 
     if (result?.cart?.checkoutUrl) {
-      redirect(result.checkoutUrl);
+      redirect(result.cart.checkoutUrl);
     }
   } catch (error) {
     logger.error('GET /api/cart/checkout failed', { cartId, error });

@@ -35,9 +35,9 @@ export function HomePage({
     <>
       <Hero locale={locale} />
       <MostPopular locale={locale} products={popularProducts} />
+      <CollectionCta locale={locale} />
       <OurValues collectionHref={valuesCollectionHref} />
       <NewArrivals locale={locale} products={newArrivals} />
-      <CollectionCta locale={locale} />
       <ProductCycler locale={locale} products={cyclerProducts} />
       <Bestsellers locale={locale} products={bestsellerProducts} />
       <AboutSection locale={locale} />
