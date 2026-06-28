@@ -67,16 +67,18 @@ function getRegions(): Record<string, Region> {
   }
 }
 
-const REGIONS = getRegions();
-
-const regionsList: Region[] = Object.values(REGIONS);
-
-const usRegion: Region = REGIONS.us as Region;
+/** ponytail: test-only; clears cached regions after env mock changes */
+export function resetRegionsCache(): void {
+  _regions = null;
+}
 
 export function resolveRegion(req: NextRequest): Region {
+  const regions = getRegions();
+  const usRegion = regions.us as Region;
+
   const cookieRegion = req.cookies.get('region')?.value;
   if (cookieRegion) {
-    const r = REGIONS[cookieRegion];
+    const r = regions[cookieRegion];
     if (r !== undefined) return r;
   }
 
@@ -89,7 +91,7 @@ export function resolveRegion(req: NextRequest): Region {
     const langParts = lang.split('-');
     const langCode = langParts[0] ?? '';
     if (!langCode) continue;
-    for (const r of regionsList) {
+    for (const r of Object.values(regions)) {
       if (r.defaultLanguage === langCode) return r;
     }
   }
@@ -106,16 +108,18 @@ export function resolveRegion(req: NextRequest): Region {
     AU: 'apac',
   };
   const code = regionMap[country] || 'us';
-  const fallback = REGIONS[code];
+  const fallback = regions[code];
   if (fallback !== undefined) return fallback;
   return usRegion;
 }
 
 export const getRegion = (code: string): Region => {
+  const regions = getRegions();
+  const usRegion = regions.us as Region;
   const normalized = code.toLowerCase();
   const localeToRegion: Record<string, string> = { en: 'us', pt: 'br' };
-  const regionKey = REGIONS[normalized] ? normalized : localeToRegion[normalized];
-  const r = regionKey ? REGIONS[regionKey] : undefined;
+  const regionKey = regions[normalized] ? normalized : localeToRegion[normalized];
+  const r = regionKey ? regions[regionKey] : undefined;
   if (r !== undefined) return r;
   return usRegion;
 };
