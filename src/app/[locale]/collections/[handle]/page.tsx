@@ -78,30 +78,34 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
   const { handle, locale } = await params;
   const result = await getCollection(handle, locale);
   if (!result) return { title: 'Collection Not Found' };
-  const { collection } = result;
-  const description = collection.description || `Shop the ${collection.title} collection`;
+
+  const description =
+    result.collection.description || `Shop the ${result.collection.title} collection`;
   let image = SOCIAL_SHARE_IMAGE;
+
   if (result.source === 'shopify') {
+    const { collection } = result;
     image =
       collection.image?.url ||
-      collection.products?.nodes?.[0]?.images?.nodes?.[0]?.url ||
+      collection.products.nodes[0]?.images.nodes[0]?.url ||
       SOCIAL_SHARE_IMAGE;
-  } else if (collection.image) {
-    image = collection.image;
-  } else if (collection.products[0]?.image) {
-    image = collection.products[0].image;
+  } else {
+    const { collection } = result;
+    image = collection.image ?? collection.products[0]?.image ?? SOCIAL_SHARE_IMAGE;
   }
+
+  const { title } = result.collection;
   return {
-    title: collection.title,
+    title,
     description,
     openGraph: {
-      title: collection.title,
+      title,
       description,
-      images: [{ url: image, alt: collection.title }],
+      images: [{ url: image, alt: title }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: collection.title,
+      title,
       description,
       images: [image],
     },
