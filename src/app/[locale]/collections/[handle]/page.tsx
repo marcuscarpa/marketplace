@@ -7,6 +7,7 @@ import {
 } from '@/components/storefront/collection-products';
 import { SECTION_PADDING_BELOW_HEADER, SectionHeading } from '@/components/storefront/ui';
 import { getCatalogCollection } from '@/lib/catalog/catalog';
+import { SOCIAL_SHARE_IMAGE } from '@/lib/site-metadata';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
 import { getBestsellerHandles } from '@/lib/shopify/bestsellers';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
@@ -78,9 +79,32 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
   const result = await getCollection(handle, locale);
   if (!result) return { title: 'Collection Not Found' };
   const { collection } = result;
+  const description = collection.description || `Shop the ${collection.title} collection`;
+  let image = SOCIAL_SHARE_IMAGE;
+  if (result.source === 'shopify') {
+    image =
+      collection.image?.url ||
+      collection.products?.nodes?.[0]?.images?.nodes?.[0]?.url ||
+      SOCIAL_SHARE_IMAGE;
+  } else if (collection.image) {
+    image = collection.image;
+  } else if (collection.products[0]?.image) {
+    image = collection.products[0].image;
+  }
   return {
     title: collection.title,
-    description: collection.description || `Shop the ${collection.title} collection`,
+    description,
+    openGraph: {
+      title: collection.title,
+      description,
+      images: [{ url: image, alt: collection.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: collection.title,
+      description,
+      images: [image],
+    },
   };
 }
 

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { ProductDetailsLuxury } from '@/components/luxury/product-details-luxury';
 import { ProductViewTracker } from '@/components/ui/product-view-tracker';
 import { isVideo360Enabled } from '@/lib/feature-flags';
+import { SOCIAL_SHARE_IMAGE } from '@/lib/site-metadata';
 import { getProductByHandle } from '@/lib/shopify/loader';
 import { getPageRecommendations } from '@/lib/shopify/product-recommendations';
 
@@ -15,13 +16,21 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const { handle, locale } = await params;
   const product = await getProductByHandle(handle, locale);
   if (!product) return { title: 'Product Not Found' };
+  const description = product.description.slice(0, 160);
+  const image = product.images.nodes[0]?.url ?? SOCIAL_SHARE_IMAGE;
   return {
     title: `${product.title} | Luxury Store`,
-    description: product.description.slice(0, 160),
+    description,
     openGraph: {
       title: product.title,
-      description: product.description.slice(0, 160),
-      images: product.images.nodes[0] ? [{ url: product.images.nodes[0].url }] : [],
+      description,
+      images: [{ url: image, alt: product.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: product.title,
+      description,
+      images: [image],
     },
   };
 }

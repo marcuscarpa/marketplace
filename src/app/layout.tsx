@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Instrument_Sans, IBM_Plex_Mono } from 'next/font/google';
 import React from 'react';
+
+import {
+  getAppUrl,
+  SITE_DESCRIPTION,
+  SOCIAL_SHARE_IMAGE,
+} from '@/lib/site-metadata';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -23,12 +29,9 @@ const ibmPlex = IBM_Plex_Mono({
 });
 
 const FAVICON = '/Favicon_sinesia.ico';
-const SOCIAL_IMAGE = '/icone-sinesia.png';
-const SITE_DESCRIPTION =
-  'Curated leather goods and accessories — enduring design and contemporary craftsmanship.';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://sinesiakarol.us'),
+  metadataBase: new URL(getAppUrl()),
   title: {
     default: 'Sinesia Karol — Timeless Sophistication',
     template: '%s | Sinesia Karol',
@@ -45,13 +48,13 @@ export const metadata: Metadata = {
     siteName: 'Sinesia Karol',
     title: 'Sinesia Karol — Timeless Sophistication',
     description: SITE_DESCRIPTION,
-    images: [{ url: SOCIAL_IMAGE, alt: 'Sinesia Karol' }],
+    images: [{ url: SOCIAL_SHARE_IMAGE, alt: 'Sinesia Karol', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Sinesia Karol — Timeless Sophistication',
     description: SITE_DESCRIPTION,
-    images: [SOCIAL_IMAGE],
+    images: [SOCIAL_SHARE_IMAGE],
   },
   other: {
     'mobile-web-app-capable': 'yes',
