@@ -52,7 +52,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <PageMain>
-      <div className="mx-auto max-w-7xl lg:py-8">
+      <div className="mx-auto max-w-7xl py-8 lg:pb-8 lg:pt-0">
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
           <a href={`/${locale}`} className="hover:text-gray-900 transition-colors">
             Home
