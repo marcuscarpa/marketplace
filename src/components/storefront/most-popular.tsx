@@ -44,9 +44,9 @@ export function MostPopular({ locale, products }: MostPopularProps) {
           data-entrance-step="3"
           className="relative hidden h-[520px] shrink-0 overflow-hidden min-[768px]:block min-[768px]:max-[1439px]:left-1/2 min-[768px]:max-[1439px]:w-screen min-[768px]:max-[1439px]:-translate-x-1/2 min-[1440px]:left-auto min-[1440px]:h-[900px] min-[1440px]:w-[690px] min-[1440px]:translate-x-0"
         >
-          <div className="absolute inset-0 min-[1440px]:hidden">
+          <div className="absolute inset-0 min-[768px]:max-[1439px]:block max-[767px]:hidden min-[1440px]:hidden">
             <Image
-              src={SITE_IMAGES.popularSideMobile}
+              src={SITE_IMAGES.popularSideIpad}
               alt="Woman in a tropical-print swimsuit seated on coastal rocks by the sea"
               fill
               sizes="100vw"
