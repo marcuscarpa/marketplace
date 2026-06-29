@@ -159,7 +159,7 @@ function IconClose() {
 
 function NavSeparator({ light }: { light: boolean }) {
   return (
-    <span className={`px-2 font-sans-ui text-[11px] font-light ${light ? 'text-white/50' : 'text-ink/35'}`}>
+    <span className={`menu-text px-2 ${light ? 'text-white/50' : 'text-ink/35'}`}>
       |
     </span>
   );
@@ -179,7 +179,7 @@ function MenuUtilityRow({
   trailing?: React.ReactNode;
 }) {
   const className =
-    'flex w-full items-center gap-3 -mx-8 px-8 py-2 font-sans-ui text-[11px] font-normal uppercase tracking-[0.04em] text-ink transition-colors hover:bg-cream';
+    'menu-text flex w-full items-center gap-3 -mx-8 px-8 py-2 text-ink transition-colors hover:bg-cream';
 
   const content = (
     <>
@@ -312,7 +312,7 @@ function MarketChooser({
             key={market.id}
             type="button"
             onClick={() => selectMarket(market.id)}
-            className="flex w-full items-center gap-2 border-b border-black/8 py-4 font-sans-ui text-[12px] font-normal uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
+            className="menu-text flex w-full items-center gap-2 border-b border-black/8 py-4 text-ink transition-opacity hover:opacity-60"
             aria-current={market.id === current.id ? 'true' : undefined}
           >
             <FlagIcon market={market.id} clipId={`${clipBase}-${market.id}`} />
@@ -336,9 +336,7 @@ function MarketChooser({
       >
         <FlagIcon market={current.id} clipId={`${clipBase}-current`} />
         <NavSeparator light={light} />
-        <span className="font-sans-ui text-[11px] font-light uppercase tracking-[0.02em]">
-          {current.currencyLabel}
-        </span>
+        <span className="menu-text">{current.currencyLabel}</span>
       </button>
 
       {open && (
@@ -354,7 +352,7 @@ function MarketChooser({
               role="option"
               aria-selected={market.id === current.id}
               onClick={() => selectMarket(market.id)}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left font-sans-ui text-[11px] font-light uppercase tracking-[0.02em] text-ink transition-colors hover:bg-black/4"
+              className="menu-text flex w-full items-center gap-2 px-3 py-2 text-left text-ink transition-colors hover:bg-black/4"
             >
               <FlagIcon market={market.id} clipId={`${clipBase}-opt-${market.id}`} />
               <NavSeparator light={false} />
@@ -524,7 +522,7 @@ export function Header({ locale }: HeaderProps) {
                 {index > 0 && <NavSeparator light={heroNav} />}
                 <Link
                   href={`${prefix}/${item.href}`}
-                  className={`font-sans-ui text-[11px] font-light uppercase tracking-[0.02em] transition-opacity hover:opacity-60 ${
+                  className={`menu-text transition-opacity hover:opacity-60 ${
                     'sale' in item && item.sale ? 'text-[#9c4a4a]' : ink
                   }`}
                 >
@@ -569,8 +567,8 @@ export function Header({ locale }: HeaderProps) {
                       <Link
                         href={`${prefix}/${item.href}`}
                         onClick={() => setMenuOpen(false)}
-                        className={`block -mx-8 px-8 py-2 font-sans-ui text-[13px] font-normal uppercase tracking-[0.02em] transition-colors hover:bg-cream ${
-                          'sale' in item && item.sale ? 'text-[#9c4a4a]' : 'text-ink'
+                        className={`menu-text block -mx-8 px-8 py-2 text-ink transition-colors hover:bg-cream ${
+                          'sale' in item && item.sale ? 'text-[#9c4a4a]' : ''
                         }`}
                       >
                         {item.label}
@@ -590,7 +588,7 @@ export function Header({ locale }: HeaderProps) {
                       <Link
                         href={`${prefix}/${link.href}`}
                         onClick={() => setMenuOpen(false)}
-                        className="block -mx-8 px-8 py-2 font-sans-ui text-[13px] font-medium uppercase tracking-[0.02em] text-ink transition-colors hover:bg-cream"
+                        className="menu-text block -mx-8 px-8 py-2 text-ink transition-colors hover:bg-cream"
                       >
                         {link.label}
                       </Link>
@@ -619,7 +617,7 @@ export function Header({ locale }: HeaderProps) {
                     }}
                     trailing={
                       cartCount > 0 ? (
-                        <span className="font-sans-ui text-[11px] font-light tabular-nums">{cartCount}</span>
+                        <span className="menu-text tabular-nums">{cartCount}</span>
                       ) : undefined
                     }
                   />
@@ -630,7 +628,7 @@ export function Header({ locale }: HeaderProps) {
                     onClick={() => setMenuOpen(false)}
                     trailing={
                       wishlistCount > 0 ? (
-                        <span className="font-sans-ui text-[11px] font-light tabular-nums">{wishlistCount}</span>
+                        <span className="menu-text tabular-nums">{wishlistCount}</span>
                       ) : undefined
                     }
                   />

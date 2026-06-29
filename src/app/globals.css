@@ -150,6 +150,16 @@ select {
   font-family: var(--font-sans);
 }
 
+.menu-text {
+  font-family: 'Helvetica Neue Regular', 'Helvetica Neue Regular Placeholder', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 .font-mono-ui {
   font-family: var(--font-mono);
 }
