@@ -48,7 +48,9 @@ export const metadata: Metadata = {
     siteName: 'Sinesia Karol',
     title: 'Sinesia Karol — Timeless Sophistication',
     description: SITE_DESCRIPTION,
-    images: [{ url: SOCIAL_SHARE_IMAGE, alt: 'Sinesia Karol', width: 1200, height: 630 }],
+    images: [
+      { url: SOCIAL_SHARE_IMAGE, alt: 'Sinesia Karol', width: 1200, height: 630, type: 'image/jpeg' },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
