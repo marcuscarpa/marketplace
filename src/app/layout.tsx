@@ -5,6 +5,7 @@ import React from 'react';
 import {
   getAppUrl,
   getSocialShareImageUrl,
+  resolveMetadataBase,
   SITE_DESCRIPTION,
 } from '@/lib/site-metadata';
 import './globals.css';
@@ -29,11 +30,14 @@ const ibmPlex = IBM_Plex_Mono({
 });
 
 const FAVICON = '/Favicon_sinesia.ico';
+const metadataBaseResolved = resolveMetadataBase();
+const sharePreviewImageUrl = getSocialShareImageUrl();
+const ogTitle = 'Sinesia Karol — Timeless Sophistication';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getAppUrl()),
+  metadataBase: metadataBaseResolved,
   title: {
-    default: 'Sinesia Karol — Timeless Sophistication',
+    default: ogTitle,
     template: '%s | Sinesia Karol',
   },
   description: SITE_DESCRIPTION,
@@ -41,29 +45,26 @@ export const metadata: Metadata = {
   icons: {
     icon: FAVICON,
     shortcut: FAVICON,
-    apple: getSocialShareImageUrl(),
+    apple: FAVICON,
   },
   openGraph: {
     type: 'website',
     url: getAppUrl(),
     siteName: 'Sinesia Karol',
-    title: 'Sinesia Karol — Timeless Sophistication',
+    title: ogTitle,
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: getSocialShareImageUrl(),
+        url: sharePreviewImageUrl,
         alt: 'Sinesia Karol',
-        width: 1200,
-        height: 630,
-        type: 'image/jpeg',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sinesia Karol — Timeless Sophistication',
+    title: ogTitle,
     description: SITE_DESCRIPTION,
-    images: [getSocialShareImageUrl()],
+    images: [sharePreviewImageUrl],
   },
   other: {
     'mobile-web-app-capable': 'yes',

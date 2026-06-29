@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { ProductDetailsLuxury } from '@/components/luxury/product-details-luxury';
 import { ProductViewTracker } from '@/components/ui/product-view-tracker';
 import { isVideo360Enabled } from '@/lib/feature-flags';
-import { SOCIAL_SHARE_IMAGE } from '@/lib/site-metadata';
+import { getSocialShareImageUrl } from '@/lib/site-metadata';
 import { getProductByHandle } from '@/lib/shopify/loader';
 import { getPageRecommendations } from '@/lib/shopify/product-recommendations';
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = await getProductByHandle(handle, locale);
   if (!product) return { title: 'Product Not Found' };
   const description = product.description.slice(0, 160);
-  const image = product.images.nodes[0]?.url ?? SOCIAL_SHARE_IMAGE;
+  const image = product.images.nodes[0]?.url ?? getSocialShareImageUrl();
   return {
     title: `${product.title} | Luxury Store`,
     description,

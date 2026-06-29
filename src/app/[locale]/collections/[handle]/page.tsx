@@ -7,7 +7,7 @@ import {
 } from '@/components/storefront/collection-products';
 import { SECTION_PADDING_BELOW_HEADER, SectionHeading } from '@/components/storefront/ui';
 import { getCatalogCollection } from '@/lib/catalog/catalog';
-import { SOCIAL_SHARE_IMAGE } from '@/lib/site-metadata';
+import { getSocialShareImageUrl } from '@/lib/site-metadata';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
 import { getBestsellerHandles } from '@/lib/shopify/bestsellers';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
@@ -81,17 +81,17 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
 
   const description =
     result.collection.description || `Shop the ${result.collection.title} collection`;
-  let image = SOCIAL_SHARE_IMAGE;
+  let image = getSocialShareImageUrl();
 
   if (result.source === 'shopify') {
     const { collection } = result;
     image =
       collection.image?.url ||
       collection.products.nodes[0]?.images.nodes[0]?.url ||
-      SOCIAL_SHARE_IMAGE;
+      getSocialShareImageUrl();
   } else {
     const { collection } = result;
-    image = collection.image ?? collection.products[0]?.image ?? SOCIAL_SHARE_IMAGE;
+    image = collection.image ?? collection.products[0]?.image ?? getSocialShareImageUrl();
   }
 
   const { title } = result.collection;

@@ -1,4 +1,19 @@
+import { existsSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+
 import type { NextConfig } from 'next';
+
+// ponytail: `next build` then `next dev` without cleaning leaves pages/_document.js → missing ./5611.js
+if (
+  process.env.NODE_ENV !== 'production' &&
+  process.argv.some((arg) => arg === 'dev' || arg.endsWith('next-dev.js'))
+) {
+  const staleProductionPages = join(process.cwd(), '.next/server/pages/_document.js');
+  if (existsSync(staleProductionPages)) {
+    rmSync(join(process.cwd(), '.next'), { recursive: true, force: true });
+    console.warn('[dev] Removed stale .next from a previous production build.');
+  }
+}
 
 /**
  * Next.js configuration for the Luxury E-Commerce boilerplate.

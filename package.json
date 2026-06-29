@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "node scripts/dev-clean.mjs && next dev",
     "dev:clean": "node scripts/dev-clean.mjs",
+    "dev:next": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
