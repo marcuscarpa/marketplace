@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+
+import { SizeGuideDrawer } from '@/components/luxury/size-guide-drawer';
 import type { ShopifyProductOption } from '@/lib/shopify/types';
 import { colorSwatchHex, isColorOption, isSizeOption } from '@/lib/shopify/variants';
 
@@ -11,8 +14,8 @@ interface ProductVariantPickerProps {
 }
 
 const labels = {
-  en: { color: 'Color', size: 'Size', findMySize: 'Find my size', sizeGuide: 'Size guide' },
-  pt: { color: 'Cor', size: 'Tamanho', findMySize: 'Encontrar meu tamanho', sizeGuide: 'Guia de tamanhos' },
+  en: { color: 'Color', size: 'Size', sizeGuide: 'Size guide' },
+  pt: { color: 'Cor', size: 'Tamanho', sizeGuide: 'Guia de tamanhos' },
 } as const;
 
 function ColorSwatches({
@@ -70,6 +73,7 @@ function SizeButtons({
   locale: string;
 }) {
   const copy = locale === 'pt' ? labels.pt : labels.en;
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
   return (
     <>
@@ -93,15 +97,16 @@ function SizeButtons({
           );
         })}
       </div>
-      <div className="flex justify-end gap-3 text-[10px] uppercase tracking-[0.15em] text-neutral-500">
-        <button type="button" className="transition-colors hover:text-neutral-900">
-          {copy.findMySize}
-        </button>
-        <span aria-hidden="true">|</span>
-        <button type="button" className="transition-colors hover:text-neutral-900">
+      <div className="flex justify-end text-[10px] uppercase tracking-[0.15em] text-neutral-500">
+        <button
+          type="button"
+          className="transition-colors hover:text-neutral-900"
+          onClick={() => setSizeGuideOpen(true)}
+        >
           {copy.sizeGuide}
         </button>
       </div>
+      <SizeGuideDrawer open={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} locale={locale} />
     </>
   );
 }
