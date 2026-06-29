@@ -4,8 +4,8 @@ import React from 'react';
 
 import {
   getAppUrl,
+  getSocialShareImageUrl,
   SITE_DESCRIPTION,
-  SOCIAL_SHARE_IMAGE,
 } from '@/lib/site-metadata';
 import './globals.css';
 
@@ -41,22 +41,29 @@ export const metadata: Metadata = {
   icons: {
     icon: FAVICON,
     shortcut: FAVICON,
-    apple: FAVICON,
+    apple: getSocialShareImageUrl(),
   },
   openGraph: {
     type: 'website',
+    url: getAppUrl(),
     siteName: 'Sinesia Karol',
     title: 'Sinesia Karol — Timeless Sophistication',
     description: SITE_DESCRIPTION,
     images: [
-      { url: SOCIAL_SHARE_IMAGE, alt: 'Sinesia Karol', width: 1200, height: 630, type: 'image/jpeg' },
+      {
+        url: getSocialShareImageUrl(),
+        alt: 'Sinesia Karol',
+        width: 1200,
+        height: 630,
+        type: 'image/jpeg',
+      },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Sinesia Karol — Timeless Sophistication',
     description: SITE_DESCRIPTION,
-    images: [SOCIAL_SHARE_IMAGE],
+    images: [getSocialShareImageUrl()],
   },
   other: {
     'mobile-web-app-capable': 'yes',

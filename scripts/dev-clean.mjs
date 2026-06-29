@@ -3,7 +3,7 @@ import { rmSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = process.cwd();
-const ports = [3000, 3003, 3004, 3010, 3099];
+const ports = [3000, 3001, 3002, 3003, 3004, 3010, 3099];
 
 for (const port of ports) {
   try {
