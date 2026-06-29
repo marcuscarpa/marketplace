@@ -65,7 +65,7 @@ export function NewsletterModal({ locale }: { locale: string }) {
       {isOpen && (
         <motion.div
           key="newsletter-modal"
-          className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-8 sm:px-6"
+          className="fixed inset-0 z-[100] flex items-center justify-center px-4 pb-8 pt-16 sm:px-6 sm:pt-20"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -87,18 +87,16 @@ export function NewsletterModal({ locale }: { locale: string }) {
             exit={{ opacity: 0, y: 16 }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
           >
-            <div className="absolute right-0 top-0 z-20 -translate-y-1/2 translate-x-1/2">
-              <button
-                type="button"
-                onClick={dismissNewsletter}
-                aria-label={copy.closeModal}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.08] text-white transition-opacity hover:opacity-80"
-              >
-                <IconClose />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={dismissNewsletter}
+              aria-label={copy.closeModal}
+              className="absolute right-0 top-[-44px] z-20 flex h-7 w-7 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.08] text-white transition-opacity hover:opacity-80"
+            >
+              <IconClose className="h-3 w-3" />
+            </button>
 
-            <div className="relative min-h-[420px] overflow-hidden sm:min-h-[480px]">
+            <div className="relative min-h-[480px] overflow-hidden sm:min-h-[560px]">
               <Image
                 src={MODAL_IMAGE}
                 alt=""
@@ -118,24 +116,25 @@ export function NewsletterModal({ locale }: { locale: string }) {
               <div
                 className="absolute inset-0"
                 style={{
-                  background: 'linear-gradient(rgba(3, 6, 7, 0.8) 0%, rgba(3, 6, 7, 0) 88%)',
+                  background:
+                    'linear-gradient(to top, rgba(3, 6, 7, 0.85) 0%, rgba(3, 6, 7, 0.35) 55%, rgba(3, 6, 7, 0) 100%)',
                 }}
               />
 
-              <div className="relative flex flex-col items-center px-6 pb-8 pt-14 text-center sm:px-10 sm:pb-10 sm:pt-16">
+              <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-8 pt-16 text-center sm:px-10 sm:pb-10">
                 <p className="mb-3 font-sans-ui text-[15px] font-normal leading-[1.33] text-white/80">
                   {copy.subtitle}
                 </p>
                 <h2
                   id={titleId}
-                  className="mb-8 max-w-[18rem] font-sans-ui text-[26px] font-normal leading-[1.15] tracking-[-0.02em] text-white sm:max-w-none sm:text-[32px]"
+                  className="mb-8 font-sans-ui text-[26px] font-normal leading-[1.15] tracking-[-0.02em] text-white sm:text-[32px]"
                 >
                   {copy.title}
                 </h2>
 
                 <form
                   onSubmit={onSubmit}
-                  className="w-full max-w-[360px] border-b border-white/20"
+                  className="mx-auto w-full max-w-[360px] border-b border-white/20"
                   autoComplete="off"
                   data-lpignore="true"
                   data-1p-ignore="true"
