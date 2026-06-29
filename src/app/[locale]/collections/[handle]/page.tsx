@@ -5,7 +5,7 @@ import {
   CollectionProducts,
   ShopifyCollectionProducts,
 } from '@/components/storefront/collection-products';
-import { SECTION_PADDING_BELOW_HEADER, SectionHeading } from '@/components/storefront/ui';
+import { PageMain, SECTION_PADDING_BELOW_HEADER, SectionHeading } from '@/components/storefront/ui';
 import { getCatalogCollection } from '@/lib/catalog/catalog';
 import { getSocialShareImageUrl } from '@/lib/site-metadata';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
@@ -152,7 +152,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   const bestsellerHandles = await getBestsellerHandles(locale);
 
   return (
-    <main className="min-h-screen bg-white pt-[calc(84px+2.5rem)] lg:pt-[calc(121px+4rem)]">
+    <PageMain padded={false}>
       <header className="bg-gray-950 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl lg:text-5xl font-light tracking-tight mb-4">{collection.title}</h1>
@@ -170,6 +170,6 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
           bestsellerHandles={bestsellerHandles}
         />
       </section>
-    </main>
+    </PageMain>
   );
 }

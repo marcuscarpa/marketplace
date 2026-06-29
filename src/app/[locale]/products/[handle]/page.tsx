@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { ProductDetailsLuxury } from '@/components/luxury/product-details-luxury';
+import { PageMain } from '@/components/storefront/ui';
 import { ProductViewTracker } from '@/components/ui/product-view-tracker';
 import { isVideo360Enabled } from '@/lib/feature-flags';
 import { getSocialShareImageUrl } from '@/lib/site-metadata';
@@ -50,8 +51,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   ]);
 
   return (
-    <main className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-16">
+    <PageMain>
+      <div className="mx-auto max-w-7xl lg:py-8">
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
           <a href={`/${locale}`} className="hover:text-gray-900 transition-colors">
             Home
@@ -113,6 +114,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         )}
       </div>
-    </main>
+    </PageMain>
   );
 }

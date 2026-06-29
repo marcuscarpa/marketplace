@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import * as Sentry from '@sentry/nextjs';
 
+import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
 import { m } from '@/lib/i18n';
 
 export default function Error({
@@ -24,7 +25,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className={`flex min-h-screen items-center justify-center px-4 ${HEADER_OFFSET_TOP}`}>
       <div className="text-center max-w-md">
         <h1 className="text-2xl font-light text-gray-900 mb-4">{t.title}</h1>
         <p className="text-gray-500 text-sm mb-8">{t.body}</p>

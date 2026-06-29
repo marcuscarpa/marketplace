@@ -41,7 +41,7 @@ export default async function LocaleLayout({
               {nonce && <ServiceWorkerRegistration nonce={nonce} />}
               <LocaleHtmlLang locale={locale} />
               <Shell locale={locale}>
-                <main className="min-h-screen selection:bg-ink selection:text-white">{children}</main>
+                <div className="min-h-screen selection:bg-ink selection:text-white">{children}</div>
                 <Footer locale={locale} />
               </Shell>
               <NewsletterModal locale={locale} />

@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
+
 import { HelpIcon, type HelpIconName } from '@/components/help/help-icons';
 import { getHelpMenu, getHelpQuickLinks } from '@/lib/help/nav';
 import { m } from '@/lib/i18n';
@@ -32,7 +34,7 @@ export function HelpPageLayout({
   const quickLinks = getHelpQuickLinks(locale);
 
   return (
-    <div className="bg-white pb-24 pt-[calc(84px+50px)] lg:pt-[calc(121px+50px)]">
+    <div className={`bg-white pb-24 ${HEADER_OFFSET_TOP}`}>
       <div className="mx-auto max-w-[1200px] px-5 lg:px-10">
         <nav aria-label="Breadcrumb" className="mb-10 font-sans-ui text-[11px] text-neutral-500">
           <ol className="flex flex-wrap items-center gap-2">

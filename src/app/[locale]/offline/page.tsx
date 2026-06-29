@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
+
 interface OfflinePageProps {
   params: Promise<{ locale: string }>;
 }
@@ -9,7 +11,7 @@ export default async function OfflinePage({ params }: OfflinePageProps) {
   const isPt = locale === 'pt';
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
+    <div className={`flex min-h-screen flex-col items-center justify-center px-4 text-center ${HEADER_OFFSET_TOP}`}>
       <h1 className="text-4xl font-light tracking-wider">{isPt ? 'Você está offline' : "You're Offline"}</h1>
       <p className="mt-4 text-neutral-500">
         {isPt

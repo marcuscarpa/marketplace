@@ -1,0 +1,48 @@
+---
+description: Storefront page layout — header offset and PageMain for new routes
+globs: src/app/**/page.tsx, src/components/**/*
+alwaysApply: false
+---
+
+# Page layout below fixed header
+
+The site header is fixed (announcement bar + nav). Page content must not sit under it.
+
+## Use these exports from `@/components/storefront/ui`
+
+| Export | When to use |
+|--------|-------------|
+| `PageMain` | Default wrapper for new `page.tsx` routes |
+| `SECTION_PADDING_BELOW_HEADER` | Sections inside home or catalog blocks (includes px + pb + offset) |
+| `HEADER_OFFSET_TOP` | Custom shells (help layout, centered error/offline) |
+
+Offsets: `pt-[calc(84px+2.5rem)] lg:pt-[calc(121px+4rem)]` (84px / 121px header stack + section rhythm).
+
+## New pages
+
+```tsx
+import { PageMain } from '@/components/storefront/ui';
+
+export default function MyPage() {
+  return (
+    <PageMain>
+      {/* content */}
+    </PageMain>
+  );
+}
+```
+
+- **Hero band inside the page** (dark header block): `<PageMain padded={false}>`
+- **Centered utility page** (login): `<PageMain padded={false} className="flex items-center justify-center bg-gray-50">`
+- **Help / legal content**: use `HelpPageLayout` (offset built in)
+
+## Exceptions — do NOT add header offset
+
+- **Home** (`/[locale]`): hero is full-bleed under the transparent header; uses `Hero` height calc instead.
+- **Nested sections on home**: use `SECTION_PADDING_BELOW_HEADER` only when needed below the hero.
+
+## Do not
+
+- Duplicate `pt-[calc(84px…)]` literals — use `HEADER_OFFSET_TOP` or `PageMain`.
+- Wrap home content in `PageMain`.
+- Nest `<main>` inside layout; locale layout uses `<div>`; each page owns `<main>` via `PageMain`.

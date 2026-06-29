@@ -9,6 +9,7 @@ import { removeFromCartAction, updateCartLinesAction } from '@/actions/cart';
 import { trackStartedCheckout } from '@/lib/analytics';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import { useWishlist } from '@/hooks/use-wishlist';
+import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
 import { maxVariantQuantity } from '@/lib/shopify/variants';
 
 interface CartBagPageProps {
@@ -353,7 +354,7 @@ export function CartBagPage({
   const grandTotal = displaySubtotal ? Number(displaySubtotal.amount) + shippingAmount : 0;
 
   return (
-    <div className="bg-white pb-20 pt-[calc(84px+2rem)] lg:pt-[calc(121px+2.5rem)]">
+    <div className={`bg-white pb-20 ${HEADER_OFFSET_TOP}`}>
       <div className="mx-auto max-w-[1310px] px-5 font-sans-ui text-[11px] font-light text-ink md:px-8 lg:px-10">
         <h1 className="mb-10 text-center text-[12px] font-normal uppercase tracking-[0.12em] text-ink">
           {copy.title}

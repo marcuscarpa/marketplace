@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import { ProductCard } from '@/components/ui/product-card';
 import { SearchBar } from '@/components/ui/search-bar';
+import { PageMain } from '@/components/storefront/ui';
 import { searchProducts } from '@/lib/shopify/search';
 
 interface SearchPageProps {
@@ -33,7 +34,7 @@ export default async function SearchPage({ params, searchParams }: SearchPagePro
   const results = await getSearchResults(query ?? '', locale);
 
   return (
-    <main className="min-h-screen bg-white">
+    <PageMain padded={false}>
       <header className="bg-gray-950 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-light tracking-tight mb-6">
@@ -114,6 +115,6 @@ export default async function SearchPage({ params, searchParams }: SearchPagePro
           </div>
         )}
       </section>
-    </main>
+    </PageMain>
   );
 }

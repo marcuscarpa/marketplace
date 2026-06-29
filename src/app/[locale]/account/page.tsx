@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 
+import { PageMain } from '@/components/storefront/ui';
+
 import { getEnv } from '@/lib/env';
 import { getRegion } from '@/lib/regions';
 
@@ -78,7 +80,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
 
   if (!customer) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+      <PageMain padded={false} className="flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full px-6 py-12 text-center">
           <h1 className="text-2xl font-light mb-4">
             {isPt ? 'Acesso restrito' : 'Access Restricted'}
@@ -95,12 +97,12 @@ export default async function AccountPage({ params }: AccountPageProps) {
             {isPt ? 'Entrar' : 'Log In'}
           </a>
         </div>
-      </main>
+      </PageMain>
     );
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <PageMain padded={false}>
       <header className="bg-gray-950 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-light tracking-tight">
@@ -185,6 +187,6 @@ export default async function AccountPage({ params }: AccountPageProps) {
           </a>
         </div>
       </div>
-    </main>
+    </PageMain>
   );
 }

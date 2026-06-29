@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
+import { PageMain } from '@/components/storefront/ui';
+
 interface LoginPageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ error?: string }>;
@@ -26,7 +28,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
   const isPt = locale === 'pt';
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50">
+    <PageMain padded={false} className="flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full px-6 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-light tracking-tight text-gray-900">
@@ -67,6 +69,6 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
           </Link>
         </p>
       </div>
-    </main>
+    </PageMain>
   );
 }
