@@ -1,10 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { SITE_IMAGES, type CatalogProduct } from '@/lib/catalog/data';
 import { PopularCard } from '@/components/storefront/product-card';
+import { Button } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
 import { m } from '@/lib/i18n';
 
@@ -15,6 +15,7 @@ interface CollectionSpotlightProps {
 
 export function CollectionSpotlight({ locale, product }: CollectionSpotlightProps) {
   const h = m(locale).home;
+  const c = m(locale).common;
   const collectionHref = `/${locale}/collections/women`;
 
   return (
@@ -27,13 +28,16 @@ export function CollectionSpotlight({ locale, product }: CollectionSpotlightProp
         className="relative min-h-0 w-full min-[1440px]:h-full min-[1440px]:flex-[3]"
       >
         <article className="relative aspect-[682/1024] h-full w-full overflow-hidden min-[1440px]:aspect-auto">
-          <Link
-            href={collectionHref}
-            className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-white px-8 py-3 font-sans-ui text-[12px] uppercase leading-[100%] tracking-[0.02em] text-ink no-underline transition-opacity hover:opacity-80"
-          >
-            {h.womenCollectionBadge}
-          </Link>
-          <figure className="absolute inset-0 m-0">
+          <figure className="absolute inset-0 m-0 min-[768px]:hidden">
+            <Image
+              src={SITE_IMAGES.collectionWomenMobile}
+              alt={h.womenCollectionImageAlt}
+              fill
+              sizes="100vw"
+              className="block h-full w-full object-cover object-center"
+            />
+          </figure>
+          <figure className="absolute inset-0 m-0 hidden min-[768px]:block">
             <Image
               src={SITE_IMAGES.collectionWomen}
               alt={h.womenCollectionImageAlt}
@@ -42,6 +46,15 @@ export function CollectionSpotlight({ locale, product }: CollectionSpotlightProp
               className="block h-full w-full object-cover object-center"
             />
           </figure>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-8 lg:p-10">
+            <h2 className="mb-6 max-w-sm font-serif text-[clamp(1.75rem,3vw,3rem)] font-normal leading-none tracking-[-0.04em] text-white">
+              {h.womenCollectionTitle}
+            </h2>
+            <Button href={collectionHref} variant="outline-white">
+              {c.shopNow}
+            </Button>
+          </div>
         </article>
       </div>
 

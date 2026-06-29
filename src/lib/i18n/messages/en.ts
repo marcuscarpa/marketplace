@@ -115,7 +115,7 @@ export const en = {
     securePaymentBody: 'We keep your payment information safe.',
     easyReturns: '14-day return policy',
     easyReturnsBody: "We think you'll love it. If you don't, let us know!",
-    womenCollectionBadge: "Women's 2025",
+    womenCollectionTitle: 'Explore Women',
     womenCollectionImageAlt: 'Woman in tailored resort wear holding a structured handbag',
     selectVariantOnPage: 'Select color on product page',
   },

@@ -15,7 +15,9 @@ export const SITE_IMAGES = {
   arrival4: '/Bloco4%20imagem%204.webp',
   about: '/banner%208.png',
   collectionNew: cdnAsset('images/mOaLu1cK2g12LAvtCBtK7ajjO4E.png?width=1024&height=1024'),
-  collectionWomen: cdnAsset('images/bbm02GgLoJp7yqWis1qKQGi6fjU.jpg?width=1536&height=1200'),
+  collectionWomen: '/bloco%208%2C%20imagem%20da%20esquerda.png',
+  collectionWomenMobile: '/imagem%20da%20esquerda%20maior.JPG',
+  collectionWomenProduct: '/bloco%208%2C%20imagem%20da%20direita.jpg',
   cycler1: '/bloco%206%2C%20imagem%20da%20esquerda%20.jpg',
   cycler2: '/bloco%206%2C%20imagem%20do%20meio%20.jpg',
   cycler3: '/bloco%206%2C%20imagem%20da%20direita.jpg',
@@ -108,11 +110,11 @@ export const SEARCH_MODAL_PRODUCTS: CatalogProduct[] = [
 
 /** Featured product beside the women collection editorial on the home page. */
 export const SPOTLIGHT_PRODUCT: CatalogProduct = {
-  title: 'Josephine Dress',
-  category: 'Ready-to-Wear',
-  price: '$670',
-  handle: 'josephine-dress',
-  image: SITE_IMAGES.bestseller1,
+  title: 'Lolo Skirt - Crochet',
+  category: 'Skirts',
+  price: '$165.00',
+  handle: 'lolo-skirt-crochet',
+  image: SITE_IMAGES.collectionWomenProduct,
 };
 
 export const BESTSELLERS: CatalogProduct[] = [
