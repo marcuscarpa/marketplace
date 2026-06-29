@@ -28,7 +28,7 @@ export function CollectionSpotlight({ locale, product }: CollectionSpotlightProp
         className="relative min-h-0 w-full min-[1440px]:h-full min-[1440px]:flex-[3]"
       >
         <article className="relative aspect-[682/1024] h-full w-full overflow-hidden min-[1440px]:aspect-auto">
-          <figure className="absolute inset-0 m-0 min-[768px]:hidden">
+          <figure className="absolute inset-0 m-0 min-[1440px]:hidden">
             <Image
               src={SITE_IMAGES.collectionWomenMobile}
               alt={h.womenCollectionImageAlt}
@@ -37,7 +37,7 @@ export function CollectionSpotlight({ locale, product }: CollectionSpotlightProp
               className="block h-full w-full object-cover object-center"
             />
           </figure>
-          <figure className="absolute inset-0 m-0 hidden min-[768px]:block">
+          <figure className="absolute inset-0 m-0 hidden min-[1440px]:block">
             <Image
               src={SITE_IMAGES.collectionWomen}
               alt={h.womenCollectionImageAlt}
