@@ -231,6 +231,13 @@ export const pt: Messages = {
     accept: 'Aceitar',
     decline: 'Recusar',
   },
+  newsletterModal: {
+    title: 'GANHE 10% OFF',
+    subtitle: 'Na sua primeira compra ao se inscrever',
+    emailPlaceholder: 'Seu e-mail*',
+    submit: 'Enviar',
+    closeModal: 'Fechar modal',
+  },
   offline: {
     title: 'Você está offline',
     body: 'Verifique sua conexão e tente novamente.',

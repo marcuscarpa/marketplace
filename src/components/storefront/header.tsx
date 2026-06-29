@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { useCart } from '@/components/providers/cart-provider';
+import { useNewsletterModal } from '@/components/providers/newsletter-modal-provider';
 import { CartDrawer } from '@/components/storefront/cart-drawer';
 import { useScroll } from '@/components/providers/scroll-provider';
 import { SearchOverlay } from '@/components/storefront/search-overlay';
@@ -369,6 +370,7 @@ export function Header({ locale }: HeaderProps) {
   const pathname = usePathname();
   const { scrollY } = useScroll();
   const { cart, openCart, isCartOpen } = useCart();
+  const { openNewsletter } = useNewsletterModal();
   const { items: wishlistItems } = useWishlist();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -635,8 +637,10 @@ export function Header({ locale }: HeaderProps) {
                   <MenuUtilityRow
                     icon={<IconEnvelope />}
                     label={labels.newsletter}
-                    href={`${prefix}/contact`}
-                    onClick={() => setMenuOpen(false)}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      openNewsletter();
+                    }}
                   />
                   <MenuUtilityRow
                     icon={<IconPin />}

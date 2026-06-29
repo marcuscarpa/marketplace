@@ -227,6 +227,13 @@ export const en = {
     accept: 'Accept',
     decline: 'Decline',
   },
+  newsletterModal: {
+    title: 'UNLOCK 10% OFF',
+    subtitle: 'Your first order when you sign up',
+    emailPlaceholder: 'Your email*',
+    submit: 'Submit',
+    closeModal: 'Close modal',
+  },
   offline: {
     title: 'You are offline',
     body: 'Check your connection and try again.',

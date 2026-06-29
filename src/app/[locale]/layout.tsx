@@ -1,9 +1,16 @@
 import { headers } from 'next/headers';
 import React from 'react';
 
-import { ScrollProvider, CartProvider, WishlistProvider, AuthProvider } from '@/components/providers';
+import {
+  ScrollProvider,
+  CartProvider,
+  WishlistProvider,
+  AuthProvider,
+  NewsletterModalProvider,
+} from '@/components/providers';
 import { EdgeConfigProvider } from '@/components/providers/edge-config-provider';
 import { Footer } from '@/components/storefront/footer';
+import { NewsletterModal } from '@/components/storefront/newsletter-modal';
 import { Shell } from '@/components/storefront/shell';
 import { ConsentBanner } from '@/components/ui/consent-banner';
 import { LocaleHtmlLang } from '@/components/ui/locale-html-lang';
@@ -28,6 +35,7 @@ export default async function LocaleLayout({
       <AuthProvider>
         <CartProvider locale={locale}>
           <WishlistProvider>
+            <NewsletterModalProvider>
             <ScrollProvider>
               {nonce && <DynamicScripts nonce={nonce} />}
               {nonce && <ServiceWorkerRegistration nonce={nonce} />}
@@ -36,10 +44,12 @@ export default async function LocaleLayout({
                 <main className="min-h-screen selection:bg-ink selection:text-white">{children}</main>
                 <Footer locale={locale} />
               </Shell>
+              <NewsletterModal locale={locale} />
               <ConsentBanner locale={locale} />
               <PwaUpdateBanner locale={locale} />
               <PwaInstallPrompt locale={locale} />
             </ScrollProvider>
+            </NewsletterModalProvider>
           </WishlistProvider>
         </CartProvider>
       </AuthProvider>
