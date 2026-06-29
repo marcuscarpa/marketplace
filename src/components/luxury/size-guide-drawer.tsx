@@ -19,12 +19,11 @@ const backdropVariants = {
 const SIZES = ['XS', 'S', 'M', 'L', 'XL'] as const;
 
 const CONVERSION_ROWS = [
-  ['Australia', '6', '8', '10', '12', '14'],
-  ['UK', '6', '8', '10', '12', '14'],
-  ['US', '2', '4', '6', '8', '10'],
-  ['Brazil', '34', '36', '38', '40', '42'],
-  ['Italy', '38', '40', '42', '44', '46'],
-  ['France', '34', '36', '38', '40', '42'],
+  { key: 'auUk', values: ['6', '8', '10', '12', '14'] },
+  { key: 'us', values: ['2', '4', '6', '8', '10'] },
+  { key: 'brazil', values: ['34/36', '36/38', '38/40', '40/42', '42/44'] },
+  { key: 'italy', values: ['38', '40', '42', '44', '46'] },
+  { key: 'france', values: ['34', '36', '38', '40', '42'] },
 ] as const;
 
 const MEASUREMENT_ROWS = [
@@ -54,19 +53,31 @@ const copy = {
     cm: 'CM',
     inch: 'INCH',
     country: 'Country',
-    brazil: 'Brazil',
     size: 'Size',
+    conversionLabels: {
+      auUk: 'Australia / UK',
+      us: 'US',
+      brazil: 'Brazil',
+      italy: 'Italy',
+      france: 'France',
+    },
   },
   pt: {
     title: 'Guia de tamanhos',
     close: 'Fechar',
     conversions: 'Vestuário — Conversão de tamanhos',
     measurements: 'Vestuário — Medidas corporais',
-    brazil: 'Brasil',
     cm: 'CM',
     inch: 'POL',
     country: 'País',
     size: 'Tamanho',
+    conversionLabels: {
+      auUk: 'Australia / UK',
+      us: 'EUA',
+      brazil: 'Brasil',
+      italy: 'Italy',
+      france: 'France',
+    },
   },
 } as const;
 
@@ -169,13 +180,13 @@ export function SizeGuideDrawer({ open, onClose, locale }: SizeGuideDrawerProps)
                       </tr>
                     </thead>
                     <tbody>
-                      {CONVERSION_ROWS.map(([country, ...values]) => (
-                        <tr key={country} className="border-b border-[#03060714]">
+                      {CONVERSION_ROWS.map((row) => (
+                        <tr key={row.key} className="border-b border-[#03060714]">
                           <th scope="row" className="px-2 py-2 text-left font-normal">
-                            {country === 'Brazil' ? t.brazil : country}
+                            {t.conversionLabels[row.key]}
                           </th>
-                          {values.map((value) => (
-                            <td key={`${country}-${value}`} className="px-2 py-2">
+                          {row.values.map((value) => (
+                            <td key={`${row.key}-${value}`} className="px-2 py-2">
                               {value}
                             </td>
                           ))}
