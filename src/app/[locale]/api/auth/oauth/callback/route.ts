@@ -4,8 +4,8 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { fetchCustomerByAccessToken } from '@/lib/auth/customer';
-import { getEnv } from '@/lib/env';
-import { getRegion } from '@/lib/regions';
+import { getOAuthCallbackUrl } from '@/lib/auth/customer-account-oauth';
+import { exchangeCustomerAccountAuthCode } from '@/lib/auth/customer-account-tokens';
 
 function isSafeRedirectPath(path: string): boolean {
   if (!path.startsWith('/')) return false;
@@ -15,16 +15,9 @@ function isSafeRedirectPath(path: string): boolean {
   return true;
 }
 
-interface TokenResponse {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  id_token?: string;
-}
-
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ locale: string }> }
+  { params }: { params: Promise<{ locale: string }> },
 ) {
   const { locale } = await params;
   const url = new URL(request.url);
@@ -34,7 +27,9 @@ export async function GET(
   const error = url.searchParams.get('error');
 
   if (error) {
-    return NextResponse.redirect(new URL(`/${locale}/account/login?error=${encodeURIComponent(error)}`, request.url));
+    return NextResponse.redirect(
+      new URL(`/${locale}/account/login?error=${encodeURIComponent(error)}`, request.url),
+    );
   }
 
   const cookieStore = await cookies();
@@ -44,43 +39,26 @@ export async function GET(
   const redirectTo = isSafeRedirectPath(rawRedirectTo) ? rawRedirectTo : `/${locale}/account`;
 
   if (!state || state !== storedState) {
-    return NextResponse.redirect(new URL(`/${locale}/account/login?error=invalid_state`, request.url));
+    return NextResponse.redirect(
+      new URL(`/${locale}/account/login?error=invalid_state`, request.url),
+    );
   }
 
   if (!code || !codeVerifier) {
-    return NextResponse.redirect(new URL(`/${locale}/account/login?error=missing_code`, request.url));
+    return NextResponse.redirect(
+      new URL(`/${locale}/account/login?error=missing_code`, request.url),
+    );
   }
 
-  const env = getEnv();
-  const region = getRegion(locale);
-  const shopDomain = region.shopifyDomain;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? `https://${request.headers.get('host') ?? 'localhost'}`;
-  const callbackPath = `/${locale}/api/auth/oauth/callback`;
-  const callbackUrl = `${appUrl.replace(/\/$/, '')}${callbackPath}`;
+  const callbackUrl = getOAuthCallbackUrl(locale, request.headers.get('host'));
 
   try {
-    const tokenUrl = `https://${shopDomain}/auth/oauth/token`;
-
-    const tokenResponse = await fetch(tokenUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        client_id: env.SHOPIFY_CLIENT_ID,
-        client_secret: env.SHOPIFY_CLIENT_SECRET,
-        code,
-        redirect_uri: callbackUrl,
-        code_verifier: codeVerifier,
-      }),
+    const tokens = await exchangeCustomerAccountAuthCode({
+      locale,
+      code,
+      redirectUri: callbackUrl,
+      codeVerifier,
     });
-
-    if (!tokenResponse.ok) {
-      throw new Error(`Token exchange failed: ${tokenResponse.status}`);
-    }
-
-    const tokens = (await tokenResponse.json()) as TokenResponse;
 
     const customer = await fetchCustomerByAccessToken(tokens.access_token, locale);
 
@@ -95,13 +73,31 @@ export async function GET(
       path: '/',
     };
 
-    const oauthCookies = ['oauth_state', 'oauth_verifier', 'oauth_redirect'];
-    oauthCookies.forEach((name) => redirectResponse.cookies.set(name, '', { ...cookieOptions, maxAge: 0 }));
+    const oauthCookies = ['oauth_state', 'oauth_verifier', 'oauth_redirect', 'oauth_nonce'];
+    oauthCookies.forEach((name) =>
+      redirectResponse.cookies.set(name, '', { ...cookieOptions, maxAge: 0 }),
+    );
 
-    redirectResponse.cookies.set('access_token', tokens.access_token, { ...cookieOptions, maxAge: tokens.expires_in });
-    redirectResponse.cookies.set('refresh_token', tokens.refresh_token, { ...cookieOptions, maxAge: 60 * 60 * 24 * 30 });
-    redirectResponse.cookies.set('access_token_hash', accessTokenHash, { ...cookieOptions, maxAge: tokens.expires_in });
-    redirectResponse.cookies.set('id_token', idToken, { ...cookieOptions, maxAge: tokens.expires_in });
+    redirectResponse.cookies.set('access_token', tokens.access_token, {
+      ...cookieOptions,
+      maxAge: tokens.expires_in,
+    });
+    redirectResponse.cookies.set('refresh_token', tokens.refresh_token ?? '', {
+      ...cookieOptions,
+      maxAge: 60 * 60 * 24 * 30,
+    });
+    redirectResponse.cookies.set('access_token_hash', accessTokenHash, {
+      ...cookieOptions,
+      maxAge: tokens.expires_in,
+    });
+    redirectResponse.cookies.set('id_token', idToken, {
+      ...cookieOptions,
+      maxAge: tokens.expires_in,
+    });
+    redirectResponse.cookies.set('shopify_locale', locale, {
+      ...cookieOptions,
+      maxAge: 60 * 60 * 24 * 30,
+    });
 
     if (customer?.id) {
       redirectResponse.cookies.set('shopify_customer_id', customer.id, {
@@ -113,6 +109,8 @@ export async function GET(
     return redirectResponse;
   } catch (err) {
     console.error('OAuth callback error:', err);
-    return NextResponse.redirect(new URL(`/${locale}/account/login?error=auth_failed`, request.url));
+    return NextResponse.redirect(
+      new URL(`/${locale}/account/login?error=auth_failed`, request.url),
+    );
   }
 }

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 
-import { getEnv } from '@/lib/env';
+import { getCustomerAccountApiConfiguration } from '@/lib/auth/customer-account-discovery';
 import { getRegion } from '@/lib/regions';
 
 export interface SessionCustomer {
@@ -11,52 +11,69 @@ export interface SessionCustomer {
   phone?: string;
 }
 
+interface CustomerAccountCustomer {
+  id: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  emailAddress?: { emailAddress?: string | null } | null;
+  phoneNumber?: { phoneNumber?: string | null } | null;
+}
+
 interface CustomerGraphQLResponse {
-  data?: { customer: SessionCustomer | null };
+  data?: { customer: CustomerAccountCustomer | null };
+}
+
+function mapCustomerAccountCustomer(customer: CustomerAccountCustomer): SessionCustomer {
+  return {
+    id: customer.id,
+    email: customer.emailAddress?.emailAddress ?? '',
+    firstName: customer.firstName ?? '',
+    lastName: customer.lastName ?? '',
+    phone: customer.phoneNumber?.phoneNumber ?? undefined,
+  };
 }
 
 export async function fetchCustomerByAccessToken(
   accessToken: string,
-  locale: string
+  locale: string,
 ): Promise<SessionCustomer | null> {
   try {
-    const env = getEnv();
     const region = getRegion(locale);
-
-    const tokenMap: Record<string, string> = {
-      US: env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US,
-      EU: env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_EU,
-      BR: env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_BR,
-      APAC: env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_APAC,
-    };
-    const storefrontToken = tokenMap[region.code] ?? env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US;
+    const apiConfig = await getCustomerAccountApiConfiguration(region.shopifyDomain);
 
     const query = `
-      query GetCustomer($accessToken: String!) {
-        customer(accessToken: $accessToken) {
+      query GetCustomer {
+        customer {
           id
-          email
           firstName
           lastName
-          phone
+          emailAddress {
+            emailAddress
+          }
+          phoneNumber {
+            phoneNumber
+          }
         }
       }
     `;
 
-    const response = await fetch(`https://${region.shopifyDomain}/api/2024-01/graphql.json`, {
+    const response = await fetch(apiConfig.graphql_api, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': storefrontToken,
+        Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ query, variables: { accessToken } }),
+      body: JSON.stringify({ query }),
       cache: 'no-store',
     });
 
     if (!response.ok) return null;
 
     const data = (await response.json()) as CustomerGraphQLResponse;
-    return data.data?.customer ?? null;
+    const customer = data.data?.customer;
+    if (!customer) return null;
+
+    return mapCustomerAccountCustomer(customer);
   } catch {
     return null;
   }

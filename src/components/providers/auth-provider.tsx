@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
+import { buildOAuthAuthorizeUrl } from '@/lib/auth/login-hint';
+
 interface Customer {
   id: string;
   email: string;
@@ -15,7 +17,7 @@ interface AuthContextType {
   customer: Customer | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (redirectTo?: string) => void;
+  login: (redirectTo?: string, email?: string) => void;
   logout: () => Promise<void>;
 }
 
@@ -46,8 +48,8 @@ export function AuthProvider({ children, locale = 'en' }: { children: ReactNode;
     void checkAuth();
   }, [checkAuth]);
 
-  const login = (redirectTo = `/${locale}/account`) => {
-    window.location.href = `/${locale}/api/auth/oauth/authorize?redirect=${encodeURIComponent(redirectTo)}`;
+  const login = (redirectTo = `/${locale}/account`, email?: string) => {
+    window.location.href = buildOAuthAuthorizeUrl(locale, redirectTo, email);
   };
 
   const logout = async () => {

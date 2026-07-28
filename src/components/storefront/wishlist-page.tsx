@@ -138,8 +138,8 @@ export function WishlistPage({ locale }: WishlistPageProps) {
           <>
             <WishlistLoginWall
               locale={locale}
-              onSignIn={() => login(redirectTo)}
-              onRegister={() => login(redirectTo)}
+              onSignIn={(email) => login(redirectTo, email)}
+              onRegister={(email) => login(redirectTo, email)}
             />
             <div className="border-t border-[#03060714]" aria-hidden />
           </>

@@ -524,7 +524,7 @@ export function Header({ locale, navigation }: HeaderProps) {
               {!searchOpen && (
                 <>
                   <div className="hidden items-center lg:flex">
-                    <HeaderIcon href={`${prefix}/account`} label={labels.account} light={heroNav}>
+                    <HeaderIcon href={`${prefix}/account/login`} label={labels.account} light={heroNav}>
                       <IconAccount />
                     </HeaderIcon>
                     <div className="relative">
