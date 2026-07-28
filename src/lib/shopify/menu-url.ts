@@ -13,7 +13,7 @@ export function parseShopifyMenuUrl(url: string): string {
     const segments = pathname.replace(/^\/+|\/+$/g, '').split('/');
 
     if (segments[0] === 'collections' && segments[1]) {
-      const handle = segments[1].split('/')[0];
+      const handle = segments[1].split('/')[0] ?? segments[1];
       const mapped = LEGACY_COLLECTION_REDIRECTS[handle] ?? handle;
       return collectionPath(mapped);
     }
