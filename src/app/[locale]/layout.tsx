@@ -18,6 +18,7 @@ import { DynamicScripts } from '@/components/ui/dynamic-scripts';
 import { ServiceWorkerRegistration } from '@/components/ui/service-worker-registration';
 import { PwaUpdateBanner } from '@/components/ui/pwa-update-banner';
 import { PwaInstallPrompt } from '@/components/ui/pwa-install-prompt';
+import { getSiteNavigation } from '@/lib/catalog/navigation';
 
 export default async function LocaleLayout({
   children,
@@ -29,6 +30,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   const headersList = await headers();
   const nonce = headersList.get('x-nonce') || undefined;
+  const navigation = await getSiteNavigation(locale);
 
   return (
     <EdgeConfigProvider>
@@ -40,9 +42,9 @@ export default async function LocaleLayout({
               {nonce && <DynamicScripts nonce={nonce} />}
               {nonce && <ServiceWorkerRegistration nonce={nonce} />}
               <LocaleHtmlLang locale={locale} />
-              <Shell locale={locale}>
+              <Shell locale={locale} navigation={navigation}>
                 <div className="min-h-screen selection:bg-ink selection:text-white">{children}</div>
-                <Footer locale={locale} />
+                <Footer locale={locale} navigation={navigation} />
               </Shell>
               <NewsletterModal locale={locale} />
               <ConsentBanner locale={locale} />

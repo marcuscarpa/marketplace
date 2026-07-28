@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { SECTION_PADDING_FLUSH, ButtonShell } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { m } from '@/lib/i18n';
 
 interface CollectionCtaProps {
@@ -18,7 +19,7 @@ export function CollectionCta({ locale }: CollectionCtaProps) {
       label: h.swimwearLabel,
       title: h.swimwearTitle,
       cta: c.shopNow,
-      href: 'collections/swimwear',
+      href: collectionPath(SHOPIFY_COLLECTION.swimwear),
       video: '/bloco%205-video%201-esquerda.mp4',
       imageAlt: h.swimwearTitle,
     },
@@ -26,7 +27,7 @@ export function CollectionCta({ locale }: CollectionCtaProps) {
       label: h.rtwLabel,
       title: h.rtwTitle,
       cta: c.shopNow,
-      href: 'collections/ready-to-wear',
+      href: collectionPath(SHOPIFY_COLLECTION.readyToWear),
       video: '/bloco%205-video%202-direita.mp4',
       imageAlt: h.rtwTitle,
     },

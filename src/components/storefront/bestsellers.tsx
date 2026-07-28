@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import type { CatalogProduct } from '@/lib/catalog/data';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { PopularCard } from '@/components/storefront/product-card';
 import { PRODUCT_GAP, SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
@@ -20,7 +21,7 @@ export function Bestsellers({ locale, products }: BestsellersProps) {
       <div className="mx-auto mb-6 flex max-w-[1440px] items-end justify-between lg:mb-8">
         <SectionHeading>{h.bestsellers}</SectionHeading>
         <Link
-          href={`/${locale}/collections/all`}
+          href={`/${locale}/${collectionPath(SHOPIFY_COLLECTION.shopAll)}`}
           className="font-sans-ui text-[12px] uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60"
         >
           {c.seeAll}

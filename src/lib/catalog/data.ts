@@ -1,4 +1,5 @@
 import { cdnAsset } from '@/lib/catalog/assets';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { m } from '@/lib/i18n';
 
 export const SITE_IMAGES = {
@@ -202,13 +203,12 @@ export function getFooterLinks(locale: string) {
   const f = m(locale).footer;
   return {
     shop: [
-      { label: n.all, href: 'collections/all' },
-      { label: n.women, href: 'collections/women' },
-      { label: n.new, href: 'collections/new' },
-      { label: n.swimwear, href: 'collections/swimwear' },
-      { label: n.readyToWear, href: 'collections/ready-to-wear' },
-      { label: n.collections, href: 'collections/collections' },
-      { label: n.accessories, href: 'collections/accessories' },
+      { label: n.all, href: collectionPath(SHOPIFY_COLLECTION.shopAll) },
+      { label: n.new, href: collectionPath(SHOPIFY_COLLECTION.newArrivals) },
+      { label: n.swimwear, href: collectionPath(SHOPIFY_COLLECTION.swimwear) },
+      { label: n.readyToWear, href: collectionPath(SHOPIFY_COLLECTION.readyToWear) },
+      { label: n.collections, href: collectionPath(SHOPIFY_COLLECTION.featured) },
+      { label: n.accessories, href: collectionPath(SHOPIFY_COLLECTION.accessories) },
     ],
     company: [
       { label: n.about, href: 'about' },

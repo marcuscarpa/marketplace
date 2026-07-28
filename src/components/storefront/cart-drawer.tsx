@@ -12,6 +12,7 @@ import { useWishlist } from '@/hooks/use-wishlist';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import { currencyForLocale } from '@/lib/locale-currency';
 import { isMockCartId, MINICART_RECOMMENDATIONS } from '@/lib/catalog/minicart-mock';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 
 const PANEL_EASE = [0.76, 0, 0.24, 1] as const;
 
@@ -400,7 +401,7 @@ export function CartDrawer({ locale }: CartDrawerProps) {
                     {isPt ? 'O seu saco está vazio' : 'Your bag is empty'}
                   </p>
                   <Link
-                    href={`${prefix}/collections/all`}
+                    href={`${prefix}/${collectionPath(SHOPIFY_COLLECTION.shopAll)}`}
                     onClick={closeCart}
                     className="border-b border-ink pb-px font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink"
                   >

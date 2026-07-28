@@ -1,6 +1,7 @@
 'use client';
 
 import { SITE_IMAGES } from '@/lib/catalog/data';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { Button } from '@/components/storefront/ui';
 import { m } from '@/lib/i18n';
 import { useLayoutEffect, useState } from 'react';
@@ -72,7 +73,7 @@ export function Hero({ locale }: HeroProps) {
             copyInView ? ' mkt-hero-editorial--in-view' : ''
           }`}
         >
-          <Button href={`/${locale}/collections/all`} variant="outline-white">
+          <Button href={`/${locale}/${collectionPath(SHOPIFY_COLLECTION.shopAll)}`} variant="outline-white">
             {c.shopAll}
           </Button>
         </div>

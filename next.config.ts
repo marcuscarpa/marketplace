@@ -35,6 +35,18 @@ if (
 const cdnAssetOrigin = process.env.NEXT_PUBLIC_ASSET_ORIGIN ?? 'https://framerusercontent.com';
 const cdnAssetHost = new URL(cdnAssetOrigin).hostname;
 
+import { LEGACY_COLLECTION_REDIRECTS } from '@/lib/catalog/collection-handles';
+
+const locales = ['en', 'pt'] as const;
+
+const collectionRedirects = locales.flatMap((locale) =>
+  Object.entries(LEGACY_COLLECTION_REDIRECTS).map(([legacy, target]) => ({
+    source: `/${locale}/collections/${legacy}`,
+    destination: `/${locale}/collections/${target}`,
+    permanent: true,
+  }))
+);
+
 const nextConfig: NextConfig = {
   // ponytail: keep native Node resolution for observability/redis deps so dev
   // doesn't emit vendor-chunks/*.js references that go missing after build↔dev.
@@ -74,6 +86,9 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+  },
+  async redirects() {
+    return collectionRedirects;
   },
 };
 

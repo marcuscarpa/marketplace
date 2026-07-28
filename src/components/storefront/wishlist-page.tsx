@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { useWishlist } from '@/hooks/use-wishlist';
 
 interface WishlistPageProps {
@@ -107,7 +108,7 @@ export function WishlistPage({ locale }: WishlistPageProps) {
           <div className="py-12 text-center">
             <p className="mb-6 text-[12px] uppercase tracking-[0.02em] text-[#03060799]">{copy.empty}</p>
             <Link
-              href={`${prefix}/collections/all`}
+              href={`${prefix}/${collectionPath(SHOPIFY_COLLECTION.shopAll)}`}
               className="border-b border-ink pb-px text-[11px] uppercase tracking-[0.02em] text-ink hover:opacity-60"
             >
               {copy.continue}
@@ -134,7 +135,7 @@ export function WishlistPage({ locale }: WishlistPageProps) {
             </div>
             <div className="mt-10 text-center">
               <Link
-                href={`${prefix}/collections/all`}
+                href={`${prefix}/${collectionPath(SHOPIFY_COLLECTION.shopAll)}`}
                 className="border-b border-ink pb-px text-[11px] uppercase tracking-[0.02em] text-ink hover:opacity-60"
               >
                 {copy.continue}

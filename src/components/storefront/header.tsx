@@ -12,11 +12,13 @@ import { CartDrawer } from '@/components/storefront/cart-drawer';
 import { useScroll } from '@/components/providers/scroll-provider';
 import { SearchOverlay } from '@/components/storefront/search-overlay';
 import { useWishlist } from '@/hooks/use-wishlist';
-import { getLocaleFromPathname, getMainNav, getMarkets, getMenuSections, replaceLocaleInPath, type MarketId } from '@/lib/catalog/menu';
+import { getLocaleFromPathname, getMarkets, replaceLocaleInPath, type MarketId } from '@/lib/catalog/menu';
+import type { SiteNavigation } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
 interface HeaderProps {
   locale: string;
+  navigation: SiteNavigation;
 }
 
 const LOGO_SRC = '/logotipo.png';
@@ -366,7 +368,7 @@ function MarketChooser({
   );
 }
 
-export function Header({ locale }: HeaderProps) {
+export function Header({ locale, navigation }: HeaderProps) {
   const pathname = usePathname();
   const { scrollY } = useScroll();
   const { cart, openCart, isCartOpen } = useCart();
@@ -394,8 +396,8 @@ export function Header({ locale }: HeaderProps) {
 
   const prefix = `/${locale}`;
   const labels = m(locale).header;
-  const mainNav = getMainNav(locale);
-  const menuSections = getMenuSections(locale);
+  const mainNav = navigation.mainNav;
+  const menuSections = navigation.menuSections;
   const ink = heroNav && !searchOpen && !blurActive ? 'text-white' : 'text-ink';
 
   return (
@@ -478,6 +480,7 @@ export function Header({ locale }: HeaderProps) {
                     light={heroNav}
                     open={searchOpen}
                     onOpenChange={setSearchOpen}
+                    categories={navigation.searchCategories}
                   />
                   <div className="relative flex items-center">
                     <HeaderIcon
@@ -506,6 +509,7 @@ export function Header({ locale }: HeaderProps) {
                   light={heroNav}
                   open={searchOpen}
                   onOpenChange={setSearchOpen}
+                  categories={navigation.searchCategories}
                 />
               )}
             </div>

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { ProductDetailsLuxury } from '@/components/luxury/product-details-luxury';
 import { PageMain } from '@/components/storefront/ui';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { ProductViewTracker } from '@/components/ui/product-view-tracker';
 import { isVideo360Enabled } from '@/lib/feature-flags';
 import { getSocialShareImageUrl } from '@/lib/site-metadata';
@@ -58,7 +59,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             Home
           </a>
           <span>/</span>
-          <a href={`/${locale}/collections/all`} className="hover:text-gray-900 transition-colors">
+          <a href={`/${locale}/${collectionPath(SHOPIFY_COLLECTION.shopAll)}`} className="hover:text-gray-900 transition-colors">
             Products
           </a>
           <span>/</span>

@@ -11,7 +11,7 @@ import { NewArrivals } from '@/components/storefront/new-arrivals';
 import { OurValues } from '@/components/storefront/our-values';
 import { SocialFeed } from '@/components/storefront/social-feed';
 import type { CatalogProduct } from '@/lib/catalog/data';
-import { isShopifyConfigured } from '@/lib/shopify/client';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 
 interface HomePageProps {
   locale: string;
@@ -22,7 +22,7 @@ interface HomePageProps {
   spotlightProduct: CatalogProduct;
 }
 
-const ORCHID_COLLECTION_HANDLE = 'orchid-collection';
+const ORCHID_COLLECTION_HANDLE = SHOPIFY_COLLECTION.featured;
 
 export function HomePage({
   locale,
@@ -32,9 +32,7 @@ export function HomePage({
   bestsellerProducts,
   spotlightProduct,
 }: HomePageProps) {
-  const valuesCollectionHref = isShopifyConfigured(locale)
-    ? `/${locale}/collections/${ORCHID_COLLECTION_HANDLE}`
-    : `/${locale}/collections/swimwear`;
+  const valuesCollectionHref = `/${locale}/${collectionPath(ORCHID_COLLECTION_HANDLE)}`;
 
   return (
     <HeroCurtainStage hero={<Hero locale={locale} />}>

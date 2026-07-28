@@ -3,6 +3,7 @@
 import Image from 'next/image';
 
 import { SITE_IMAGES, type CatalogProduct } from '@/lib/catalog/data';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { PopularCard } from '@/components/storefront/product-card';
 import { Button } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
@@ -16,7 +17,7 @@ interface CollectionSpotlightProps {
 export function CollectionSpotlight({ locale, product }: CollectionSpotlightProps) {
   const h = m(locale).home;
   const c = m(locale).common;
-  const collectionHref = `/${locale}/collections/women`;
+  const collectionHref = `/${locale}/${collectionPath(SHOPIFY_COLLECTION.shopAll)}`;
 
   return (
     <EntranceView

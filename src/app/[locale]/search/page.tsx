@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { ProductCard } from '@/components/ui/product-card';
 import { SearchBar } from '@/components/ui/search-bar';
 import { PageMain } from '@/components/storefront/ui';
+import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { searchProducts } from '@/lib/shopify/search';
 
 interface SearchPageProps {
@@ -77,7 +78,7 @@ export default async function SearchPage({ params, searchParams }: SearchPagePro
                 : 'Try searching for different terms or browse our collections'}
             </p>
             <a
-              href={`/${locale}/collections/all`}
+              href={`/${locale}/${collectionPath(SHOPIFY_COLLECTION.shopAll)}`}
               className="inline-block mt-6 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-900 transition-colors"
             >
               {isPt ? 'Ver Todas as Coleções' : 'View All Collections'}

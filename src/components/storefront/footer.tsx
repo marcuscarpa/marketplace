@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 
 import { getFooterLinks, instagramHref } from '@/lib/catalog/data';
+import type { SiteNavigation } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
 interface FooterProps {
   locale: string;
+  navigation: SiteNavigation;
 }
 
 function SocialIcon({ icon }: { icon: 'instagram' }) {
@@ -121,11 +123,11 @@ function NewsletterBox({ locale }: { locale: string }) {
   );
 }
 
-export function Footer({ locale }: FooterProps) {
+export function Footer({ locale, navigation }: FooterProps) {
   const f = m(locale).footer;
   const links = getFooterLinks(locale);
   const menuColumns = [
-    [f.shop, links.shop],
+    [f.shop, navigation.footerShop],
     [f.company, links.company],
     [f.customerService, links.others],
   ] as const;

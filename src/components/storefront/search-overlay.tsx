@@ -20,6 +20,7 @@ interface SearchOverlayProps {
   light?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  categories?: Array<{ label: string; href: string; query: string }>;
 }
 
 function IconSearch({ className = 'h-[18px] w-[18px]' }: { className?: string }) {
@@ -225,6 +226,7 @@ export function SearchOverlay({
   light = false,
   open,
   onOpenChange,
+  categories: categoriesProp,
 }: SearchOverlayProps) {
   const router = useRouter();
   const panelId = useId();
@@ -236,7 +238,7 @@ export function SearchOverlay({
   const [panelPos, setPanelPos] = useState({ top: 0, right: 20 });
 
   const copy = getSearchCopy(locale);
-  const categories = getSearchCategories(locale);
+  const categories = categoriesProp ?? getSearchCategories(locale);
   const popularTerms = POPULAR_SEARCHES[locale === 'pt' ? 'pt' : 'en'];
 
   const [query, setQuery] = useState('');

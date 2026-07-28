@@ -1,4 +1,5 @@
 import type { HelpIconName } from '@/components/help/help-icons';
+import { SHOPIFY_COLLECTION, collectionPath } from '@/lib/catalog/collection-handles';
 import { m } from '@/lib/i18n';
 
 export function getHelpMenu(locale: string) {
@@ -18,7 +19,7 @@ export function getHelpQuickLinks(locale: string) {
   const n = m(locale).nav;
   return [
     { slug: 'account', label: h.myAccount, icon: 'account' as HelpIconName },
-    { slug: 'collections/new', label: n.newArrivals, icon: 'sparkles' as HelpIconName },
+    { slug: collectionPath(SHOPIFY_COLLECTION.newArrivals), label: n.newArrivals, icon: 'sparkles' as HelpIconName },
   ] as const;
 }
 
