@@ -1,19 +1,10 @@
+import { buildMainHeaderNav } from '@/lib/catalog/header-nav';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import type { MenuSections, NavLink, SiteNavigation } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
 function buildStaticMainNav(locale: string): NavLink[] {
-  const n = m(locale).nav;
-  return [
-    { label: n.newArrivals, href: collectionPath(SHOPIFY_COLLECTION.newArrivals) },
-    { label: n.all, href: collectionPath(SHOPIFY_COLLECTION.shopAll) },
-    { label: n.swimwear, href: collectionPath(SHOPIFY_COLLECTION.swimwear) },
-    { label: n.readyToWear, href: collectionPath(SHOPIFY_COLLECTION.readyToWear) },
-    { label: n.collections, href: collectionPath(SHOPIFY_COLLECTION.featured) },
-    { label: n.accessories, href: collectionPath(SHOPIFY_COLLECTION.accessories) },
-    { label: n.about, href: 'about' },
-    { label: n.sale, href: collectionPath(SHOPIFY_COLLECTION.sale), sale: true },
-  ];
+  return buildMainHeaderNav(locale, null);
 }
 
 function buildStaticMenuSections(locale: string): MenuSections {

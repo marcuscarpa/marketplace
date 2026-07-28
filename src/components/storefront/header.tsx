@@ -13,7 +13,7 @@ import { useScroll } from '@/components/providers/scroll-provider';
 import { SearchOverlay } from '@/components/storefront/search-overlay';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { getLocaleFromPathname, getMarkets, replaceLocaleInPath, type MarketId } from '@/lib/catalog/menu';
-import type { SiteNavigation } from '@/lib/catalog/navigation-types';
+import type { NavLink, SiteNavigation } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
 interface HeaderProps {
@@ -165,6 +165,69 @@ function NavSeparator({ light }: { light: boolean }) {
     <span className={`menu-text px-2 ${light ? 'text-white/50' : 'text-ink/35'}`}>
       |
     </span>
+  );
+}
+
+function NavHeaderItem({
+  item,
+  prefix,
+  ink,
+  onNavigate,
+}: {
+  item: NavLink;
+  prefix: string;
+  ink: string;
+  onNavigate?: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const hasChildren = (item.children?.length ?? 0) > 0;
+  const linkClass = `menu-text transition-opacity hover:opacity-60 ${
+    item.sale ? 'text-[#9c4a4a]' : ink
+  }`;
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (!ref.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
+  }, [open]);
+
+  if (!hasChildren) {
+    return (
+      <Link href={`${prefix}/${item.href}`} onClick={onNavigate} className={linkClass}>
+        {item.label}
+      </Link>
+    );
+  }
+
+  return (
+    <div
+      ref={ref}
+      className="relative flex items-center"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <Link href={`${prefix}/${item.href}`} className={linkClass}>
+        {item.label}
+      </Link>
+      {open && (
+        <div className="absolute left-0 top-full z-[100] mt-2 min-w-[180px] border border-black/10 bg-white py-1 shadow-sm">
+          {item.children!.map((child) => (
+            <Link
+              key={child.href + child.label}
+              href={`${prefix}/${child.href}`}
+              onClick={onNavigate}
+              className="menu-text block px-3 py-2 text-ink transition-colors hover:bg-black/4"
+            >
+              {child.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -526,14 +589,7 @@ export function Header({ locale, navigation }: HeaderProps) {
             {mainNav.map((item, index) => (
               <li key={item.href + item.label} className="flex items-center">
                 {index > 0 && <NavSeparator light={heroNav} />}
-                <Link
-                  href={`${prefix}/${item.href}`}
-                  className={`menu-text transition-opacity hover:opacity-60 ${
-                    'sale' in item && item.sale ? 'text-[#9c4a4a]' : ink
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                <NavHeaderItem item={item} prefix={prefix} ink={ink} />
               </li>
             ))}
           </ul>
@@ -574,11 +630,21 @@ export function Header({ locale, navigation }: HeaderProps) {
                         href={`${prefix}/${item.href}`}
                         onClick={() => setMenuOpen(false)}
                         className={`menu-text block -mx-8 px-8 py-2 text-ink transition-colors hover:bg-cream ${
-                          'sale' in item && item.sale ? 'text-[#9c4a4a]' : ''
+                          item.sale ? 'text-[#9c4a4a]' : ''
                         }`}
                       >
                         {item.label}
                       </Link>
+                      {item.children?.map((child) => (
+                        <Link
+                          key={child.href + child.label}
+                          href={`${prefix}/${child.href}`}
+                          onClick={() => setMenuOpen(false)}
+                          className="menu-text block -mx-8 py-2 pl-12 pr-8 text-ink transition-colors hover:bg-cream"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
                     </motion.li>
                   ))}
                 </motion.ul>

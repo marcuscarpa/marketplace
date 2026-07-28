@@ -3,10 +3,10 @@ import {
   isHiddenCollectionHandle,
   SHOPIFY_COLLECTION,
 } from '@/lib/catalog/collection-handles';
+import { buildMainHeaderNav } from '@/lib/catalog/header-nav';
 import type { MenuSections, NavLink, SiteNavigation } from '@/lib/catalog/navigation-types';
 import { getStaticNavigation } from '@/lib/catalog/navigation-static';
 import { m } from '@/lib/i18n';
-import { getCachedOrFetch } from '@/lib/cache/stampede';
 
 import { getShopifyClient, isShopifyConfigured } from './client';
 import { GET_COLLECTIONS } from './queries';
@@ -16,23 +16,6 @@ interface ShopifyCollectionNode {
   title: string;
 }
 
-const MAIN_NAV_HANDLES = [
-  SHOPIFY_COLLECTION.newArrivals,
-  SHOPIFY_COLLECTION.shopAll,
-  SHOPIFY_COLLECTION.swimwear,
-  SHOPIFY_COLLECTION.readyToWear,
-  SHOPIFY_COLLECTION.featured,
-  SHOPIFY_COLLECTION.accessories,
-] as const;
-
-const MAIN_NAV_LABEL_KEY: Record<string, 'newArrivals' | 'all' | 'swimwear' | 'readyToWear' | 'collections' | 'accessories'> = {
-  [SHOPIFY_COLLECTION.newArrivals]: 'newArrivals',
-  [SHOPIFY_COLLECTION.shopAll]: 'all',
-  [SHOPIFY_COLLECTION.swimwear]: 'swimwear',
-  [SHOPIFY_COLLECTION.readyToWear]: 'readyToWear',
-  [SHOPIFY_COLLECTION.featured]: 'collections',
-  [SHOPIFY_COLLECTION.accessories]: 'accessories',
-};
 
 const DRAWER_GROUP_HANDLES: string[][] = [
   [
@@ -79,27 +62,7 @@ function toNavLink(collection: ShopifyCollectionNode, options?: { sale?: boolean
 }
 
 function buildMainNav(locale: string, byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
-  const n = m(locale).nav;
-  const items: NavLink[] = [];
-
-  for (const handle of MAIN_NAV_HANDLES) {
-    const collection = byHandle.get(handle);
-    if (!collection) continue;
-    const labelKey = MAIN_NAV_LABEL_KEY[handle];
-    items.push({
-      label: labelKey ? n[labelKey] : collection.title,
-      href: collectionPath(handle),
-    });
-  }
-
-  items.push({ label: n.about, href: 'about' });
-
-  const sale = byHandle.get(SHOPIFY_COLLECTION.sale);
-  if (sale) {
-    items.push({ label: n.sale, href: collectionPath(sale.handle), sale: true });
-  }
-
-  return items;
+  return buildMainHeaderNav(locale, byHandle);
 }
 
 function buildDrawerLinks(byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
@@ -181,17 +144,14 @@ export async function getShopifyNavigation(locale: string): Promise<SiteNavigati
     return getStaticNavigation(locale);
   }
 
-  try {
-    const collections = await getCachedOrFetch(
-      `navigation:collections:${locale}`,
-      () => fetchCollections(locale),
-      3600
-    );
-    if (collections.length === 0) {
-      return getStaticNavigation(locale);
-    }
-    return buildShopifyNavigation(locale, collections);
-  } catch {
+  const [collectionsResult] = await Promise.allSettled([fetchCollections(locale)]);
+
+  const collections =
+    collectionsResult.status === 'fulfilled' ? collectionsResult.value : [];
+
+  if (collections.length === 0) {
     return getStaticNavigation(locale);
   }
+
+  return buildShopifyNavigation(locale, collections);
 }

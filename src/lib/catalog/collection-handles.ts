@@ -9,6 +9,7 @@ export const SHOPIFY_COLLECTION = {
   sale: 'sale',
   bestsellers: 'bestsellers',
   women: 'shop-all',
+  men: 'mens-collection',
 } as const;
 
 /** Legacy storefront paths → live Shopify handles. */

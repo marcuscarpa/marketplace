@@ -3,6 +3,7 @@ export interface NavLink {
   href: string;
   sale?: boolean;
   chevron?: boolean;
+  children?: NavLink[];
 }
 
 export interface MenuSections {
