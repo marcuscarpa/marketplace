@@ -7,6 +7,15 @@ export interface WishlistStoredItem {
   title: string;
   price: string;
   image: string;
+  vendor?: string;
+  hoverImage?: string;
+  variantId?: string;
+  productId?: string;
+  variantLabel?: string;
+  priceAmount?: string;
+  currencyCode?: string;
+  availableForSale?: boolean;
+  badge?: 'soldOut' | 'lowStock' | null;
 }
 
 const LEGACY_HANDLES = new Set([

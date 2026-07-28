@@ -11,6 +11,7 @@ import { CartQtyStepper } from '@/components/cart/cart-qty-stepper';
 import { useCart } from '@/components/providers/cart-provider';
 import { CartRecommendationsCarousel } from '@/components/storefront/cart-recommendations-carousel';
 import { useWishlist } from '@/hooks/use-wishlist';
+import { useAuth } from '@/hooks/use-auth';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import {
   lineMaxQuantity,
@@ -77,6 +78,7 @@ function CartLineRow({
   updating: boolean;
 }) {
   const { addItem, isInWishlist } = useWishlist();
+  const { isAuthenticated, login } = useAuth();
   const isPt = locale === 'pt';
   const size = lineSize(line);
   const inWishlist = isInWishlist(line.variantId);
@@ -143,6 +145,10 @@ function CartLineRow({
             type="button"
             onClick={() => {
               if (inWishlist) return;
+              if (!isAuthenticated) {
+                login(`${prefix}/wishlist`);
+                return;
+              }
               addItem({
                 id: line.variantId,
                 handle: line.handle,

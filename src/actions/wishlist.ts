@@ -1,14 +1,15 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import { cookies } from 'next/headers';
 import { z } from 'zod';
 
+import { getWishlistOwnerId } from '@/lib/auth/customer';
 import { type WishlistStoredItem } from '@/lib/catalog/wishlist-seed';
 import { formatPriceForLocale } from '@/lib/locale-currency';
 import { logger } from '@/lib/logger';
 import { getRedisClient } from '@/lib/redis/client';
 import { getProductByHandle } from '@/lib/shopify/loader';
+import type { ShopifyProductVariant } from '@/lib/shopify/types';
 
 const toggleWishlistSchema = z.object({
   productId: z.string().min(1, 'Product ID is required'),
@@ -20,10 +21,60 @@ export interface WishlistItem {
   addedAt: string;
 }
 
+function authRequiredMessage(locale: string): string {
+  return locale === 'pt'
+    ? 'Inicie sessão para usar a lista de desejos.'
+    : 'Sign in to use your wishlist.';
+}
+
+function pickVariant(variants: ShopifyProductVariant[]): ShopifyProductVariant | undefined {
+  return variants.find((v) => v.availableForSale !== false) ?? variants[0];
+}
+
+function variantLabel(variant: ShopifyProductVariant | undefined): string | undefined {
+  if (!variant?.selectedOptions?.length) return undefined;
+  return variant.selectedOptions.map((o) => o.value).join(' · ');
+}
+
+function wishlistBadge(
+  variant: ShopifyProductVariant | undefined,
+  totalInventory: number | null | undefined
+): WishlistStoredItem['badge'] {
+  if (variant?.availableForSale === false) return 'soldOut';
+  if (totalInventory !== null && totalInventory !== undefined && totalInventory <= 0) return 'soldOut';
+  const stock = variant?.quantityAvailable;
+  if (stock !== null && stock !== undefined && stock > 0 && stock <= 3) return 'lowStock';
+  return null;
+}
+
+function productToWishlistItem(product: NonNullable<Awaited<ReturnType<typeof getProductByHandle>>>, locale: string): WishlistStoredItem {
+  const variant = pickVariant(product.variants.nodes);
+  const images = product.images.nodes;
+  const priceAmount = variant?.price.amount ?? product.priceRange.minVariantPrice.amount;
+  const currencyCode = variant?.price.currencyCode ?? product.priceRange.minVariantPrice.currencyCode;
+
+  return {
+    id: product.handle,
+    handle: product.handle,
+    title: product.title,
+    vendor: product.vendor,
+    price: formatPriceForLocale(priceAmount, locale),
+    priceAmount,
+    currencyCode,
+    image: variant?.image?.url ?? images[0]?.url ?? '',
+    hoverImage: images[1]?.url,
+    variantId: variant?.id,
+    productId: product.id,
+    variantLabel: variantLabel(variant),
+    availableForSale: variant?.availableForSale !== false,
+    badge: wishlistBadge(variant, product.totalInventory),
+  };
+}
+
 export async function toggleWishlist(
-  _prevState: { success: boolean; message: string; items?: WishlistItem[] },
+  _prevState: { success: boolean; message: string; items?: WishlistItem[]; requiresAuth?: boolean },
   formData: FormData
-): Promise<{ success: boolean; message: string; items?: WishlistItem[] }> {
+): Promise<{ success: boolean; message: string; items?: WishlistItem[]; requiresAuth?: boolean }> {
   const productId = formData.get('productId') as string;
   const locale = (formData.get('locale') as string) || 'en';
 
@@ -36,22 +87,9 @@ export async function toggleWishlist(
     };
   }
 
-  const cookieStore = await cookies();
-  let customerId = cookieStore.get('shopify_customer_id')?.value;
-
+  const customerId = await getWishlistOwnerId(parsed.data.locale);
   if (!customerId) {
-    let anonymousId = cookieStore.get('wishlist_anonymous_id')?.value;
-    if (!anonymousId) {
-      anonymousId = `guest:${crypto.randomUUID()}`;
-      cookieStore.set('wishlist_anonymous_id', anonymousId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24 * 90,
-      });
-    }
-    customerId = anonymousId;
+    return { success: false, message: authRequiredMessage(parsed.data.locale), requiresAuth: true };
   }
 
   try {
@@ -95,12 +133,12 @@ export async function toggleWishlist(
 
 export async function getWishlist(
   locale?: string
-): Promise<{ success: boolean; items: WishlistItem[] }> {
-  const cookieStore = await cookies();
-  let customerId = cookieStore.get('shopify_customer_id')?.value;
+): Promise<{ success: boolean; items: WishlistItem[]; requiresAuth?: boolean }> {
+  const resolvedLocale = locale ?? 'en';
+  const customerId = await getWishlistOwnerId(resolvedLocale);
 
   if (!customerId) {
-    customerId = cookieStore.get('wishlist_anonymous_id')?.value ?? `guest:${crypto.randomUUID()}`;
+    return { success: true, items: [], requiresAuth: true };
   }
 
   try {
@@ -118,23 +156,13 @@ export async function getWishlist(
   }
 }
 
-/** Product handles in Redis → live Shopify product cards for header / account. */
+/** Product handles in Redis → live Shopify product cards for wishlist page / header. */
 export async function getWishlistItems(locale: string): Promise<WishlistStoredItem[]> {
-  const { success, items } = await getWishlist(locale);
-  if (!success || items.length === 0) return [];
+  const { success, items, requiresAuth } = await getWishlist(locale);
+  if (requiresAuth || !success || items.length === 0) return [];
 
   const handles = items.map((item) => item.productId);
-  const products = await Promise.all(
-    handles.map((handle) => getProductByHandle(handle, locale))
-  );
+  const products = await Promise.all(handles.map((handle) => getProductByHandle(handle, locale)));
 
-  return products
-    .filter(Boolean)
-    .map((product) => ({
-      id: product!.handle,
-      handle: product!.handle,
-      title: product!.title,
-      price: formatPriceForLocale(product!.priceRange.minVariantPrice.amount, locale),
-      image: product!.images.nodes[0]?.url ?? '',
-    }));
+  return products.filter(Boolean).map((product) => productToWishlistItem(product!, locale));
 }

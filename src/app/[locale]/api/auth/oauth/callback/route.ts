@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
+import { fetchCustomerByAccessToken } from '@/lib/auth/customer';
 import { getEnv } from '@/lib/env';
 import { getRegion } from '@/lib/regions';
 
@@ -81,6 +82,8 @@ export async function GET(
 
     const tokens = (await tokenResponse.json()) as TokenResponse;
 
+    const customer = await fetchCustomerByAccessToken(tokens.access_token, locale);
+
     const accessTokenHash = crypto.createHash('sha256').update(tokens.access_token).digest('hex');
     const idToken = tokens.id_token || '';
 
@@ -99,6 +102,13 @@ export async function GET(
     redirectResponse.cookies.set('refresh_token', tokens.refresh_token, { ...cookieOptions, maxAge: 60 * 60 * 24 * 30 });
     redirectResponse.cookies.set('access_token_hash', accessTokenHash, { ...cookieOptions, maxAge: tokens.expires_in });
     redirectResponse.cookies.set('id_token', idToken, { ...cookieOptions, maxAge: tokens.expires_in });
+
+    if (customer?.id) {
+      redirectResponse.cookies.set('shopify_customer_id', customer.id, {
+        ...cookieOptions,
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    }
 
     return redirectResponse;
   } catch (err) {

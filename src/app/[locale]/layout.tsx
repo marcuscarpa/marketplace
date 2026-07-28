@@ -34,7 +34,7 @@ export default async function LocaleLayout({
 
   return (
     <EdgeConfigProvider>
-      <AuthProvider>
+      <AuthProvider locale={locale}>
         <CartProvider locale={locale}>
           <WishlistProvider locale={locale}>
             <NewsletterModalProvider>
