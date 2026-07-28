@@ -371,7 +371,7 @@ export function Header({ locale }: HeaderProps) {
   const { scrollY } = useScroll();
   const { cart, openCart, isCartOpen } = useCart();
   const { openNewsletter } = useNewsletterModal();
-  const { items: wishlistItems } = useWishlist();
+  const { items: wishlistItems, hydrated: wishlistHydrated } = useWishlist();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -389,7 +389,7 @@ export function Header({ locale }: HeaderProps) {
   const isHome = pathname === `/${locale}` || pathname === `/${locale}/`;
   const heroNav = isHome && scrollY < 60 && !menuOpen;
   const cartCount = mounted ? cart?.totalQuantity ?? 0 : 0;
-  const wishlistCount = mounted ? wishlistItems.length : 0;
+  const wishlistCount = wishlistHydrated ? wishlistItems.length : 0;
   const blurActive = scrolled && !menuOpen;
 
   const prefix = `/${locale}`;
@@ -463,7 +463,7 @@ export function Header({ locale }: HeaderProps) {
                       <IconAccount />
                     </HeaderIcon>
                     <div className="relative">
-                      <HeaderIcon href={`${prefix}/account`} label={labels.wishlist} light={heroNav}>
+                      <HeaderIcon href={`${prefix}/wishlist`} label={labels.wishlist} light={heroNav}>
                         <IconWishlist />
                       </HeaderIcon>
                       {wishlistCount > 0 && (
@@ -626,7 +626,7 @@ export function Header({ locale }: HeaderProps) {
                   <MenuUtilityRow
                     icon={<IconWishlist />}
                     label={labels.wishlist}
-                    href={`${prefix}/account`}
+                    href={`${prefix}/wishlist`}
                     onClick={() => setMenuOpen(false)}
                     trailing={
                       wishlistCount > 0 ? (

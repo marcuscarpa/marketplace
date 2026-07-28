@@ -3,7 +3,7 @@
 import { useWishlist as useWishlistContext } from '@/components/providers/wishlist-provider';
 
 export function useWishlist() {
-  const { items, addItem, removeItem, isInWishlist, clearWishlist } = useWishlistContext();
+  const { items, addItem, removeItem, isInWishlist, clearWishlist, hydrated } = useWishlistContext();
 
   const toggleItem = (productId: string, handle: string) => {
     if (isInWishlist(productId)) {
@@ -20,5 +20,6 @@ export function useWishlist() {
     addItem,
     removeItem,
     clearWishlist,
+    hydrated,
   };
 }

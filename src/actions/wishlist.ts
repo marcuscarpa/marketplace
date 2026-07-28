@@ -4,9 +4,11 @@ import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 
+import { type WishlistStoredItem } from '@/lib/catalog/wishlist-seed';
+import { formatPriceForLocale } from '@/lib/locale-currency';
 import { logger } from '@/lib/logger';
 import { getRedisClient } from '@/lib/redis/client';
-import { getShopifyClient } from '@/lib/shopify/client';
+import { getProductByHandle } from '@/lib/shopify/loader';
 
 const toggleWishlistSchema = z.object({
   productId: z.string().min(1, 'Product ID is required'),
@@ -71,18 +73,18 @@ export async function toggleWishlist(
       return items
     `;
 
+    const wasMember = await redis.sismember(wishlistKey, parsed.data.productId);
     const items = await redis.eval(
       lua, 1, wishlistKey, parsed.data.productId, String(60 * 60 * 24 * 90)
     ) as string[];
 
-    const existed = items.includes(parsed.data.productId);
-    logger.info(existed ? 'Removed from wishlist' : 'Added to wishlist', { customerId, productId });
+    logger.info(wasMember ? 'Removed from wishlist' : 'Added to wishlist', { customerId, productId });
 
     revalidateTag('wishlist');
 
     return {
       success: true,
-      message: existed ? 'Removed from wishlist' : 'Added to wishlist',
+      message: wasMember ? 'Removed from wishlist' : 'Added to wishlist',
       items: items.map((id) => ({ productId: id, addedAt: new Date().toISOString() })),
     };
   } catch (error) {
@@ -114,4 +116,25 @@ export async function getWishlist(
     logger.error('Failed to fetch wishlist', { customerId, error });
     return { success: false, items: [] };
   }
+}
+
+/** Product handles in Redis → live Shopify product cards for header / account. */
+export async function getWishlistItems(locale: string): Promise<WishlistStoredItem[]> {
+  const { success, items } = await getWishlist(locale);
+  if (!success || items.length === 0) return [];
+
+  const handles = items.map((item) => item.productId);
+  const products = await Promise.all(
+    handles.map((handle) => getProductByHandle(handle, locale))
+  );
+
+  return products
+    .filter(Boolean)
+    .map((product) => ({
+      id: product!.handle,
+      handle: product!.handle,
+      title: product!.title,
+      price: formatPriceForLocale(product!.priceRange.minVariantPrice.amount, locale),
+      image: product!.images.nodes[0]?.url ?? '',
+    }));
 }

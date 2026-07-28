@@ -34,7 +34,7 @@ export default async function LocaleLayout({
     <EdgeConfigProvider>
       <AuthProvider>
         <CartProvider locale={locale}>
-          <WishlistProvider>
+          <WishlistProvider locale={locale}>
             <NewsletterModalProvider>
             <ScrollProvider>
               {nonce && <DynamicScripts nonce={nonce} />}

@@ -48,7 +48,7 @@ function refreshFromCatalog(item: WishlistStoredItem): WishlistStoredItem | null
 
 /** Drop placeholder favorites; refresh titles/images from local catalog. */
 export function normalizeWishlistItems(stored: WishlistStoredItem[]): WishlistStoredItem[] {
-  if (stored.some(isLegacyItem)) return WISHLIST_SEED_ITEMS;
+  if (stored.some(isLegacyItem)) return [];
 
   const refreshed = stored
     .map((item) => refreshFromCatalog(item) ?? (isLegacyItem(item) ? null : item))
@@ -73,7 +73,7 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
       image: 'https://www.zimmermann.com/x.jpg',
     },
   ]);
-  if (legacy.length !== WISHLIST_SEED_ITEMS.length || legacy[0]?.handle !== WISHLIST_SEED_ITEMS[0]?.handle) {
-    console.error('[wishlist-seed] normalizeWishlistItems self-check failed');
+  if (legacy.length !== 0) {
+    console.error('[wishlist-seed] normalizeWishlistItems should drop legacy items');
   }
 }

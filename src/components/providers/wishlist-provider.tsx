@@ -1,12 +1,9 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
-import {
-  WISHLIST_SEED_ITEMS,
-  normalizeWishlistItems,
-  type WishlistStoredItem,
-} from '@/lib/catalog/wishlist-seed';
+import { getWishlistItems, toggleWishlist } from '@/actions/wishlist';
+import { type WishlistStoredItem } from '@/lib/catalog/wishlist-seed';
 
 interface WishlistContextType {
   items: WishlistStoredItem[];
@@ -14,65 +11,89 @@ interface WishlistContextType {
   removeItem: (id: string) => void;
   isInWishlist: (id: string) => boolean;
   clearWishlist: () => void;
+  hydrated: boolean;
 }
 
 const WishlistContext = createContext<WishlistContextType | null>(null);
 
 const EMPTY_WISHLIST: WishlistStoredItem[] = [];
-const STORAGE_KEY = 'wishlist';
 
-export function WishlistProvider({ children }: { children: ReactNode }) {
+export function WishlistProvider({
+  children,
+  locale,
+}: {
+  children: ReactNode;
+  locale: string;
+}) {
   const [items, setItems] = useState<WishlistStoredItem[]>(EMPTY_WISHLIST);
   const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
-      // ponytail: demo favorites — same 6 products as search modal; upgrade path: account sync
-      setItems(WISHLIST_SEED_ITEMS);
-      setHydrated(true);
-      return;
-    }
-
+  const refresh = useCallback(async () => {
     try {
-      const parsed = JSON.parse(stored) as WishlistStoredItem[];
-      const normalized = normalizeWishlistItems(parsed);
-      setItems(normalized.length > 0 ? normalized : WISHLIST_SEED_ITEMS);
+      const loaded = await getWishlistItems(locale);
+      setItems(loaded);
     } catch {
-      setItems(WISHLIST_SEED_ITEMS);
-      localStorage.removeItem(STORAGE_KEY);
+      setItems(EMPTY_WISHLIST);
+    } finally {
+      setHydrated(true);
     }
-    setHydrated(true);
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
-    if (!hydrated || typeof window === 'undefined') return;
-    if (items.length === 0) {
-      localStorage.removeItem(STORAGE_KEY);
-      return;
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items, hydrated]);
+    void refresh();
+  }, [refresh]);
 
-  const addItem = (item: WishlistStoredItem) => {
-    setItems((prev) => {
-      if (prev.some((i) => i.id === item.id)) return prev;
-      return [...prev, item];
-    });
-  };
+  const syncToggle = useCallback(
+    async (productId: string) => {
+      const formData = new FormData();
+      formData.set('productId', productId);
+      formData.set('locale', locale);
+      const result = await toggleWishlist({ success: false, message: '' }, formData);
+      if (result.success) {
+        const loaded = await getWishlistItems(locale);
+        setItems(loaded);
+      }
+    },
+    [locale]
+  );
 
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-  };
+  const addItem = useCallback(
+    (item: WishlistStoredItem) => {
+      if (items.some((i) => i.id === item.id || i.handle === item.handle)) return;
+      setItems((prev) => [...prev, item]);
+      void syncToggle(item.handle);
+    },
+    [items, syncToggle]
+  );
 
-  const isInWishlist = (id: string) => items.some((i) => i.id === id);
+  const removeItem = useCallback(
+    (id: string) => {
+      if (!items.some((i) => i.id === id || i.handle === id)) return;
+      setItems((prev) => prev.filter((i) => i.id !== id && i.handle !== id));
+      void syncToggle(id);
+    },
+    [items, syncToggle]
+  );
 
-  const clearWishlist = () => setItems(EMPTY_WISHLIST);
+  const isInWishlist = useCallback(
+    (id: string) => items.some((i) => i.id === id || i.handle === id),
+    [items]
+  );
+
+  const clearWishlist = useCallback(() => {
+    const snapshot = [...items];
+    setItems(EMPTY_WISHLIST);
+    void (async () => {
+      for (const item of snapshot) {
+        await syncToggle(item.handle);
+      }
+    })();
+  }, [items, syncToggle]);
 
   return (
-    <WishlistContext.Provider value={{ items, addItem, removeItem, isInWishlist, clearWishlist }}>
+    <WishlistContext.Provider
+      value={{ items, addItem, removeItem, isInWishlist, clearWishlist, hydrated }}
+    >
       {children}
     </WishlistContext.Provider>
   );

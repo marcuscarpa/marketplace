@@ -81,7 +81,7 @@ export function getMenuSections(locale: string) {
     utilityMobile: [
       { label: n.search, href: 'search' },
       { label: n.account, href: 'account' },
-      { label: n.wishlist, href: 'account' },
+      { label: n.wishlist, href: 'wishlist' },
     ],
   };
 }
