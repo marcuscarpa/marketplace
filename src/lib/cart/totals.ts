@@ -1,15 +1,19 @@
 import type { CartLineItem } from '@/lib/cart/display';
-import { maxVariantQuantity } from '@/lib/shopify/variants';
 
 export function lineTotal(line: CartLineItem): number {
   return Number(line.price.amount) * line.quantity;
 }
 
 export function lineMaxQuantity(line: CartLineItem): number {
-  return maxVariantQuantity({
-    availableForSale: true,
-    quantityAvailable: line.quantityAvailable,
-  });
+  const stock = line.quantityAvailable;
+  if (stock === null || stock === undefined) {
+    return 99;
+  }
+  // Cart line API often returns 0 even when the variant is sellable; don't block + if already in bag.
+  if (stock === 0 && line.quantity > 0) {
+    return 99;
+  }
+  return Math.min(Math.max(stock, line.quantity), 99);
 }
 
 export function totalQuantityFromLines(lines: CartLineItem[]): number {

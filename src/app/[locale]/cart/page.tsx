@@ -9,6 +9,8 @@ import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
 import { GET_CART } from '@/lib/shopify/queries';
 import { ShopifyCart } from '@/lib/shopify/types';
 
+export const dynamic = 'force-dynamic';
+
 interface CartPageProps {
   params: Promise<{ locale: string }>;
 }

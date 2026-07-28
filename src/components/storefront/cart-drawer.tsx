@@ -186,6 +186,7 @@ export function CartDrawer({ locale }: CartDrawerProps) {
   const [optimisticLines, setOptimisticLines] = useState<CartLineItem[] | null>(null);
   const [recommendations, setRecommendations] = useState<CartCarouselItem[]>([]);
   const [, startTransition] = useTransition();
+  const mutatingRef = useRef(false);
 
   const { cart, isLoading, isCartOpen, closeCart, updateFromAction, refreshCart } = useCart();
 
@@ -193,14 +194,17 @@ export function CartDrawer({ locale }: CartDrawerProps) {
   const prefix = `/${locale}`;
   const isMockCart = isMockCartId(cart.id);
 
+  const cartLinesSignature = cart.lines.map((l) => `${l.id}:${l.quantity}`).join('|');
+
   useEffect(() => {
     if (isMockCart) setMockLines(cart.lines);
     else setMockLines(null);
   }, [isMockCart, cart.lines]);
 
   useEffect(() => {
-    if (!isMockCart) setOptimisticLines(null);
-  }, [cart.lines, isMockCart]);
+    if (mutatingRef.current || isMockCart) return;
+    setOptimisticLines(null);
+  }, [cartLinesSignature, isMockCart]);
 
   const lines = isMockCart && mockLines ? mockLines : optimisticLines ?? cart.lines;
   const count = totalQuantityFromLines(lines);
@@ -306,19 +310,30 @@ export function CartDrawer({ locale }: CartDrawerProps) {
       setMockLines((prev) => removeLine(prev ?? cart.lines, lineId));
       return;
     }
-    setOptimisticLines((prev) => removeLine(prev ?? cart.lines, lineId));
+
+    const previous = optimisticLines ?? cart.lines;
+    setOptimisticLines(removeLine(previous, lineId));
+    mutatingRef.current = true;
     setPendingLineId(lineId);
     setPendingAction('remove');
     startTransition(async () => {
-      const fd = new FormData();
-      fd.set('lineId', lineId);
-      fd.set('locale', locale);
-      const result = await removeFromCartAction({ success: false, message: '' }, fd);
-      if (!result.success) setOptimisticLines(null);
-      updateFromAction(result);
-      if (result.success) await refreshCart();
-      setPendingLineId(null);
-      setPendingAction(null);
+      try {
+        const fd = new FormData();
+        fd.set('lineId', lineId);
+        fd.set('locale', locale);
+        const result = await removeFromCartAction({ success: false, message: '' }, fd);
+        if (result.success) {
+          updateFromAction(result);
+          setOptimisticLines(null);
+          await refreshCart();
+        } else {
+          setOptimisticLines(null);
+        }
+      } finally {
+        mutatingRef.current = false;
+        setPendingLineId(null);
+        setPendingAction(null);
+      }
     });
   };
 
@@ -335,20 +350,30 @@ export function CartDrawer({ locale }: CartDrawerProps) {
       return;
     }
 
-    setOptimisticLines((prev) => updateLineQuantity(prev ?? cart.lines, lineId, next));
+    const previous = optimisticLines ?? cart.lines;
+    setOptimisticLines(updateLineQuantity(previous, lineId, next));
+    mutatingRef.current = true;
     setPendingLineId(lineId);
     setPendingAction('quantity');
     startTransition(async () => {
-      const fd = new FormData();
-      fd.set('lineId', lineId);
-      fd.set('quantity', String(next));
-      fd.set('locale', locale);
-      const result = await updateCartLinesAction({ success: false, message: '' }, fd);
-      if (!result.success) setOptimisticLines(null);
-      updateFromAction(result);
-      if (result.success) await refreshCart();
-      setPendingLineId(null);
-      setPendingAction(null);
+      try {
+        const fd = new FormData();
+        fd.set('lineId', lineId);
+        fd.set('quantity', String(next));
+        fd.set('locale', locale);
+        const result = await updateCartLinesAction({ success: false, message: '' }, fd);
+        if (result.success) {
+          updateFromAction(result);
+          setOptimisticLines(null);
+          await refreshCart();
+        } else {
+          setOptimisticLines(null);
+        }
+      } finally {
+        mutatingRef.current = false;
+        setPendingLineId(null);
+        setPendingAction(null);
+      }
     });
   };
 

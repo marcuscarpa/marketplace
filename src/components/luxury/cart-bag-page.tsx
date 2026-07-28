@@ -3,10 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 import { removeFromCartAction, updateCartLinesAction } from '@/actions/cart';
 import { CartQtyStepper } from '@/components/cart/cart-qty-stepper';
+import { useCart } from '@/components/providers/cart-provider';
 import { trackStartedCheckout } from '@/lib/analytics';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import {
@@ -250,10 +251,15 @@ export function CartBagPage({
   const [pendingLineId, setPendingLineId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const router = useRouter();
+  const { updateFromAction, refreshCart } = useCart();
+  const mutatingRef = useRef(false);
+
+  const linesSignature = lines.map((l) => `${l.id}:${l.quantity}`).join('|');
 
   useEffect(() => {
+    if (mutatingRef.current) return;
     setLocalLines(lines);
-  }, [lines]);
+  }, [linesSignature, lines]);
 
   const isPt = locale === 'pt';
   const prefix = `/${locale}`;
@@ -279,18 +285,32 @@ export function CartBagPage({
         setLocalLines((prev) => removeLine(prev, lineId));
         return;
       }
+
+      const previous = localLines;
       setLocalLines((prev) => removeLine(prev, lineId));
+      mutatingRef.current = true;
       setPendingLineId(lineId);
       startTransition(async () => {
-        const fd = new FormData();
-        fd.set('lineId', lineId);
-        fd.set('locale', locale);
-        await removeFromCartAction({ success: false, message: '' }, fd);
-        setPendingLineId(null);
-        router.refresh();
+        try {
+          const fd = new FormData();
+          fd.set('lineId', lineId);
+          fd.set('locale', locale);
+          const result = await removeFromCartAction({ success: false, message: '' }, fd);
+          if (result.success && result.cart?.lines) {
+            setLocalLines(result.cart.lines);
+            updateFromAction(result);
+            void refreshCart();
+            router.refresh();
+          } else {
+            setLocalLines(previous);
+          }
+        } finally {
+          mutatingRef.current = false;
+          setPendingLineId(null);
+        }
       });
     },
-    [isMockCart, locale, router]
+    [isMockCart, localLines, locale, refreshCart, router, updateFromAction]
   );
 
   const handleQuantityChange = useCallback(
@@ -301,25 +321,37 @@ export function CartBagPage({
       const next = Math.max(1, Math.min(quantity, max));
       if (next === line.quantity) return;
 
+      if (isMockCart) {
+        setLocalLines((prev) => updateLineQuantity(prev, lineId, next));
+        return;
+      }
+
+      const previous = localLines;
       setLocalLines((prev) => updateLineQuantity(prev, lineId, next));
-
-      if (isMockCart) return;
-
+      mutatingRef.current = true;
       setPendingLineId(lineId);
       startTransition(async () => {
-        const fd = new FormData();
-        fd.set('lineId', lineId);
-        fd.set('quantity', String(next));
-        fd.set('locale', locale);
-        const result = await updateCartLinesAction({ success: false, message: '' }, fd);
-        if (!result.success) {
-          setLocalLines(lines);
+        try {
+          const fd = new FormData();
+          fd.set('lineId', lineId);
+          fd.set('quantity', String(next));
+          fd.set('locale', locale);
+          const result = await updateCartLinesAction({ success: false, message: '' }, fd);
+          if (result.success && result.cart?.lines) {
+            setLocalLines(result.cart.lines);
+            updateFromAction(result);
+            void refreshCart();
+            router.refresh();
+          } else {
+            setLocalLines(previous);
+          }
+        } finally {
+          mutatingRef.current = false;
+          setPendingLineId(null);
         }
-        setPendingLineId(null);
-        router.refresh();
       });
     },
-    [isMockCart, lines, localLines, locale, router]
+    [isMockCart, localLines, locale, refreshCart, router, updateFromAction]
   );
 
   const handleCheckout = () => {

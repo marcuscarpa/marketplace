@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { cookies, headers } from 'next/headers';
 import { z } from 'zod';
 
@@ -53,8 +53,11 @@ export interface CartActionState {
   };
 }
 
-async function invalidateCartCache(cartId: string): Promise<void> {
+async function invalidateCartCache(cartId: string, locale?: string): Promise<void> {
   revalidateTag('cart');
+  if (locale) {
+    revalidatePath(`/${locale}/cart`);
+  }
   try {
     const redis = getRedisClient();
     await redis.del(`cart:${cartId}`);
@@ -131,7 +134,7 @@ export async function addToCartAction(
 
       const cart = result.cartLinesAdd.cart;
       if (cart) {
-        await invalidateCartCache(cart.id);
+        await invalidateCartCache(cart.id, parsed.data.locale);
         const mapped = await serializeCartWithImages(cart, locale);
         return {
           success: true,
@@ -168,7 +171,7 @@ export async function addToCartAction(
         maxAge: 60 * 60 * 24 * 30,
       });
 
-      await invalidateCartCache(cart.id);
+      await invalidateCartCache(cart.id, parsed.data.locale);
 
       return {
         success: true,
@@ -245,7 +248,7 @@ export async function updateCartLinesAction(
 
     const cart = result.cartLinesUpdate.cart;
     if (cart) {
-      await invalidateCartCache(cart.id);
+      await invalidateCartCache(cart.id, parsed.data.locale);
       return {
         success: true,
         message: cartMsg.updated,
@@ -310,7 +313,7 @@ export async function removeFromCartAction(
 
     const cart = result.cartLinesRemove.cart;
     if (cart) {
-      await invalidateCartCache(cart.id);
+      await invalidateCartCache(cart.id, parsed.data.locale);
       return {
         success: true,
         message: cartMsg.removed,
