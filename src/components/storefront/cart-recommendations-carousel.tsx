@@ -23,6 +23,7 @@ interface CartRecommendationsCarouselProps {
   prefix: string;
   items: CartCarouselItem[];
   onItemClick?: () => void;
+  variant?: 'compact' | 'page';
 }
 
 export function CartRecommendationsCarousel({
@@ -30,9 +31,13 @@ export function CartRecommendationsCarousel({
   prefix,
   items,
   onItemClick,
+  variant = 'compact',
 }: CartRecommendationsCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const isPt = locale === 'pt';
+  const isPage = variant === 'page';
+
+  const scrollStep = isPage ? 320 : 140;
 
   if (items.length === 0) return null;
 
@@ -44,12 +49,12 @@ export function CartRecommendationsCarousel({
         </h3>
       </header>
 
-      <div className="relative px-3 py-4">
+      <div className={`relative py-4 ${isPage ? '' : 'px-3'}`}>
         <button
           type="button"
           aria-label={isPt ? 'Anterior' : 'Previous'}
-          onClick={() => trackRef.current?.scrollBy({ left: -140, behavior: 'smooth' })}
-          className="absolute left-1 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-ink hover:opacity-60"
+          onClick={() => trackRef.current?.scrollBy({ left: -scrollStep, behavior: 'smooth' })}
+          className={`absolute top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-ink hover:opacity-60 ${isPage ? '-left-1' : 'left-1'}`}
         >
           <IconChevron direction="left" />
         </button>
@@ -57,24 +62,42 @@ export function CartRecommendationsCarousel({
         <div
           ref={trackRef}
           data-minicart-carousel
-          className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto scroll-smooth px-7 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className={
+            isPage
+              ? 'flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+              : 'flex snap-x snap-mandatory gap-2.5 overflow-x-auto scroll-smooth px-7 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+          }
         >
           {items.map((item) => (
             <Link
               key={item.handle}
               href={`${prefix}/products/${item.handle}`}
               onClick={onItemClick}
-              className="w-[127px] shrink-0 snap-start text-center"
+              className={
+                isPage
+                  ? 'w-[calc((100%-3rem)/4)] min-w-[160px] shrink-0 snap-start text-center md:min-w-0'
+                  : 'w-[127px] shrink-0 snap-start text-center'
+              }
             >
               <div className="relative mb-2 aspect-[514/668] w-full overflow-hidden bg-white">
                 {item.image ? (
-                  <Image src={item.image} alt={item.title} fill sizes="127px" className="object-contain" />
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes={isPage ? '(max-width: 768px) 160px, 25vw' : '127px'}
+                    className="object-contain"
+                  />
                 ) : null}
               </div>
-              <p className="mb-1 line-clamp-2 font-sans-ui text-[10px] uppercase leading-snug tracking-[0.06em] text-ink">
+              <p
+                className={`mb-1 line-clamp-2 font-sans-ui uppercase leading-snug tracking-[0.06em] text-ink ${
+                  isPage ? 'text-[11px]' : 'text-[10px]'
+                }`}
+              >
                 {item.title}
               </p>
-              <p className="font-sans-ui text-[11px] text-ink">{item.price}</p>
+              <p className={`font-sans-ui text-ink ${isPage ? 'text-[12px]' : 'text-[11px]'}`}>{item.price}</p>
             </Link>
           ))}
         </div>
@@ -82,8 +105,8 @@ export function CartRecommendationsCarousel({
         <button
           type="button"
           aria-label={isPt ? 'Seguinte' : 'Next'}
-          onClick={() => trackRef.current?.scrollBy({ left: 140, behavior: 'smooth' })}
-          className="absolute right-1 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-ink hover:opacity-60"
+          onClick={() => trackRef.current?.scrollBy({ left: scrollStep, behavior: 'smooth' })}
+          className={`absolute top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-ink hover:opacity-60 ${isPage ? '-right-1' : 'right-1'}`}
         >
           <IconChevron direction="right" />
         </button>
