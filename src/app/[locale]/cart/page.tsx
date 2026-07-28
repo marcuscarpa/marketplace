@@ -51,6 +51,7 @@ export default async function CartPage({ params }: CartPageProps) {
         totalQuantity={mock.totalQuantity}
         checkoutDisabled={false}
         cartDisabled={false}
+        isMockCart
         recommendations={recommendations}
       />
     );

@@ -3,15 +3,23 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import { removeFromCartAction, updateCartLinesAction } from '@/actions/cart';
+import { CartQtyStepper } from '@/components/cart/cart-qty-stepper';
 import { trackStartedCheckout } from '@/lib/analytics';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
+import {
+  lineMaxQuantity,
+  lineTotal,
+  removeLine,
+  subtotalFromLines,
+  totalQuantityFromLines,
+  updateLineQuantity,
+} from '@/lib/cart/totals';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
-import { maxVariantQuantity } from '@/lib/shopify/variants';
 
 import { CartRecommendationsCarousel } from '@/components/storefront/cart-recommendations-carousel';
 import type { CartCarouselItem } from '@/lib/shopify/cart-recommendations';
@@ -23,6 +31,7 @@ interface CartBagPageProps {
   totalQuantity: number;
   checkoutDisabled: boolean;
   cartDisabled: boolean;
+  isMockCart?: boolean;
   recommendations: CartCarouselItem[];
 }
 
@@ -52,64 +61,6 @@ function lineSize(line: CartLineItem): string {
 function lineColor(line: CartLineItem): string | null {
   const color = line.selectedOptions.find((o) => /color|cor|colour/i.test(o.name));
   return color?.value ?? null;
-}
-
-function lineMaxQuantity(line: CartLineItem): number {
-  return maxVariantQuantity({
-    availableForSale: true,
-    quantityAvailable: line.quantityAvailable,
-  });
-}
-
-function lineTotal(line: CartLineItem): number {
-  return Number(line.price.amount) * line.quantity;
-}
-
-function subtotalFromLines(lines: CartLineItem[]): { amount: string; currencyCode: string } | null {
-  if (!lines.length) return null;
-  const currencyCode = lines[0]!.price.currencyCode;
-  const amount = lines.reduce((sum, line) => sum + lineTotal(line), 0).toFixed(2);
-  return { amount, currencyCode };
-}
-
-function CartQtyStepper({
-  quantity,
-  max,
-  disabled,
-  onChange,
-  labels,
-}: {
-  quantity: number;
-  max: number;
-  disabled: boolean;
-  onChange: (next: number) => void;
-  labels: { decrease: string; increase: string };
-}) {
-  return (
-    <div className="inline-flex items-stretch border border-[#03060733] text-[11px] uppercase tracking-[0.02em]">
-      <button
-        type="button"
-        aria-label={labels.decrease}
-        disabled={disabled || quantity <= 1}
-        onClick={() => onChange(quantity - 1)}
-        className="flex w-8 items-center justify-center transition-opacity hover:opacity-60 disabled:opacity-30"
-      >
-        −
-      </button>
-      <span className="flex min-w-[2.25rem] items-center justify-center border-x border-[#03060733] px-1 tabular-nums">
-        {quantity}
-      </span>
-      <button
-        type="button"
-        aria-label={labels.increase}
-        disabled={disabled || quantity >= max}
-        onClick={() => onChange(quantity + 1)}
-        className="flex w-8 items-center justify-center transition-opacity hover:opacity-60 disabled:opacity-30"
-      >
-        +
-      </button>
-    </div>
-  );
 }
 
 function CartTableHeader({ locale }: { locale: string }) {
@@ -292,15 +243,22 @@ export function CartBagPage({
   totalQuantity,
   checkoutDisabled,
   cartDisabled,
+  isMockCart = false,
   recommendations,
 }: CartBagPageProps) {
+  const [localLines, setLocalLines] = useState(lines);
   const [pendingLineId, setPendingLineId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const router = useRouter();
 
+  useEffect(() => {
+    setLocalLines(lines);
+  }, [lines]);
+
   const isPt = locale === 'pt';
   const prefix = `/${locale}`;
-  const displaySubtotal = subtotal ?? subtotalFromLines(lines);
+  const displayTotalQuantity = totalQuantityFromLines(localLines);
+  const displaySubtotal = subtotalFromLines(localLines) ?? subtotal;
 
   const copy = {
     title: isPt ? 'Saco' : 'Bag',
@@ -317,6 +275,11 @@ export function CartBagPage({
 
   const handleRemove = useCallback(
     (lineId: string) => {
+      if (isMockCart) {
+        setLocalLines((prev) => removeLine(prev, lineId));
+        return;
+      }
+      setLocalLines((prev) => removeLine(prev, lineId));
       setPendingLineId(lineId);
       startTransition(async () => {
         const fd = new FormData();
@@ -327,32 +290,45 @@ export function CartBagPage({
         router.refresh();
       });
     },
-    [locale, router]
+    [isMockCart, locale, router]
   );
 
   const handleQuantityChange = useCallback(
     (lineId: string, quantity: number) => {
+      const line = localLines.find((l) => l.id === lineId);
+      if (!line) return;
+      const max = lineMaxQuantity(line);
+      const next = Math.max(1, Math.min(quantity, max));
+      if (next === line.quantity) return;
+
+      setLocalLines((prev) => updateLineQuantity(prev, lineId, next));
+
+      if (isMockCart) return;
+
       setPendingLineId(lineId);
       startTransition(async () => {
         const fd = new FormData();
         fd.set('lineId', lineId);
-        fd.set('quantity', String(quantity));
+        fd.set('quantity', String(next));
         fd.set('locale', locale);
-        await updateCartLinesAction({ success: false, message: '' }, fd);
+        const result = await updateCartLinesAction({ success: false, message: '' }, fd);
+        if (!result.success) {
+          setLocalLines(lines);
+        }
         setPendingLineId(null);
         router.refresh();
       });
     },
-    [locale, router]
+    [isMockCart, lines, localLines, locale, router]
   );
 
   const handleCheckout = () => {
     if (!displaySubtotal) return;
     trackStartedCheckout({
-      totalQuantity,
+      totalQuantity: displayTotalQuantity,
       totalAmount: displaySubtotal.amount,
       currency: displaySubtotal.currencyCode,
-      itemCount: lines.length,
+      itemCount: localLines.length,
     });
   };
 
@@ -370,7 +346,7 @@ export function CartBagPage({
           <p className="mb-6 text-center text-[11px] uppercase tracking-[0.02em] text-red-700">{copy.cartDisabled}</p>
         )}
 
-        {lines.length === 0 ? (
+        {localLines.length === 0 ? (
           <div className="py-12 text-center">
             <p className="mb-6 text-[12px] uppercase tracking-[0.02em] text-[#03060799]">{copy.empty}</p>
             <Link
@@ -383,7 +359,7 @@ export function CartBagPage({
         ) : (
           <>
             <CartTableHeader locale={locale} />
-            {lines.map((line) => (
+            {localLines.map((line) => (
               <CartTableRow
                 key={line.id}
                 line={line}
@@ -398,7 +374,7 @@ export function CartBagPage({
             {displaySubtotal && (
               <section className="mt-4">
                 <div className="bg-[#f3f3f3]">
-                  <SummaryRow label={copy.totalItems} value={String(totalQuantity)} />
+                  <SummaryRow label={copy.totalItems} value={String(displayTotalQuantity)} />
                   <SummaryRow
                     label={copy.subtotal}
                     value={formatCartPrice(displaySubtotal.amount, displaySubtotal.currencyCode, locale)}

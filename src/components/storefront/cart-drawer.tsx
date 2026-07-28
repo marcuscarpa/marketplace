@@ -6,12 +6,20 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useId, useRef, useState, useTransition } from 'react';
 import { createPortal } from 'react-dom';
 
-import { getCartRecommendationsAction, removeFromCartAction, type CartActionState } from '@/actions/cart';
+import { getCartRecommendationsAction, removeFromCartAction, updateCartLinesAction } from '@/actions/cart';
+import { CartQtyStepper } from '@/components/cart/cart-qty-stepper';
 import { useCart } from '@/components/providers/cart-provider';
 import { CartRecommendationsCarousel } from '@/components/storefront/cart-recommendations-carousel';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
-import { currencyForLocale } from '@/lib/locale-currency';
+import {
+  lineMaxQuantity,
+  lineTotal,
+  removeLine,
+  subtotalFromLines,
+  totalQuantityFromLines,
+  updateLineQuantity,
+} from '@/lib/cart/totals';
 import { isMockCartId } from '@/lib/catalog/minicart-mock';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import type { CartCarouselItem } from '@/lib/shopify/cart-recommendations';
@@ -56,18 +64,24 @@ function CartLineRow({
   locale,
   prefix,
   onRemove,
+  onQuantityChange,
   removing,
+  updating,
 }: {
   line: CartLineItem;
   locale: string;
   prefix: string;
   onRemove: (lineId: string) => void;
+  onQuantityChange: (lineId: string, quantity: number) => void;
   removing: boolean;
+  updating: boolean;
 }) {
   const { addItem, isInWishlist } = useWishlist();
   const isPt = locale === 'pt';
   const size = lineSize(line);
   const inWishlist = isInWishlist(line.variantId);
+  const pending = removing || updating;
+  const lineTotalFormatted = formatCartPrice(String(lineTotal(line)), line.price.currencyCode, locale);
 
   return (
     <div className="flex gap-4 border-b border-[#03060714] py-5">
@@ -105,9 +119,22 @@ function CartLineRow({
               <span className="shrink-0 tabular-nums">{size}</span>
             </div>
           )}
-          <div className="flex items-baseline justify-between gap-3 font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink">
+          <div className="flex items-center justify-between gap-3 font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink">
             <span className="shrink-0 text-[#03060799]">{isPt ? 'Quantidade' : 'Quantity'}</span>
-            <span className="shrink-0 tabular-nums">{line.quantity}</span>
+            <CartQtyStepper
+              quantity={line.quantity}
+              max={lineMaxQuantity(line)}
+              disabled={pending}
+              onChange={(next) => onQuantityChange(line.id, next)}
+              labels={{
+                decrease: isPt ? 'Diminuir quantidade' : 'Decrease quantity',
+                increase: isPt ? 'Aumentar quantidade' : 'Increase quantity',
+              }}
+            />
+          </div>
+          <div className="flex items-baseline justify-between gap-3 font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink">
+            <span className="shrink-0 text-[#03060799]">{isPt ? 'Total artigo' : 'Item total'}</span>
+            <span className="shrink-0 tabular-nums">{lineTotalFormatted}</span>
           </div>
         </div>
 
@@ -133,7 +160,7 @@ function CartLineRow({
           <button
             type="button"
             onClick={() => onRemove(line.id)}
-            disabled={removing}
+            disabled={pending}
             className="inline-flex items-center gap-1.5 border-b border-ink pb-px font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink transition-opacity hover:opacity-60 disabled:opacity-40"
           >
             <span>{isPt ? 'Remover' : 'Remove'}</span>
@@ -154,7 +181,9 @@ export function CartDrawer({ locale }: CartDrawerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [pendingLineId, setPendingLineId] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<'remove' | 'quantity' | null>(null);
   const [mockLines, setMockLines] = useState<CartLineItem[] | null>(null);
+  const [optimisticLines, setOptimisticLines] = useState<CartLineItem[] | null>(null);
   const [recommendations, setRecommendations] = useState<CartCarouselItem[]>([]);
   const [, startTransition] = useTransition();
 
@@ -169,17 +198,13 @@ export function CartDrawer({ locale }: CartDrawerProps) {
     else setMockLines(null);
   }, [isMockCart, cart.lines]);
 
-  const lines = isMockCart && mockLines ? mockLines : cart.lines;
-  const count = lines.reduce((sum, line) => sum + line.quantity, 0);
-  const subtotal =
-    isMockCart && mockLines && mockLines.length > 0
-      ? {
-          currencyCode: currencyForLocale(locale),
-          amount: mockLines
-            .reduce((sum, line) => sum + Number(line.price.amount) * line.quantity, 0)
-            .toFixed(2),
-        }
-      : cart.cost?.subtotalAmount;
+  useEffect(() => {
+    if (!isMockCart) setOptimisticLines(null);
+  }, [cart.lines, isMockCart]);
+
+  const lines = isMockCart && mockLines ? mockLines : optimisticLines ?? cart.lines;
+  const count = totalQuantityFromLines(lines);
+  const subtotal = subtotalFromLines(lines) ?? cart.cost?.subtotalAmount ?? null;
 
   useEffect(() => setMounted(true), []);
 
@@ -278,18 +303,52 @@ export function CartDrawer({ locale }: CartDrawerProps) {
 
   const handleRemove = (lineId: string) => {
     if (isMockCart) {
-      setMockLines((prev) => (prev ?? cart.lines).filter((line) => line.id !== lineId));
+      setMockLines((prev) => removeLine(prev ?? cart.lines, lineId));
       return;
     }
+    setOptimisticLines((prev) => removeLine(prev ?? cart.lines, lineId));
     setPendingLineId(lineId);
+    setPendingAction('remove');
     startTransition(async () => {
       const fd = new FormData();
       fd.set('lineId', lineId);
       fd.set('locale', locale);
       const result = await removeFromCartAction({ success: false, message: '' }, fd);
+      if (!result.success) setOptimisticLines(null);
       updateFromAction(result);
       if (result.success) await refreshCart();
       setPendingLineId(null);
+      setPendingAction(null);
+    });
+  };
+
+  const handleQuantityChange = (lineId: string, quantity: number) => {
+    const sourceLines = isMockCart && mockLines ? mockLines : optimisticLines ?? cart.lines;
+    const line = sourceLines.find((l) => l.id === lineId);
+    if (!line) return;
+    const max = lineMaxQuantity(line);
+    const next = Math.max(1, Math.min(quantity, max));
+    if (next === line.quantity) return;
+
+    if (isMockCart) {
+      setMockLines((prev) => updateLineQuantity(prev ?? cart.lines, lineId, next));
+      return;
+    }
+
+    setOptimisticLines((prev) => updateLineQuantity(prev ?? cart.lines, lineId, next));
+    setPendingLineId(lineId);
+    setPendingAction('quantity');
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set('lineId', lineId);
+      fd.set('quantity', String(next));
+      fd.set('locale', locale);
+      const result = await updateCartLinesAction({ success: false, message: '' }, fd);
+      if (!result.success) setOptimisticLines(null);
+      updateFromAction(result);
+      if (result.success) await refreshCart();
+      setPendingLineId(null);
+      setPendingAction(null);
     });
   };
 
@@ -365,7 +424,9 @@ export function CartDrawer({ locale }: CartDrawerProps) {
                     locale={locale}
                     prefix={prefix}
                     onRemove={handleRemove}
-                    removing={pendingLineId === line.id}
+                    onQuantityChange={handleQuantityChange}
+                    removing={pendingLineId === line.id && pendingAction === 'remove'}
+                    updating={pendingLineId === line.id && pendingAction === 'quantity'}
                   />
                 ))
               )}
