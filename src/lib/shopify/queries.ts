@@ -147,24 +147,6 @@ export const GET_COLLECTIONS = `
   }
 `;
 
-export const GET_MENU = `
-  query GetMenu($handle: String!) {
-    menu(handle: $handle) {
-      title
-      items {
-        title
-        url
-        type
-        items {
-          title
-          url
-          type
-        }
-      }
-    }
-  }
-`;
-
 export const GET_PRODUCTS_BY_COLLECTION = `
   query GetProductsByCollection($handle: String!, $first: Int!, $after: String) {
     collection(handle: $handle) {
