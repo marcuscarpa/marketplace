@@ -13,6 +13,7 @@ import { useScroll } from '@/components/providers/scroll-provider';
 import { SearchOverlay } from '@/components/storefront/search-overlay';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { getLocaleFromPathname, getMarkets, replaceLocaleInPath, type MarketId } from '@/lib/catalog/menu';
+import { resolveNavHref } from '@/lib/catalog/nav-href';
 import type { SiteNavigation } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
@@ -527,7 +528,7 @@ export function Header({ locale, navigation }: HeaderProps) {
               <li key={item.href + item.label} className="flex items-center">
                 {index > 0 && <NavSeparator light={heroNav} />}
                 <Link
-                  href={`${prefix}/${item.href}`}
+                  href={resolveNavHref(locale, item.href)}
                   className={`menu-text transition-opacity hover:opacity-60 ${
                     'sale' in item && item.sale ? 'text-[#9c4a4a]' : ink
                   }`}
@@ -571,7 +572,7 @@ export function Header({ locale, navigation }: HeaderProps) {
                   {mainNav.map((item) => (
                     <motion.li key={item.href + item.label} variants={itemVariants}>
                       <Link
-                        href={`${prefix}/${item.href}`}
+                        href={resolveNavHref(locale, item.href)}
                         onClick={() => setMenuOpen(false)}
                         className={`menu-text block -mx-8 px-8 py-2 text-ink transition-colors hover:bg-cream ${
                           'sale' in item && item.sale ? 'text-[#9c4a4a]' : ''
@@ -592,7 +593,7 @@ export function Header({ locale, navigation }: HeaderProps) {
                   {menuSections.brand.links.map((link) => (
                     <motion.div key={link.href} variants={itemVariants}>
                       <Link
-                        href={`${prefix}/${link.href}`}
+                        href={resolveNavHref(locale, link.href)}
                         onClick={() => setMenuOpen(false)}
                         className="menu-text block -mx-8 px-8 py-2 text-ink transition-colors hover:bg-cream"
                       >

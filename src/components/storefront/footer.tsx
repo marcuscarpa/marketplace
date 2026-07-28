@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 
 import { getFooterLinks, instagramHref } from '@/lib/catalog/data';
+import { resolveNavHref } from '@/lib/catalog/nav-href';
 import type { SiteNavigation } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
@@ -46,7 +47,7 @@ function FooterColumn({
         {links.map((link) => (
           <li key={link.href}>
             <Link
-              href={`/${locale}/${link.href}`}
+              href={resolveNavHref(locale, link.href)}
               className="font-sans-ui text-[15px] leading-[1.33] text-ink transition-opacity hover:opacity-60"
             >
               {link.label}
@@ -191,7 +192,7 @@ export function Footer({ locale, navigation }: FooterProps) {
             {links.legal.map((link) => (
               <li key={link.href}>
                 <Link
-                  href={`/${locale}/${link.href}`}
+                  href={resolveNavHref(locale, link.href)}
                   className="font-sans-ui text-[15px] leading-[1.33] text-ink underline underline-offset-2 transition-opacity hover:opacity-60"
                 >
                   {link.label}

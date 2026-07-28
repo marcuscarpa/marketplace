@@ -9,12 +9,28 @@ import { m } from '@/lib/i18n';
 import { getCachedOrFetch } from '@/lib/cache/stampede';
 
 import { getShopifyClient, isShopifyConfigured } from './client';
-import { GET_COLLECTIONS } from './queries';
+import { parseShopifyMenuUrl } from './menu-url';
+import { GET_COLLECTIONS, GET_MENU } from './queries';
 
 interface ShopifyCollectionNode {
   handle: string;
   title: string;
 }
+
+interface ShopifyMenuItem {
+  title: string;
+  url: string;
+  type: string;
+  items?: ShopifyMenuItem[];
+}
+
+interface ShopifyMenu {
+  title: string;
+  items: ShopifyMenuItem[];
+}
+
+const MAIN_MENU_HANDLE = 'main-menu';
+const FOOTER_MENU_HANDLE = 'footer';
 
 const MAIN_NAV_HANDLES = [
   SHOPIFY_COLLECTION.newArrivals,
@@ -59,6 +75,16 @@ const DRAWER_GROUP_HANDLES: string[][] = [
   [SHOPIFY_COLLECTION.bestsellers, SHOPIFY_COLLECTION.sale],
 ];
 
+async function fetchMenu(locale: string, handle: string): Promise<ShopifyMenu | null> {
+  const client = getShopifyClient(locale);
+  const data = await client.execute<{ menu: ShopifyMenu | null }>(
+    GET_MENU,
+    { handle },
+    `shopify:menu:${handle}:${locale}`
+  );
+  return data.menu;
+}
+
 async function fetchCollections(locale: string): Promise<ShopifyCollectionNode[]> {
   const client = getShopifyClient(locale);
   const data = await client.execute<{ collections: { nodes: ShopifyCollectionNode[] } }>(
@@ -67,6 +93,41 @@ async function fetchCollections(locale: string): Promise<ShopifyCollectionNode[]
     `shopify:collections:${locale}`
   );
   return data.collections.nodes.filter((c) => !isHiddenCollectionHandle(c.handle));
+}
+
+function isSaleHref(href: string): boolean {
+  return href.endsWith(`/${SHOPIFY_COLLECTION.sale}`) || href === collectionPath(SHOPIFY_COLLECTION.sale);
+}
+
+function menuItemToNavLink(item: ShopifyMenuItem, options?: { chevron?: boolean }): NavLink {
+  const href = parseShopifyMenuUrl(item.url);
+  return {
+    label: item.title.replace(/^-\s*/, ''),
+    href,
+    sale: isSaleHref(href),
+    chevron: options?.chevron,
+  };
+}
+
+function buildMainNavFromMenu(items: ShopifyMenuItem[]): NavLink[] {
+  return items.map((item) => menuItemToNavLink(item));
+}
+
+function flattenFooterMenu(items: ShopifyMenuItem[]): NavLink[] {
+  const links: NavLink[] = [];
+
+  for (const item of items) {
+    links.push(
+      menuItemToNavLink(item, {
+        chevron: item.type === 'CATALOG' || (item.items?.length ?? 0) > 0,
+      })
+    );
+    for (const child of item.items ?? []) {
+      links.push(menuItemToNavLink(child));
+    }
+  }
+
+  return links;
 }
 
 function toNavLink(collection: ShopifyCollectionNode, options?: { sale?: boolean; chevron?: boolean }): NavLink {
@@ -78,7 +139,7 @@ function toNavLink(collection: ShopifyCollectionNode, options?: { sale?: boolean
   };
 }
 
-function buildMainNav(locale: string, byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
+function buildMainNavFromCollections(locale: string, byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
   const n = m(locale).nav;
   const items: NavLink[] = [];
 
@@ -102,7 +163,7 @@ function buildMainNav(locale: string, byHandle: Map<string, ShopifyCollectionNod
   return items;
 }
 
-function buildDrawerLinks(byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
+function buildDrawerLinksFromCollections(byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
   const seen = new Set<string>();
   const links: NavLink[] = [];
 
@@ -157,21 +218,20 @@ function buildSearchCategories(locale: string, links: NavLink[]) {
   }));
 }
 
-function buildShopifyNavigation(locale: string, collections: ShopifyCollectionNode[]): SiteNavigation {
-  const byHandle = new Map(collections.map((c) => [c.handle, c]));
-  const mainNav = buildMainNav(locale, byHandle);
-  const drawerLinks = buildDrawerLinks(byHandle);
-  const menuSections = buildMenuSections(locale, drawerLinks);
-
-  const footerShop = drawerLinks
-    .filter((link) => !link.href.endsWith(SHOPIFY_COLLECTION.sale))
-    .slice(0, 8);
-
+function buildNavigation(
+  locale: string,
+  options: {
+    mainNav: NavLink[];
+    drawerLinks: NavLink[];
+    footerShop: NavLink[];
+  }
+): SiteNavigation {
+  const menuSections = buildMenuSections(locale, options.drawerLinks);
   return {
-    mainNav,
+    mainNav: options.mainNav,
     menuSections,
-    footerShop,
-    searchCategories: buildSearchCategories(locale, drawerLinks.slice(0, 12)),
+    footerShop: options.footerShop,
+    searchCategories: buildSearchCategories(locale, options.drawerLinks.slice(0, 12)),
     source: 'shopify',
   };
 }
@@ -182,15 +242,51 @@ export async function getShopifyNavigation(locale: string): Promise<SiteNavigati
   }
 
   try {
-    const collections = await getCachedOrFetch(
-      `navigation:collections:${locale}`,
-      () => fetchCollections(locale),
+    const [mainMenu, footerMenu, collections] = await getCachedOrFetch(
+      `navigation:menus:${locale}`,
+      () =>
+        Promise.all([
+          fetchMenu(locale, MAIN_MENU_HANDLE),
+          fetchMenu(locale, FOOTER_MENU_HANDLE),
+          fetchCollections(locale),
+        ]),
       3600
     );
+
+    const byHandle = new Map(collections.map((c) => [c.handle, c]));
+
+    if (mainMenu?.items.length || footerMenu?.items.length) {
+      const mainNav =
+        mainMenu?.items.length
+          ? buildMainNavFromMenu(mainMenu.items)
+          : buildMainNavFromCollections(locale, byHandle);
+
+      const drawerLinks =
+        footerMenu?.items.length
+          ? flattenFooterMenu(footerMenu.items)
+          : buildDrawerLinksFromCollections(byHandle);
+
+      const footerShop = footerMenu?.items.length
+        ? footerMenu.items
+            .map((item) => menuItemToNavLink(item))
+            .filter((link) => !link.sale)
+            .slice(0, 8)
+        : drawerLinks.filter((link) => !link.sale).slice(0, 8);
+
+      return buildNavigation(locale, { mainNav, drawerLinks, footerShop });
+    }
+
     if (collections.length === 0) {
       return getStaticNavigation(locale);
     }
-    return buildShopifyNavigation(locale, collections);
+
+    const mainNav = buildMainNavFromCollections(locale, byHandle);
+    const drawerLinks = buildDrawerLinksFromCollections(byHandle);
+    return buildNavigation(locale, {
+      mainNav,
+      drawerLinks,
+      footerShop: drawerLinks.filter((link) => !link.sale).slice(0, 8),
+    });
   } catch {
     return getStaticNavigation(locale);
   }
