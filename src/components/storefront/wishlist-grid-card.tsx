@@ -39,7 +39,7 @@ export function WishlistGridCard({ item, locale, prefix, onRemove }: WishlistGri
 
   return (
     <article className="group/card flex flex-col">
-      <div className="relative mb-4 aspect-[3/4] w-full overflow-hidden bg-cream">
+      <div className="relative mb-4 aspect-[3/4] w-full overflow-hidden bg-white">
         <Link href={href} className="absolute inset-0 z-0 block">
           <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER_NESTED}`}>
             {item.image ? (
@@ -92,7 +92,7 @@ export function WishlistGridCard({ item, locale, prefix, onRemove }: WishlistGri
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] translate-y-full opacity-0 transition duration-500 ease-in-out group-hover/card:pointer-events-auto group-hover/card:translate-y-0 group-hover/card:opacity-100">
           {canAddToBag && item.variantId && item.productId ? (
-            <div className="[&_button]:h-12 [&_button]:border-0 [&_button]:bg-cream [&_button]:text-[12px] [&_button]:font-normal [&_button]:tracking-[0.02em] [&_button]:text-ink [&_button]:hover:bg-[#eceae5] [&_form]:w-full">
+            <div className="[&_button]:h-12 [&_button]:border-0 [&_button]:bg-white [&_button]:text-[12px] [&_button]:font-normal [&_button]:tracking-[0.02em] [&_button]:text-ink [&_button]:hover:bg-[#f7f7f7] [&_form]:w-full">
               <AddToCartButton
                 variantId={item.variantId}
                 productId={item.productId}
@@ -106,7 +106,7 @@ export function WishlistGridCard({ item, locale, prefix, onRemove }: WishlistGri
           ) : (
             <Link
               href={href}
-              className="flex h-12 w-full items-center justify-center bg-cream font-sans-ui text-[12px] font-normal uppercase tracking-[0.02em] text-ink no-underline transition-colors hover:bg-[#eceae5]"
+              className="flex h-12 w-full items-center justify-center bg-white font-sans-ui text-[12px] font-normal uppercase tracking-[0.02em] text-ink no-underline transition-colors hover:bg-[#f7f7f7]"
             >
               {item.badge === 'soldOut'
                 ? isPt
