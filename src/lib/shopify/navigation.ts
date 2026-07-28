@@ -241,11 +241,15 @@ export async function getShopifyNavigation(locale: string): Promise<SiteNavigati
   }
 
   try {
-    const [mainMenu, footerMenu, collections] = await Promise.all([
+    const [mainMenuResult, footerMenuResult, collectionsResult] = await Promise.allSettled([
       fetchMenu(locale, MAIN_MENU_HANDLE),
       fetchMenu(locale, FOOTER_MENU_HANDLE),
       fetchCollections(locale),
     ]);
+
+    const mainMenu = mainMenuResult.status === 'fulfilled' ? mainMenuResult.value : null;
+    const footerMenu = footerMenuResult.status === 'fulfilled' ? footerMenuResult.value : null;
+    const collections = collectionsResult.status === 'fulfilled' ? collectionsResult.value : [];
 
     const byHandle = new Map(collections.map((c) => [c.handle, c]));
 
