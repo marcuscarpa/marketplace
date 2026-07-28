@@ -6,7 +6,6 @@ import { motion, useInView } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { useWishlist } from '@/hooks/use-wishlist';
-import { useAuth } from '@/hooks/use-auth';
 import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
 import { PRODUCT_IMAGE_HOVER_NESTED } from '@/components/storefront/ui';
 import { type CatalogProduct } from '@/lib/catalog/data';
@@ -49,7 +48,6 @@ function HeartIcon({ filled = false, className = 'h-4 w-4' }: { filled?: boolean
 
 function FavoriteButton({ product, locale }: { product: CatalogProduct; locale: string }) {
   const { isInWishlist, addItem, removeItem } = useWishlist();
-  const { isAuthenticated, login } = useAuth();
   const saved = isInWishlist(product.handle);
 
   return (
@@ -58,10 +56,6 @@ function FavoriteButton({ product, locale }: { product: CatalogProduct; locale: 
       onClick={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        if (!isAuthenticated) {
-          login(`/${locale}/wishlist`);
-          return;
-        }
         if (saved) {
           removeItem(product.handle);
         } else {

@@ -1,10 +1,11 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { getWishlistItems, toggleWishlist } from '@/actions/wishlist';
 import { useAuth } from '@/hooks/use-auth';
 import { type WishlistStoredItem } from '@/lib/catalog/wishlist-seed';
+import { clearGuestWishlist, readGuestWishlist, writeGuestWishlist } from '@/lib/wishlist/guest-storage';
 
 interface WishlistContextType {
   items: WishlistStoredItem[];
@@ -13,7 +14,6 @@ interface WishlistContextType {
   isInWishlist: (id: string) => boolean;
   clearWishlist: () => void;
   hydrated: boolean;
-  requiresAuth: boolean;
 }
 
 const WishlistContext = createContext<WishlistContextType | null>(null);
@@ -29,33 +29,24 @@ export function WishlistProvider({
 }) {
   const [items, setItems] = useState<WishlistStoredItem[]>(EMPTY_WISHLIST);
   const [hydrated, setHydrated] = useState(false);
-  const [requiresAuth, setRequiresAuth] = useState(false);
   const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const mergedGuestRef = useRef(false);
 
-  const refresh = useCallback(async () => {
-    if (!isAuthenticated) {
-      setItems(EMPTY_WISHLIST);
-      setRequiresAuth(true);
-      setHydrated(true);
-      return;
-    }
-
+  const refreshServer = useCallback(async () => {
     try {
       const loaded = await getWishlistItems(locale);
       setItems(loaded);
-      setRequiresAuth(false);
     } catch {
       setItems(EMPTY_WISHLIST);
     } finally {
       setHydrated(true);
     }
-  }, [isAuthenticated, locale]);
+  }, [locale]);
 
-  useEffect(() => {
-    if (authLoading) return;
-    setHydrated(false);
-    void refresh();
-  }, [authLoading, refresh]);
+  const refreshGuest = useCallback(() => {
+    setItems(readGuestWishlist());
+    setHydrated(true);
+  }, []);
 
   const syncToggle = useCallback(
     async (productId: string) => {
@@ -63,11 +54,6 @@ export function WishlistProvider({
       formData.set('productId', productId);
       formData.set('locale', locale);
       const result = await toggleWishlist({ success: false, message: '' }, formData);
-      if (result.requiresAuth) {
-        setRequiresAuth(true);
-        setItems(EMPTY_WISHLIST);
-        return false;
-      }
       if (result.success) {
         const loaded = await getWishlistItems(locale);
         setItems(loaded);
@@ -78,9 +64,51 @@ export function WishlistProvider({
     [locale]
   );
 
+  useEffect(() => {
+    if (authLoading) return;
+
+    if (!isAuthenticated) {
+      mergedGuestRef.current = false;
+      refreshGuest();
+      return;
+    }
+
+    setHydrated(false);
+    void refreshServer();
+  }, [authLoading, isAuthenticated, refreshGuest, refreshServer]);
+
+  useEffect(() => {
+    if (authLoading || !isAuthenticated || mergedGuestRef.current) return;
+
+    const guestItems = readGuestWishlist();
+    if (guestItems.length === 0) {
+      mergedGuestRef.current = true;
+      return;
+    }
+
+    mergedGuestRef.current = true;
+    void (async () => {
+      for (const item of guestItems) {
+        await syncToggle(item.handle);
+      }
+      clearGuestWishlist();
+      await refreshServer();
+    })();
+  }, [authLoading, isAuthenticated, refreshServer, syncToggle]);
+
   const addItem = useCallback(
     (item: WishlistStoredItem) => {
-      if (!isAuthenticated || items.some((i) => i.id === item.id || i.handle === item.handle)) return;
+      if (items.some((i) => i.id === item.id || i.handle === item.handle)) return;
+
+      if (!isAuthenticated) {
+        setItems((prev) => {
+          const next = [...prev, item];
+          writeGuestWishlist(next);
+          return next;
+        });
+        return;
+      }
+
       setItems((prev) => [...prev, item]);
       void syncToggle(item.handle).then((ok) => {
         if (!ok) {
@@ -93,13 +121,23 @@ export function WishlistProvider({
 
   const removeItem = useCallback(
     (id: string) => {
-      if (!isAuthenticated || !items.some((i) => i.id === id || i.handle === id)) return;
+      if (!items.some((i) => i.id === id || i.handle === id)) return;
+
+      if (!isAuthenticated) {
+        setItems((prev) => {
+          const next = prev.filter((i) => i.id !== id && i.handle !== id);
+          writeGuestWishlist(next);
+          return next;
+        });
+        return;
+      }
+
       setItems((prev) => prev.filter((i) => i.id !== id && i.handle !== id));
       void syncToggle(id).then((ok) => {
-        if (!ok) void refresh();
+        if (!ok) void refreshServer();
       });
     },
-    [isAuthenticated, items, refresh, syncToggle]
+    [isAuthenticated, items, refreshServer, syncToggle]
   );
 
   const isInWishlist = useCallback(
@@ -110,16 +148,20 @@ export function WishlistProvider({
   const clearWishlist = useCallback(() => {
     const snapshot = [...items];
     setItems(EMPTY_WISHLIST);
+    if (!isAuthenticated) {
+      clearGuestWishlist();
+      return;
+    }
     void (async () => {
       for (const item of snapshot) {
         await syncToggle(item.handle);
       }
     })();
-  }, [items, syncToggle]);
+  }, [isAuthenticated, items, syncToggle]);
 
   return (
     <WishlistContext.Provider
-      value={{ items, addItem, removeItem, isInWishlist, clearWishlist, hydrated, requiresAuth }}
+      value={{ items, addItem, removeItem, isInWishlist, clearWishlist, hydrated }}
     >
       {children}
     </WishlistContext.Provider>

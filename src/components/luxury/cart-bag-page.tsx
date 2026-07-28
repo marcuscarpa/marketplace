@@ -19,7 +19,6 @@ import {
   updateLineQuantity,
 } from '@/lib/cart/totals';
 import { useWishlist } from '@/hooks/use-wishlist';
-import { useAuth } from '@/hooks/use-auth';
 import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 
@@ -96,7 +95,6 @@ function CartTableRow({
   pending: boolean;
 }) {
   const { addItem, isInWishlist } = useWishlist();
-  const { isAuthenticated, login } = useAuth();
   const isPt = locale === 'pt';
   const size = lineSize(line);
   const color = lineColor(line);
@@ -169,10 +167,6 @@ function CartTableRow({
           type="button"
           onClick={() => {
             if (inWishlist) return;
-            if (!isAuthenticated) {
-              login(`${prefix}/wishlist`);
-              return;
-            }
             addItem({
               id: line.variantId,
               handle: line.handle,
