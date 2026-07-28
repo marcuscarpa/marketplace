@@ -6,7 +6,6 @@ import {
 import type { MenuSections, NavLink, SiteNavigation } from '@/lib/catalog/navigation-types';
 import { getStaticNavigation } from '@/lib/catalog/navigation-static';
 import { m } from '@/lib/i18n';
-import { getCachedOrFetch } from '@/lib/cache/stampede';
 
 import { getShopifyClient, isShopifyConfigured } from './client';
 import { parseShopifyMenuUrl } from './menu-url';
@@ -242,16 +241,11 @@ export async function getShopifyNavigation(locale: string): Promise<SiteNavigati
   }
 
   try {
-    const [mainMenu, footerMenu, collections] = await getCachedOrFetch(
-      `navigation:menus:${locale}`,
-      () =>
-        Promise.all([
-          fetchMenu(locale, MAIN_MENU_HANDLE),
-          fetchMenu(locale, FOOTER_MENU_HANDLE),
-          fetchCollections(locale),
-        ]),
-      3600
-    );
+    const [mainMenu, footerMenu, collections] = await Promise.all([
+      fetchMenu(locale, MAIN_MENU_HANDLE),
+      fetchMenu(locale, FOOTER_MENU_HANDLE),
+      fetchCollections(locale),
+    ]);
 
     const byHandle = new Map(collections.map((c) => [c.handle, c]));
 
