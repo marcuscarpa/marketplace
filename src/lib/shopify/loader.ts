@@ -137,12 +137,6 @@ const PRODUCT_FIELDS = `
       price { amount currencyCode }
       selectedOptions { name value }
       image { url altText }
-      shopPayInstallmentsPricing {
-        eligible
-        installmentsCount { count }
-        pricePerTerm { amount currencyCode }
-        fullPrice { amount currencyCode }
-      }
     }
   }
   metafields(identifiers: [

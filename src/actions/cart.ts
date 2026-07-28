@@ -144,7 +144,6 @@ export async function addToCartAction(
         input: {
           lines: [{ merchandiseId: parsed.data.variantId, quantity: parsed.data.quantity }],
         },
-        locale: parsed.data.locale === 'pt' ? 'PT-BR' : 'EN-US',
       }
     );
 

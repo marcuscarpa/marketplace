@@ -44,16 +44,44 @@ describe('Shopify Client', () => {
       mockEnv.SHOPIFY_STORE_DOMAIN_US = 'store-us.myshopify.com';
     });
 
-    it('returns false when token starts with test-token', () => {
+    it('returns false when token starts with test-token and client credentials are placeholders', () => {
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = 'test-token-us';
+      mockEnv.SHOPIFY_CLIENT_ID = 'test-client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'test-client-secret';
       expect(isShopifyConfigured('en-US')).toBe(false);
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = 'real-token-us';
+      mockEnv.SHOPIFY_CLIENT_ID = 'client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'client-secret';
+    });
+
+    it('returns false when token is empty and client credentials are placeholders', () => {
+      mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = '';
+      mockEnv.SHOPIFY_CLIENT_ID = 'test-client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'test-client-secret';
+      expect(isShopifyConfigured('en-US')).toBe(false);
+      mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = 'real-token-us';
+      mockEnv.SHOPIFY_CLIENT_ID = 'client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'client-secret';
+    });
+
+    it('returns true when client credentials are set even without static storefront token', () => {
+      mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = 'auto';
+      mockEnv.SHOPIFY_CLIENT_ID = 'real-client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'real-client-secret';
+      expect(isShopifyConfigured('en-US')).toBe(true);
+      mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = 'real-token-us';
+      mockEnv.SHOPIFY_CLIENT_ID = 'client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'client-secret';
     });
 
     it('returns false when token is empty', () => {
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = '';
+      mockEnv.SHOPIFY_CLIENT_ID = 'test-client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'test-client-secret';
       expect(isShopifyConfigured('en-US')).toBe(false);
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = 'real-token-us';
+      mockEnv.SHOPIFY_CLIENT_ID = 'client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'client-secret';
     });
 
     it('returns false when domain is empty', () => {
@@ -64,14 +92,22 @@ describe('Shopify Client', () => {
 
     it('returns false when region token is missing and US token is test-token', () => {
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = 'test-token-us';
+      mockEnv.SHOPIFY_CLIENT_ID = 'test-client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'test-client-secret';
       expect(isShopifyConfigured('pt-BR')).toBe(false);
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US = 'real-token-us';
+      mockEnv.SHOPIFY_CLIENT_ID = 'client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'client-secret';
     });
 
     it('checks EU region credentials', () => {
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_EU = 'test-token-eu';
+      mockEnv.SHOPIFY_CLIENT_ID = 'test-client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'test-client-secret';
       expect(isShopifyConfigured('eu')).toBe(false);
       mockEnv.SHOPIFY_STOREFRONT_ACCESS_TOKEN_EU = 'real-token-eu';
+      mockEnv.SHOPIFY_CLIENT_ID = 'client-id';
+      mockEnv.SHOPIFY_CLIENT_SECRET = 'client-secret';
     });
 
     it('returns true for APAC when credentials are valid', () => {

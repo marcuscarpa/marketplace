@@ -51,12 +51,29 @@ function isBuildPhase(): boolean {
 export function hasRealShopifyCredentials(): boolean {
   const domain = process.env.SHOPIFY_STORE_DOMAIN_US ?? '';
   const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US ?? '';
-  if (!domain || !token) return false;
-  if (domain.includes('dev-placeholder') || domain.includes('your-store')) return false;
-  if (token === 'dev-placeholder' || token.startsWith('your_') || token.startsWith('test-token')) {
+  const clientId = process.env.SHOPIFY_CLIENT_ID ?? '';
+  const clientSecret = process.env.SHOPIFY_CLIENT_SECRET ?? '';
+
+  if (!domain || domain.includes('dev-placeholder') || domain.includes('your-store') || domain.includes('test-')) {
     return false;
   }
-  return true;
+
+  const hasStaticToken =
+    !!token &&
+    token !== 'dev-placeholder' &&
+    token !== 'auto' &&
+    !token.startsWith('your_') &&
+    !token.startsWith('test-token');
+
+  const hasClientCreds =
+    !!clientId &&
+    !!clientSecret &&
+    clientId !== 'dev-placeholder' &&
+    clientSecret !== 'dev-placeholder' &&
+    clientId !== 'test-client-id' &&
+    clientSecret !== 'test-client-secret';
+
+  return hasStaticToken || hasClientCreds;
 }
 
 function canUseIntegrationStubs(): boolean {

@@ -49,12 +49,6 @@ export const GET_PRODUCT_BY_HANDLE = `
           price { amount currencyCode }
           selectedOptions { name value }
           image { url altText }
-          shopPayInstallmentsPricing {
-            eligible
-            installmentsCount { count }
-            pricePerTerm { amount currencyCode }
-            fullPrice { amount currencyCode }
-          }
         }
       }
       metafields(identifiers: [
@@ -209,8 +203,8 @@ export const CART_FRAGMENT = `
 `;
 
 export const CART_CREATE = `
-  mutation CartCreate($input: CartInput!, $locale: String) {
-    cartCreate(input: $input, locale: $locale) {
+  mutation CartCreate($input: CartInput!) {
+    cartCreate(input: $input) {
       cart {
         ...CartFields
       }

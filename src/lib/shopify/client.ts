@@ -4,22 +4,13 @@ import { getRedisClient } from '@/lib/redis/client';
 import { logger } from '@/lib/logger';
 import { getRegion } from '@/lib/regions';
 import { getEnv } from '@/lib/env';
+import {
+  hasClientCredentials,
+  hasStaticStorefrontToken,
+  resolveStorefrontAccessToken,
+} from '@/lib/shopify/token';
 
-export function isShopifyConfigured(locale: string): boolean {
-  try {
-    const region = getRegion(locale);
-    const token = getTokenForRegion(region.code);
-    const domain = region.shopifyDomain;
-    // ponytail: skip API when env still has placeholder credentials
-    if (!domain || !token) return false;
-    if (domain.includes('test-') || domain.includes('dev-placeholder') || token.startsWith('test-token') || token === 'dev-placeholder') return false;
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function getTokenForRegion(regionCode: string): string {
+function getStaticTokenForRegion(regionCode: string): string {
   const env = getEnv();
   const map: Record<string, string> = {
     US: env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US,
@@ -30,43 +21,71 @@ function getTokenForRegion(regionCode: string): string {
   return map[regionCode] ?? env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US;
 }
 
-const clientCache = new Map<string, ReturnType<typeof createStorefrontApiClient>>();
+function isPlaceholderDomain(domain: string): boolean {
+  return !domain || domain.includes('test-') || domain.includes('dev-placeholder');
+}
+
+export function isShopifyConfigured(locale: string): boolean {
+  try {
+    const region = getRegion(locale);
+    const domain = region.shopifyDomain;
+    const token = getStaticTokenForRegion(region.code);
+
+    if (isPlaceholderDomain(domain)) return false;
+    if (hasStaticStorefrontToken(token)) return true;
+    return region.code === 'US' && hasClientCredentials();
+  } catch {
+    return false;
+  }
+}
+
+type CachedClient = ReturnType<typeof createStorefrontApiClient>;
+const clientCache = new Map<string, Promise<CachedClient>>();
+
+async function getOrCreateClient(regionCode: string, storeDomain: string): Promise<CachedClient> {
+  const cacheKey = `${regionCode}:${storeDomain}`;
+  const existing = clientCache.get(cacheKey);
+  if (existing) return existing;
+
+  const pending = (async () => {
+    const staticToken = getStaticTokenForRegion(regionCode);
+    const publicAccessToken = await resolveStorefrontAccessToken(regionCode, storeDomain, staticToken);
+
+    return createStorefrontApiClient({
+      storeDomain,
+      apiVersion: getEnv().SHOPIFY_API_VERSION,
+      publicAccessToken,
+    });
+  })();
+
+  clientCache.set(cacheKey, pending);
+  try {
+    return await pending;
+  } catch (error) {
+    clientCache.delete(cacheKey);
+    throw error;
+  }
+}
 
 export function getShopifyClient(locale: string) {
   const region = getRegion(locale);
-  const cacheKey = region.code;
 
-  if (clientCache.has(cacheKey)) {
-    const cached = clientCache.get(cacheKey)!;
-    return buildExecutor(cached, locale);
-  }
-
-  const storeDomain = region.shopifyDomain;
-  const publicAccessToken = getTokenForRegion(region.code);
-
-  if (!storeDomain || !publicAccessToken) {
-    throw new Error(`Credenciais Shopify não encontradas para a região: ${region.code}`);
-  }
-
-  const client = createStorefrontApiClient({
-    storeDomain,
-    apiVersion: getEnv().SHOPIFY_API_VERSION,
-    publicAccessToken,
-  });
-
-  clientCache.set(cacheKey, client);
-  return buildExecutor(client, locale);
-}
-
-function buildExecutor(client: ReturnType<typeof createStorefrontApiClient>, locale: string) {
   return {
     execute: async <T>(
       query: string,
-      variables: Record<string, any> = {},
+      variables: Record<string, unknown> = {},
       cacheKey?: string
     ): Promise<T> => {
       return shopifyBreaker.execute(async () => {
+        const storeDomain = region.shopifyDomain;
+        const staticToken = getStaticTokenForRegion(region.code);
+
+        if (!storeDomain || (!hasStaticStorefrontToken(staticToken) && !hasClientCredentials())) {
+          throw new Error(`Credenciais Shopify não encontradas para a região: ${region.code}`);
+        }
+
         try {
+          const client = await getOrCreateClient(region.code, storeDomain);
           const response = await client.request(query, { variables });
 
           if (response.errors) {
