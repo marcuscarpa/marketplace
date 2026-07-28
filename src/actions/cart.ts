@@ -13,6 +13,10 @@ import { ShopifyCart } from '@/lib/shopify/types';
 import { serializeCartWithImages } from '@/lib/cart/enrich-images';
 import type { CartLineItem } from '@/lib/cart/display';
 import { m } from '@/lib/i18n';
+import {
+  getCartPageRecommendations,
+  type CartCarouselItem,
+} from '@/lib/shopify/cart-recommendations';
 
 const CART_COOKIE = 'shopify_cart_id';
 
@@ -319,5 +323,17 @@ export async function removeFromCartAction(
   } catch (error) {
     logger.error('removeFromCartAction failed', { lineId: parsed.data.lineId, error });
     return { success: false, message: cartMsg.error };
+  }
+}
+
+export async function getCartRecommendationsAction(
+  locale: string,
+  lines: CartLineItem[]
+): Promise<CartCarouselItem[]> {
+  try {
+    return await getCartPageRecommendations(locale, lines);
+  } catch (error) {
+    logger.warn('getCartRecommendationsAction failed', { error });
+    return [];
   }
 }

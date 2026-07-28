@@ -1,4 +1,3 @@
-import { getCachedOrFetch } from '@/lib/cache/stampede';
 import { getShopifyClient } from '@/lib/shopify/client';
 import { PRODUCT_RECOMMENDATIONS } from '@/lib/shopify/queries';
 
@@ -23,15 +22,13 @@ export async function getProductRecommendations(
 
   const client = getShopifyClient(locale);
 
-  const results = await getCachedOrFetch<RecommendationResult[]>(cacheKey, async () => {
-    const data = await client.execute<RecommendationsResponse>(
-      PRODUCT_RECOMMENDATIONS,
-      { productId }
-    );
-    return data?.productRecommendations ?? [];
-  }, 3600);
+  const data = await client.execute<RecommendationsResponse>(
+    PRODUCT_RECOMMENDATIONS,
+    { productId },
+    cacheKey
+  );
 
-  return results.slice(0, maxResults);
+  return (data?.productRecommendations ?? []).slice(0, maxResults);
 }
 
 export interface RecommendationEnriched extends RecommendationResult {

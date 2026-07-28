@@ -4,6 +4,7 @@ import { CartBagPage } from '@/components/luxury/cart-bag-page';
 import { isCartKillSwitchActive, isCheckoutKillSwitchActive } from '@/lib/feature-flags';
 import { serializeCartWithImages } from '@/lib/cart/enrich-images';
 import { getMockCart } from '@/lib/catalog/minicart-mock';
+import { getCartPageRecommendations } from '@/lib/shopify/cart-recommendations';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
 import { GET_CART } from '@/lib/shopify/queries';
 import { ShopifyCart } from '@/lib/shopify/types';
@@ -41,6 +42,7 @@ export default async function CartPage({ params }: CartPageProps) {
 
   if (!isShopifyConfigured(locale)) {
     const mock = getMockCart(locale);
+    const recommendations = await getCartPageRecommendations(locale, mock.lines);
     return (
       <CartBagPage
         locale={locale}
@@ -49,6 +51,7 @@ export default async function CartPage({ params }: CartPageProps) {
         totalQuantity={mock.totalQuantity}
         checkoutDisabled={false}
         cartDisabled={false}
+        recommendations={recommendations}
       />
     );
   }
@@ -62,6 +65,7 @@ export default async function CartPage({ params }: CartPageProps) {
 
   const serialized = cart ? await serializeCartWithImages(cart, locale) : null;
   const lines = serialized?.lines ?? [];
+  const recommendations = await getCartPageRecommendations(locale, lines);
 
   return (
     <CartBagPage
@@ -71,6 +75,7 @@ export default async function CartPage({ params }: CartPageProps) {
       totalQuantity={serialized?.totalQuantity ?? 0}
       checkoutDisabled={checkoutDisabled}
       cartDisabled={cartDisabled}
+      recommendations={recommendations}
     />
   );
 }

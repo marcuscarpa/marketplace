@@ -13,6 +13,9 @@ import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { maxVariantQuantity } from '@/lib/shopify/variants';
 
+import { CartRecommendationsCarousel } from '@/components/storefront/cart-recommendations-carousel';
+import type { CartCarouselItem } from '@/lib/shopify/cart-recommendations';
+
 interface CartBagPageProps {
   locale: string;
   lines: CartLineItem[];
@@ -20,6 +23,7 @@ interface CartBagPageProps {
   totalQuantity: number;
   checkoutDisabled: boolean;
   cartDisabled: boolean;
+  recommendations: CartCarouselItem[];
 }
 
 function IconClose({ className = '' }: { className?: string }) {
@@ -288,6 +292,7 @@ export function CartBagPage({
   totalQuantity,
   checkoutDisabled,
   cartDisabled,
+  recommendations,
 }: CartBagPageProps) {
   const [pendingLineId, setPendingLineId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
@@ -432,6 +437,10 @@ export function CartBagPage({
             <CartTrustSignals locale={locale} />
           </>
         )}
+
+        <div className="mx-auto max-w-[504px]">
+          <CartRecommendationsCarousel locale={locale} prefix={prefix} items={recommendations} />
+        </div>
       </div>
     </div>
   );
