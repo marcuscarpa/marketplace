@@ -57,16 +57,9 @@ export function CartProvider({ locale, children }: { locale: string; children: R
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const refreshCart = useCallback(async () => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3_000);
-
     try {
       setError(null);
-      const response = await fetch(`/${locale}/api/cart`, {
-        signal: controller.signal,
-        credentials: 'same-origin',
-        cache: 'no-store',
-      });
+      const response = await fetch(`/${locale}/api/cart`);
       if (response.ok) {
         setCart((await response.json()) as CartState);
       } else {
@@ -75,7 +68,6 @@ export function CartProvider({ locale, children }: { locale: string; children: R
     } catch {
       setError('Network error loading cart');
     } finally {
-      clearTimeout(timeout);
       setIsLoading(false);
     }
   }, [locale]);

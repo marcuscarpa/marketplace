@@ -42,21 +42,6 @@ export function isShopifyConfigured(locale: string): boolean {
 type CachedClient = ReturnType<typeof createStorefrontApiClient>;
 const clientCache = new Map<string, Promise<CachedClient>>();
 const SHOPIFY_REQUEST_TIMEOUT_MS = 8_000;
-const REDIS_READ_TIMEOUT_MS = 500;
-
-async function redisGetSafe(key: string): Promise<string | null> {
-  try {
-    const redis = getRedisClient();
-    return await Promise.race([
-      redis.get(key),
-      new Promise<null>((resolve) => {
-        setTimeout(() => resolve(null), REDIS_READ_TIMEOUT_MS);
-      }),
-    ]);
-  } catch {
-    return null;
-  }
-}
 
 async function requestWithTimeout<T>(
   promise: Promise<T>,
@@ -139,7 +124,8 @@ export function getShopifyClient(locale: string) {
           return response.data as T;
         } catch (error) {
           if (cacheKey) {
-            const cachedData = await redisGetSafe(cacheKey);
+            const redis = getRedisClient();
+            const cachedData = await redis.get(cacheKey);
             if (cachedData) {
               try {
                 const parsed = JSON.parse(cachedData);

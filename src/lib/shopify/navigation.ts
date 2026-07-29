@@ -44,16 +44,11 @@ const DRAWER_GROUP_HANDLES: string[][] = [
 
 async function fetchCollections(locale: string): Promise<ShopifyCollectionNode[]> {
   const client = getShopifyClient(locale);
-  const data = await Promise.race([
-    client.execute<{ collections: { nodes: ShopifyCollectionNode[] } }>(
-      GET_COLLECTIONS,
-      { first: 100 },
-      `shopify:collections:${locale}`,
-    ),
-    new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Navigation collections timeout')), 3_000);
-    }),
-  ]);
+  const data = await client.execute<{ collections: { nodes: ShopifyCollectionNode[] } }>(
+    GET_COLLECTIONS,
+    { first: 100 },
+    `shopify:collections:${locale}`
+  );
   return data.collections.nodes.filter((c) => !isHiddenCollectionHandle(c.handle));
 }
 
