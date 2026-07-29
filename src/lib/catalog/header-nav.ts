@@ -1,6 +1,6 @@
 import { collectionPath } from '@/lib/catalog/collection-handles';
 import { CATALOG_MENU_GROUPS } from '@/lib/catalog/catalog-menu-groups';
-import { isCombinedCollectionHandle } from '@/lib/catalog/combined-collections';
+import { isCombinedCollectionHandle } from '@/lib/catalog/combined-collections-static';
 import type { NavLink } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
