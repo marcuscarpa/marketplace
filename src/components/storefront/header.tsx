@@ -183,7 +183,7 @@ function NavHeaderItem({
   onNavigate?: () => void;
 }) {
   const hasChildren = (item.children?.length ?? 0) > 0;
-  const linkClass = `menu-text flex h-full items-center transition-opacity hover:opacity-60 ${
+  const linkClass = `menu-text flex h-[73px] items-center px-[7px] transition-opacity hover:opacity-60 ${
     item.sale ? 'text-[#9c4a4a]' : ink
   } ${active ? 'nav__item__link--active' : ''}`;
 
@@ -251,7 +251,7 @@ function DesktopMainNav({
       }`}
       onMouseLeave={scheduleClose}
     >
-      <ul className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center px-5 py-3">
+      <ul className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center px-[30px] py-0">
         {mainNav.map((item, index) => (
           <li
             key={item.href + item.label}

@@ -681,7 +681,7 @@ select {
   color: rgba(48, 48, 48, 0.6);
 }
 
-/* ── Mega menu (Mytheresa-style nav dropdown) ── */
+/* ── Mega menu (Mytheresa flyout dimensions) ── */
 .nav__item__link--active {
   position: relative;
 }
@@ -691,7 +691,7 @@ select {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -12px;
+  bottom: 0;
   height: 1px;
   background: currentColor;
 }
@@ -702,26 +702,33 @@ select {
   right: 0;
   top: 100%;
   z-index: 100;
-  display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  height: 550px;
   background: #fff;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  min-height: 320px;
+}
+
+.mega-menu__inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 138px;
+  max-width: 1440px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 30px;
+  box-sizing: border-box;
 }
 
 .mega-menu__links {
-  padding: 32px 40px;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  width: 207px;
+  flex-shrink: 0;
 }
 
 .mega-menu__heading {
   margin: 0 0 20px;
   font-family: 'Helvetica Neue Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: 0.03125rem;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16.8px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
   color: #000;
 }
@@ -732,16 +739,23 @@ select {
   list-style: none;
 }
 
+.mega-menu__list-item {
+  margin: 0 0 7.5px;
+}
+
+.mega-menu__list-item:last-child {
+  margin-bottom: 0;
+}
+
 .mega-menu__link {
-  display: block;
-  padding: 6px 0;
+  display: inline;
   font-family: 'Helvetica Neue Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 12px;
   font-weight: 400;
-  line-height: 1.4;
-  letter-spacing: 0.03125rem;
+  line-height: 16.8px;
+  letter-spacing: 0.5px;
   text-transform: none;
-  color: #000;
+  color: #757575;
   text-decoration: none;
   transition: opacity 0.2s ease;
 }
@@ -751,33 +765,31 @@ select {
 }
 
 .mega-menu__banner {
-  display: flex;
-  flex-direction: column;
-  padding: 32px 40px 32px 0;
+  flex: 1;
+  min-width: 0;
+  max-width: 1020px;
 }
 
 .mega-menu__banner-link {
   display: block;
-  flex: 1;
   text-decoration: none;
 }
 
 .mega-menu__banner-image {
   position: relative;
   width: 100%;
-  min-height: 260px;
-  aspect-ratio: 16 / 7;
+  height: 415px;
   overflow: hidden;
   background: #f5f5f5;
 }
 
 .mega-menu__caption {
-  margin: 12px 0 0;
+  margin: 6px 0 0;
   font-family: 'Helvetica Neue Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 12px;
   font-weight: 400;
-  line-height: 1.4;
-  letter-spacing: 0.03125rem;
+  line-height: 16.8px;
+  letter-spacing: 0.5px;
   color: #000;
 }
 

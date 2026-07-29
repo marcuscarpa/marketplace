@@ -31,35 +31,38 @@ export function MegaMenuPanel({
       role="region"
       aria-label={item.label}
     >
-      <div className="mega-menu__links">
-        <p className="mega-menu__heading">{item.sectionTitle ?? sectionTitle}</p>
-        <ul className="mega-menu__list">
-          {children.map((child) => (
-            <li key={child.href + child.label}>
-              <Link href={`${prefix}/${child.href}`} className="mega-menu__link">
-                {child.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {banner && (
-        <div className="mega-menu__banner">
-          <Link href={`${prefix}/${item.href}`} className="mega-menu__banner-link">
-            <div className="mega-menu__banner-image">
-              <Image
-                src={banner.src}
-                alt={banner.alt}
-                fill
-                sizes="(min-width: 1024px) 60vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-          </Link>
-          {banner.caption && <p className="mega-menu__caption">{banner.caption}</p>}
+      <div className="mega-menu__inner">
+        <div className="mega-menu__links">
+          <p className="mega-menu__heading">{item.sectionTitle ?? sectionTitle}</p>
+          <ul className="mega-menu__list">
+            {children.map((child) => (
+              <li key={child.href + child.label} className="mega-menu__list-item">
+                <Link href={`${prefix}/${child.href}`} className="mega-menu__link">
+                  {child.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
-      )}
+
+        {banner && (
+          <div className="mega-menu__banner">
+            <Link href={`${prefix}/${item.href}`} className="mega-menu__banner-link">
+              <div className="mega-menu__banner-image">
+                <Image
+                  src={banner.src}
+                  alt={banner.alt}
+                  fill
+                  sizes="(min-width: 1024px) 1020px, 100vw"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </Link>
+            {banner.caption && <p className="mega-menu__caption">{banner.caption}</p>}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
