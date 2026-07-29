@@ -781,6 +781,10 @@ select {
   align-items: start;
 }
 
+.mega-menu__gallery--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .mega-menu__gallery-item {
   min-width: 0;
 }

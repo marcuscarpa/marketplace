@@ -47,7 +47,11 @@ export function MegaMenuPanel({
         </div>
 
         {bannerGallery && bannerGallery.length > 0 ? (
-          <div className="mega-menu__gallery">
+          <div
+            className={`mega-menu__gallery${
+              bannerGallery.length === 2 ? ' mega-menu__gallery--2' : ''
+            }`}
+          >
             {bannerGallery.map((tile) => (
               <div key={tile.src + tile.href} className="mega-menu__gallery-item">
                 <Link href={`${prefix}/${tile.href}`} className="mega-menu__gallery-link">
@@ -56,7 +60,11 @@ export function MegaMenuPanel({
                       src={tile.src}
                       alt={tile.alt}
                       fill
-                      sizes="(min-width: 1024px) 340px, 33vw"
+                      sizes={
+                        bannerGallery.length === 2
+                          ? '(min-width: 1024px) 510px, 50vw'
+                          : '(min-width: 1024px) 340px, 33vw'
+                      }
                       className="object-cover"
                     />
                   </div>
