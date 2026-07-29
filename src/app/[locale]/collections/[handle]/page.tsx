@@ -14,10 +14,11 @@ import {
 import { SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { getSocialShareImageUrl } from '@/lib/site-metadata';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
-import { buildFilterState, extractFacets, shopifyToFilterable, type FilterState } from '@/lib/product-filters';
+import { buildFilterState, extractFacets, shopifyToFilterable, type FilterState, type ProductFacets } from '@/lib/product-filters';
 import { getBestsellerHandles } from '@/lib/shopify/bestsellers';
 import {
   fetchCollectionInitialPayload,
+  type CollectionProductsPage,
 } from '@/lib/shopify/collection-products';
 import { STATIC_BESTSELLER_HANDLES } from '@/lib/product-tags';
 import { isShopifyConfigured } from '@/lib/shopify/client';
@@ -63,8 +64,13 @@ interface ShopifyCollection {
   };
 }
 
+type ShopifyCollectionWithMeta = ShopifyCollection & {
+  pageInfo: CollectionProductsPage['pageInfo'];
+  facets: ProductFacets;
+};
+
 type CollectionResult =
-  | { source: 'shopify'; collection: ShopifyCollection }
+  | { source: 'shopify'; collection: ShopifyCollectionWithMeta }
   | { source: 'catalog'; collection: ReturnType<typeof getCatalogCollection> & object };
 
 async function getCollection(handle: string, locale: string): Promise<CollectionResult | null> {
@@ -84,10 +90,7 @@ async function getCollection(handle: string, locale: string): Promise<Collection
           nodes = await getSaleProducts(locale);
         }
 
-        const shopifyCollection: ShopifyCollection & {
-          pageInfo: typeof pageInfo;
-          facets: typeof _facets;
-        } = {
+        const shopifyCollection: ShopifyCollectionWithMeta = {
           id: collection?.id ?? `virtual-${handle}`,
           title,
           description: collection?.description ?? '',
@@ -183,10 +186,9 @@ export default async function CollectionPage({ params, searchParams }: Collectio
     );
   }
 
-  const { collection } = result;
+  const collection = result.collection;
   const products = collection.products?.nodes || [];
-  const pageInfo = 'pageInfo' in collection ? collection.pageInfo : { hasNextPage: false, endCursor: null, offset: products.length };
-  const facets = 'facets' in collection ? collection.facets : extractFacets(products.map(shopifyToFilterable));
+  const { pageInfo, facets } = collection;
   let bestsellerHandles = STATIC_BESTSELLER_HANDLES;
   try {
     bestsellerHandles = await getBestsellerHandles(locale);

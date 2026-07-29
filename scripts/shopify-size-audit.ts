@@ -1,5 +1,21 @@
 import { readFileSync } from 'node:fs';
 
+type ProductNode = {
+  handle: string;
+  title: string;
+  productType: string;
+  tags: string[];
+  collections: { nodes: Array<{ handle: string; title: string }> };
+  options: Array<{ name: string; values: string[] }>;
+};
+
+type SizeAuditResponse = {
+  products: {
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
+    nodes: ProductNode[];
+  };
+};
+
 function loadEnvLocal() {
   const raw = readFileSync('.env.local', 'utf8');
   for (const line of raw.split('\n')) {
@@ -32,25 +48,11 @@ async function main() {
     }
   }`;
 
-  type ProductNode = {
-    handle: string;
-    title: string;
-    productType: string;
-    tags: string[];
-    collections: { nodes: Array<{ handle: string; title: string }> };
-    options: Array<{ name: string; values: string[] }>;
-  };
-
   let cursor: string | null = null;
   const all: ProductNode[] = [];
 
   for (let page = 0; page < 20; page++) {
-    const res = await client.execute<{
-      products: {
-        pageInfo: { hasNextPage: boolean; endCursor: string | null };
-        nodes: ProductNode[];
-      };
-    }>(query, { cursor });
+    const res: SizeAuditResponse = await client.execute<SizeAuditResponse>(query, { cursor });
     all.push(...res.products.nodes);
     if (!res.products.pageInfo.hasNextPage) break;
     cursor = res.products.pageInfo.endCursor;
@@ -72,12 +74,10 @@ async function main() {
 
     for (const value of sizeOpt.values) {
       allSizes.add(value);
-      if (!sizeByType[productType]) sizeByType[productType] = new Set();
-      sizeByType[productType].add(value);
+      (sizeByType[productType] ??= new Set()).add(value);
 
       for (const collection of product.collections?.nodes ?? []) {
-        if (!collSizes[collection.handle]) collSizes[collection.handle] = new Set();
-        collSizes[collection.handle].add(value);
+        (collSizes[collection.handle] ??= new Set()).add(value);
       }
     }
   }
