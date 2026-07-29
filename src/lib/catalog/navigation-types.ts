@@ -9,6 +9,7 @@ export interface NavBannerTile {
   alt: string;
   caption: string;
   href: string;
+  imageClassName?: string;
 }
 
 export interface NavLink {

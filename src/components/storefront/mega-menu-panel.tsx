@@ -65,7 +65,7 @@ export function MegaMenuPanel({
                           ? '(min-width: 1024px) 510px, 50vw'
                           : '(min-width: 1024px) 340px, 33vw'
                       }
-                      className="object-cover"
+                      className={tile.imageClassName ?? 'object-cover'}
                     />
                   </div>
                 </Link>
