@@ -18,7 +18,7 @@ import { DynamicScripts } from '@/components/ui/dynamic-scripts';
 import { ServiceWorkerRegistration } from '@/components/ui/service-worker-registration';
 import { PwaUpdateBanner } from '@/components/ui/pwa-update-banner';
 import { PwaInstallPrompt } from '@/components/ui/pwa-install-prompt';
-import { getSiteNavigation } from '@/lib/catalog/navigation';
+import { getStaticNavigation } from '@/lib/catalog/navigation-static';
 
 export default async function LocaleLayout({
   children,
@@ -30,7 +30,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   const headersList = await headers();
   const nonce = headersList.get('x-nonce') || undefined;
-  const navigation = await getSiteNavigation(locale);
+  const navigation = getStaticNavigation(locale);
 
   return (
     <EdgeConfigProvider>
