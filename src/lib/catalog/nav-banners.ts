@@ -51,13 +51,13 @@ function getSwimwearBannerGallery(locale: string): NavBannerTile[] {
       href: collectionPath('bikini'),
     },
     {
-      src: SWIMWEAR_GALLERY_IMAGES[0],
+      src: SWIMWEAR_GALLERY_IMAGES[2],
       alt: n.onePiece,
       caption: n.onePiece,
       href: collectionPath('one-piece'),
     },
     {
-      src: SWIMWEAR_GALLERY_IMAGES[2],
+      src: SWIMWEAR_GALLERY_IMAGES[0],
       alt: n.coverUp,
       caption: n.coverUp,
       href: collectionPath('cover-up'),
