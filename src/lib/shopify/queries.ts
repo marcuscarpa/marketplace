@@ -83,14 +83,18 @@ export const PRODUCT_RECOMMENDATIONS = `
 `;
 
 export const GET_COLLECTION_BY_HANDLE = `
-  query GetCollectionByHandle($handle: String!, $first: Int!) {
+  query GetCollectionByHandle($handle: String!, $first: Int!, $after: String) {
     collection(handle: $handle) {
       id
       title
       description
       handle
       image { url altText }
-      products(first: $first) {
+      products(first: $first, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
         nodes {
           id
           title

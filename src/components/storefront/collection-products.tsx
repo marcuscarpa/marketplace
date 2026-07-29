@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FilterDrawer, FilterTrigger } from '@/components/storefront/filter-drawer';
 import { PopularCard } from '@/components/storefront/product-card';
 import { PRODUCT_GAP } from '@/components/storefront/ui';
 import { ProductCard } from '@/components/ui/product-card';
 import type { CatalogProduct } from '@/lib/catalog/data';
+import { useInfiniteScroll } from '@/hooks/use-infinite-scroll';
 import { m } from '@/lib/i18n';
 import { resolveCatalogProductTags, resolveShopifyProductTags } from '@/lib/product-tags';
 import {
@@ -15,9 +16,11 @@ import {
   extractFacets,
   filterAndSortProducts,
   catalogToFilterable,
+  filterStateToParams,
   sanitizeFilters,
   shopifyToFilterable,
   type FilterState,
+  type ProductFacets,
 } from '@/lib/product-filters';
 import type { ShopifyProduct } from '@/lib/shopify/types';
 
@@ -27,12 +30,22 @@ type ShopifyCollectionProduct = ShopifyProduct & {
   totalInventory?: number | null;
 };
 
+interface PageInfo {
+  hasNextPage: boolean;
+  endCursor: string | null;
+  offset: number;
+}
+
 interface ShopifyCollectionProductsProps {
+  collectionHandle: string;
   products: ShopifyCollectionProduct[];
+  pageInfo: PageInfo;
+  facets: ProductFacets;
   locale: string;
   collectionTitle: string;
   bestsellerHandles?: Set<string>;
   forceSaleBadge?: boolean;
+  initialFilters?: FilterState;
 }
 
 interface CollectionProductsProps {
@@ -41,6 +54,8 @@ interface CollectionProductsProps {
   collectionTitle: string;
 }
 
+const CATALOG_PAGE_SIZE = 20;
+
 function CollectionGridShell({
   count,
   activeCount,
@@ -48,6 +63,7 @@ function CollectionGridShell({
   locale,
   children,
   toolbarClassName = 'mb-8',
+  footer,
 }: {
   count: number;
   activeCount: number;
@@ -55,6 +71,7 @@ function CollectionGridShell({
   locale: string;
   children: React.ReactNode;
   toolbarClassName?: string;
+  footer?: React.ReactNode;
 }) {
   const col = m(locale).collection;
   return (
@@ -66,16 +83,17 @@ function CollectionGridShell({
         <FilterTrigger onClick={onOpenFilters} count={activeCount} locale={locale} />
       </div>
       {children}
+      {footer}
     </>
   );
 }
 
-function useProductGrid<T extends { handle: string }>(
+function useProductGrid<T extends { handle: string; id?: string }>(
   products: T[],
   filterable: ReturnType<typeof shopifyToFilterable>[],
-  filters: FilterState
+  filters: FilterState,
+  facets: ProductFacets
 ) {
-  const facets = useMemo(() => extractFacets(filterable), [filterable]);
   const clean = useMemo(
     () => sanitizeFilters(filters, facets, filterable),
     [filters, facets, filterable]
@@ -89,25 +107,134 @@ function useProductGrid<T extends { handle: string }>(
       .filter((p): p is T => p !== null && p !== undefined);
   }, [filterable, clean, facets.price, products]);
 
-  return { facets, clean, activeCount, visibleProducts };
+  return { clean, activeCount, visibleProducts };
+}
+
+function CatalogInfiniteGrid({
+  products,
+  locale,
+}: {
+  products: CatalogProduct[];
+  locale: string;
+}) {
+  const [visibleCount, setVisibleCount] = useState(CATALOG_PAGE_SIZE);
+  const visible = products.slice(0, visibleCount);
+  const hasMore = visibleCount < products.length;
+
+  const loadMore = useCallback(() => {
+    setVisibleCount((count) => Math.min(count + CATALOG_PAGE_SIZE, products.length));
+  }, [products.length]);
+
+  const sentinelRef = useInfiniteScroll(loadMore, hasMore);
+
+  return (
+    <>
+      <div className={`grid grid-cols-2 ${PRODUCT_GAP} lg:grid-cols-4`}>
+        {visible.map((product) => (
+          <PopularCard
+            key={product.handle}
+            product={product}
+            badges={resolveCatalogProductTags(product)}
+            locale={locale}
+          />
+        ))}
+      </div>
+      {hasMore && (
+        <div ref={sentinelRef} className="py-10 text-center font-sans-ui text-[11px] uppercase tracking-[0.08em] text-[#03060766]">
+          {m(locale).common.loading}
+        </div>
+      )}
+    </>
+  );
 }
 
 export function ShopifyCollectionProducts({
-  products,
+  collectionHandle,
+  products: initialProducts,
+  pageInfo: initialPageInfo,
+  facets,
   locale,
   collectionTitle,
   bestsellerHandles,
   forceSaleBadge = false,
+  initialFilters,
 }: ShopifyCollectionProductsProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTER_STATE);
+  const [filters, setFilters] = useState<FilterState>(initialFilters ?? DEFAULT_FILTER_STATE);
+  const [products, setProducts] = useState(initialProducts);
+  const [pageInfo, setPageInfo] = useState(initialPageInfo);
+  const [loading, setLoading] = useState(false);
+  const loadingRef = useRef(false);
+  const isFirstFilterEffect = useRef(true);
+  const col = m(locale).collection;
+
   const filterable = useMemo(() => products.map(shopifyToFilterable), [products]);
-  const { facets, clean, activeCount, visibleProducts } = useProductGrid(
+  const { clean, activeCount, visibleProducts } = useProductGrid(
     products,
     filterable,
-    filters
+    filters,
+    facets
   );
-  const col = m(locale).collection;
+
+  const fetchPage = useCallback(
+    async (mode: 'replace' | 'append', next?: Partial<PageInfo>) => {
+      if (loadingRef.current) return;
+      loadingRef.current = true;
+      setLoading(true);
+
+      try {
+        const params = filterStateToParams(clean);
+        params.set('locale', locale);
+        params.set('first', String(CATALOG_PAGE_SIZE));
+        if (mode === 'append') {
+          if (next?.endCursor) params.set('after', next.endCursor);
+          if (next?.offset) params.set('offset', String(next.offset));
+        }
+
+        const res = await fetch(
+          `/${locale}/api/collections/${collectionHandle}/products?${params.toString()}`
+        );
+        if (!res.ok) return;
+
+        const data = (await res.json()) as {
+          products: ShopifyCollectionProduct[];
+          pageInfo: PageInfo;
+        };
+
+        setProducts((current) => {
+          if (mode === 'replace') return data.products;
+          const seen = new Set(current.map((product) => product.id));
+          const merged = [...current];
+          for (const product of data.products) {
+            if (seen.has(product.id)) continue;
+            seen.add(product.id);
+            merged.push(product);
+          }
+          return merged;
+        });
+        setPageInfo(data.pageInfo);
+      } finally {
+        loadingRef.current = false;
+        setLoading(false);
+      }
+    },
+    [clean, collectionHandle, locale]
+  );
+
+  useEffect(() => {
+    if (isFirstFilterEffect.current) {
+      isFirstFilterEffect.current = false;
+      if (activeFilterCount(clean, facets.price) === 0) return;
+    }
+    void fetchPage('replace');
+  }, [clean, fetchPage, facets.price]);
+
+  const loadMore = useCallback(() => {
+    if (!pageInfo.hasNextPage || loadingRef.current) return;
+    void fetchPage('append', pageInfo);
+  }, [fetchPage, pageInfo]);
+
+  const sentinelRef = useInfiniteScroll(loadMore, pageInfo.hasNextPage && !loading);
 
   return (
     <>
@@ -116,6 +243,16 @@ export function ShopifyCollectionProducts({
         activeCount={activeCount}
         onOpenFilters={() => setDrawerOpen(true)}
         locale={locale}
+        footer={
+          pageInfo.hasNextPage ? (
+            <div
+              ref={sentinelRef}
+              className="py-10 text-center font-sans-ui text-[11px] uppercase tracking-[0.08em] text-[#03060766]"
+            >
+              {loading ? m(locale).common.loading : '\u00a0'}
+            </div>
+          ) : null
+        }
       >
         {visibleProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -125,15 +262,16 @@ export function ShopifyCollectionProducts({
                 badges.unshift('sale');
               }
               return (
-              <ProductCard
-                key={product.id}
-                product={{
-                  ...product,
-                  badges,
-                }}
-                locale={locale}
-              />
-            );})}
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    ...product,
+                    badges,
+                  }}
+                  locale={locale}
+                />
+              );
+            })}
           </div>
         ) : (
           <p className="py-20 text-center font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799]">
@@ -171,10 +309,12 @@ export function CollectionProducts({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTER_STATE);
   const filterable = useMemo(() => products.map(catalogToFilterable), [products]);
-  const { facets, clean, activeCount, visibleProducts } = useProductGrid(
+  const facets = useMemo(() => extractFacets(filterable), [filterable]);
+  const { clean, activeCount, visibleProducts } = useProductGrid(
     products,
     filterable,
-    filters
+    filters,
+    facets
   );
   const col = m(locale).collection;
 
@@ -188,16 +328,7 @@ export function CollectionProducts({
         toolbarClassName="mb-10"
       >
         {visibleProducts.length > 0 ? (
-          <div className={`grid grid-cols-2 ${PRODUCT_GAP} lg:grid-cols-4`}>
-            {visibleProducts.map((product) => (
-              <PopularCard
-                key={product.handle}
-                product={product}
-                badges={resolveCatalogProductTags(product)}
-                locale={locale}
-              />
-            ))}
-          </div>
+          <CatalogInfiniteGrid products={visibleProducts} locale={locale} />
         ) : (
           <p className="py-20 text-center font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799]">
             {col.noMatch}{' '}

@@ -3,12 +3,16 @@ import {
   isHiddenCollectionHandle,
   SHOPIFY_COLLECTION,
 } from '@/lib/catalog/collection-handles';
-import { buildMainHeaderNav } from '@/lib/catalog/header-nav';
+import { buildHeaderCatalogNav, buildHeaderTrailingNav } from '@/lib/catalog/header-nav';
 import type { MenuSections, NavLink, SiteNavigation } from '@/lib/catalog/navigation-types';
 import { getStaticNavigation } from '@/lib/catalog/navigation-static';
 import { m } from '@/lib/i18n';
 
 import { getShopifyClient, isShopifyConfigured } from './client';
+import {
+  buildCatalogNavFromFooterMenu,
+  fetchFooterCatalogMenu,
+} from './menu';
 import { GET_COLLECTIONS } from './queries';
 
 interface ShopifyCollectionNode {
@@ -61,8 +65,13 @@ function toNavLink(collection: ShopifyCollectionNode, options?: { sale?: boolean
   };
 }
 
-function buildMainNav(locale: string, byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
-  return buildMainHeaderNav(locale, byHandle);
+function buildMainNav(locale: string, byHandle: Map<string, ShopifyCollectionNode>, footerMenu: Awaited<ReturnType<typeof fetchFooterCatalogMenu>>): NavLink[] {
+  const catalogNav =
+    footerMenu && footerMenu.items.length > 0
+      ? buildCatalogNavFromFooterMenu(locale, footerMenu, byHandle)
+      : buildHeaderCatalogNav(locale, byHandle);
+
+  return [...catalogNav, ...buildHeaderTrailingNav(locale, byHandle)];
 }
 
 function buildDrawerLinks(byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
@@ -120,9 +129,13 @@ function buildSearchCategories(locale: string, links: NavLink[]) {
   }));
 }
 
-function buildShopifyNavigation(locale: string, collections: ShopifyCollectionNode[]): SiteNavigation {
+function buildShopifyNavigation(
+  locale: string,
+  collections: ShopifyCollectionNode[],
+  footerMenu: Awaited<ReturnType<typeof fetchFooterCatalogMenu>>
+): SiteNavigation {
   const byHandle = new Map(collections.map((c) => [c.handle, c]));
-  const mainNav = buildMainNav(locale, byHandle);
+  const mainNav = buildMainNav(locale, byHandle, footerMenu);
   const drawerLinks = buildDrawerLinks(byHandle);
   const menuSections = buildMenuSections(locale, drawerLinks);
 
@@ -144,14 +157,19 @@ export async function getShopifyNavigation(locale: string): Promise<SiteNavigati
     return getStaticNavigation(locale);
   }
 
-  const [collectionsResult] = await Promise.allSettled([fetchCollections(locale)]);
+  const [collectionsResult, footerMenuResult] = await Promise.allSettled([
+    fetchCollections(locale),
+    fetchFooterCatalogMenu(locale),
+  ]);
 
   const collections =
     collectionsResult.status === 'fulfilled' ? collectionsResult.value : [];
+  const footerMenu =
+    footerMenuResult.status === 'fulfilled' ? footerMenuResult.value : null;
 
   if (collections.length === 0) {
     return getStaticNavigation(locale);
   }
 
-  return buildShopifyNavigation(locale, collections);
+  return buildShopifyNavigation(locale, collections, footerMenu);
 }

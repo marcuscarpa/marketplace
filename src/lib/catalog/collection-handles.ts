@@ -5,7 +5,8 @@ export const SHOPIFY_COLLECTION = {
   swimwear: 'swimwear',
   readyToWear: 'all-rtw',
   featured: 'orchid-collection',
-  accessories: 'bags',
+  /** Virtual PLP — merges bags, shoes, hats. */
+  accessories: 'accessories',
   sale: 'sale',
   bestsellers: 'bestsellers',
   women: 'shop-all',
@@ -20,6 +21,7 @@ export const LEGACY_COLLECTION_REDIRECTS: Record<string, string> = {
   'ready-to-wear': SHOPIFY_COLLECTION.readyToWear,
   collections: SHOPIFY_COLLECTION.featured,
   accessories: SHOPIFY_COLLECTION.accessories,
+  bags: 'bags',
 };
 
 export function collectionPath(handle: string): string {

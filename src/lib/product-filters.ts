@@ -9,7 +9,7 @@ export const CATEGORY_FILTERS = [
   { handle: 'mens', match: ['mens', "men's"] },
   { handle: 'dresses', match: ['dresses', 'dress'] },
   { handle: 'shoes', match: ['shoes', 'loafer', 'flip flop', 'footwear', 'sandal'] },
-  { handle: 'accessories', match: ['accessories', 'accessory', 'hats', 'hat', 'necessaire'] },
+  { handle: 'accessories', match: ['accessories', 'accessory', 'hats', 'hat', 'necessaire', 'bags', 'bag'] },
   { handle: 'bracelets', match: ['jewellery', 'jewelry', 'bracelets'] },
   { handle: 'denim', match: ['denim', 'jean', 'jeans'] },
   { handle: 'bags', match: ['bags', 'bag'] },

@@ -7,19 +7,27 @@ import {
 } from '@/components/storefront/collection-products';
 import { PageMain, SECTION_PADDING_BELOW_HEADER, SectionHeading } from '@/components/storefront/ui';
 import { getCatalogCollection } from '@/lib/catalog/catalog';
+import {
+  combinedCollectionTitle,
+  isCombinedCollectionHandle,
+} from '@/lib/catalog/combined-collections';
 import { SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { getSocialShareImageUrl } from '@/lib/site-metadata';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
+import { buildFilterState, extractFacets, shopifyToFilterable, type FilterState } from '@/lib/product-filters';
 import { getBestsellerHandles } from '@/lib/shopify/bestsellers';
+import {
+  fetchCollectionInitialPayload,
+} from '@/lib/shopify/collection-products';
 import { STATIC_BESTSELLER_HANDLES } from '@/lib/product-tags';
-import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
-import { GET_COLLECTION_BY_HANDLE } from '@/lib/shopify/queries';
+import { isShopifyConfigured } from '@/lib/shopify/client';
 import { getSaleProducts } from '@/lib/shopify/sale-products';
 
 export const revalidate = 3600;
 
 interface CollectionPageProps {
   params: Promise<{ locale: string; handle: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 interface ShopifyCollection {
@@ -62,21 +70,35 @@ type CollectionResult =
 async function getCollection(handle: string, locale: string): Promise<CollectionResult | null> {
   if (isShopifyConfigured(locale)) {
     try {
-      const client = getShopifyClient(locale);
-      const data = await client.execute<{ collection: ShopifyCollection | null }>(
-        GET_COLLECTION_BY_HANDLE,
-        { handle, first: 24 }
-      );
-      if (data?.collection) {
-        let collection = data.collection;
-        if (handle === SHOPIFY_COLLECTION.sale && collection.products.nodes.length === 0) {
-          const saleProducts = await getSaleProducts(locale);
-          collection = {
-            ...collection,
-            products: { nodes: saleProducts },
-          };
+      const { page, facets: _facets } = await fetchCollectionInitialPayload(handle, locale);
+      const { products, collection, pageInfo } = page;
+
+      if (collection || isCombinedCollectionHandle(handle)) {
+        const title =
+          combinedCollectionTitle(handle, locale) ??
+          collection?.title ??
+          handle;
+
+        let nodes = products;
+        if (handle === SHOPIFY_COLLECTION.sale && nodes.length === 0) {
+          nodes = await getSaleProducts(locale);
         }
-        return { source: 'shopify', collection };
+
+        const shopifyCollection: ShopifyCollection & {
+          pageInfo: typeof pageInfo;
+          facets: typeof _facets;
+        } = {
+          id: collection?.id ?? `virtual-${handle}`,
+          title,
+          description: collection?.description ?? '',
+          handle,
+          image: collection?.image ?? null,
+          products: { nodes },
+          pageInfo,
+          facets: _facets,
+        };
+
+        return { source: 'shopify', collection: shopifyCollection };
       }
     } catch {
       // ponytail: fall through to static catalog when Shopify is unreachable
@@ -125,8 +147,9 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
   };
 }
 
-export default async function CollectionPage({ params }: CollectionPageProps) {
+export default async function CollectionPage({ params, searchParams }: CollectionPageProps) {
   const { locale, handle } = await params;
+  const query = await searchParams;
   const result = await getCollection(handle, locale);
 
   if (!result) {
@@ -162,12 +185,21 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
 
   const { collection } = result;
   const products = collection.products?.nodes || [];
+  const pageInfo = 'pageInfo' in collection ? collection.pageInfo : { hasNextPage: false, endCursor: null, offset: products.length };
+  const facets = 'facets' in collection ? collection.facets : extractFacets(products.map(shopifyToFilterable));
   let bestsellerHandles = STATIC_BESTSELLER_HANDLES;
   try {
     bestsellerHandles = await getBestsellerHandles(locale);
   } catch {
     // ponytail: badges still render without dynamic bestseller list
   }
+
+  const initialFilters: FilterState | undefined = (() => {
+    if (Object.keys(query).length === 0) return undefined;
+    const filterable = products.map(shopifyToFilterable);
+    const facets = extractFacets(filterable);
+    return buildFilterState(query, facets, filterable);
+  })();
 
   return (
     <PageMain padded={false}>
@@ -182,11 +214,15 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <ShopifyCollectionProducts
+          collectionHandle={handle}
           products={products}
+          pageInfo={pageInfo}
+          facets={facets}
           locale={locale}
           collectionTitle={collection.title}
           bestsellerHandles={bestsellerHandles}
           forceSaleBadge={handle === SHOPIFY_COLLECTION.sale}
+          initialFilters={initialFilters}
         />
       </section>
     </PageMain>

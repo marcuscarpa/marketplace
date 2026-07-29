@@ -1,8 +1,9 @@
 import { collectionPath } from '@/lib/catalog/collection-handles';
+import { isCombinedCollectionHandle } from '@/lib/catalog/combined-collections';
 import type { NavLink } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
-/** Header catalog groups — mirrors Shopify footer menu structure. */
+/** Fallback when Shopify footer menu is unavailable. Mirrors live footer menu structure. */
 export const HEADER_CATALOG_GROUPS = [
   {
     labelKey: 'newCollections' as const,
@@ -21,48 +22,57 @@ export const HEADER_CATALOG_GROUPS = [
   },
   {
     labelKey: 'accessories' as const,
-    handle: 'hats',
+    handle: 'accessories',
     children: ['bags', 'shoes', 'hats'],
   },
 ] as const;
 
-const STATIC_CHILD_LABELS: Record<string, string> = {
-  enseada: 'Enseada',
-  'green-tea': 'Green Tea',
-  'garden-collection': 'Garden Collection',
-  'floral-print-collection': 'Floral Print Collection',
-  bikini: 'All Bikinis',
-  'bikini-bottom': 'Bikini Bottoms',
-  'bikini-top': 'Bikini Top',
-  'cover-up': 'Cover-up',
-  'one-piece': 'One Piece',
-  dresses: 'Dresses',
-  tops: 'Tops',
-  'pants-shorts': 'Pants + Shorts',
-  skirts: 'Skirts',
-  bags: 'Bags',
-  shoes: 'Shoes',
-  hats: 'Hats',
+const CHILD_LABEL_KEYS: Record<string, keyof ReturnType<typeof m>['nav']> = {
+  enseada: 'enseada',
+  'green-tea': 'greenTea',
+  'garden-collection': 'gardenCollection',
+  'floral-print-collection': 'floralPrintCollection',
+  bikini: 'bikini',
+  'bikini-bottom': 'bikiniBottom',
+  'bikini-top': 'bikiniTop',
+  'cover-up': 'coverUp',
+  'one-piece': 'onePiece',
+  dresses: 'dresses',
+  tops: 'tops',
+  'pants-shorts': 'pantsShorts',
+  skirts: 'skirts',
+  bags: 'bags',
+  shoes: 'shoes',
+  hats: 'hats',
 };
 
 type CollectionLookup = Map<string, { handle: string; title: string }> | null;
+
+function childLabel(locale: string, handle: string, fallback: string): string {
+  const n = m(locale).nav;
+  const key = CHILD_LABEL_KEYS[handle];
+  return key ? n[key] : fallback;
+}
 
 export function buildHeaderCatalogNav(locale: string, byHandle: CollectionLookup): NavLink[] {
   const n = m(locale).nav;
 
   return HEADER_CATALOG_GROUPS.flatMap((group) => {
+    const isVirtual = isCombinedCollectionHandle(group.handle);
     const parent = byHandle?.get(group.handle);
-    if (byHandle && !parent) return [];
+    if (byHandle && !parent && !isVirtual) return [];
 
     const children: NavLink[] = [];
     for (const handle of group.children) {
       const collection = byHandle?.get(handle);
       if (byHandle && !collection) continue;
       children.push({
-        label: collection?.title ?? STATIC_CHILD_LABELS[handle] ?? handle,
+        label: childLabel(locale, handle, collection?.title ?? handle),
         href: collectionPath(handle),
       });
     }
+
+    if (byHandle && !parent && !isVirtual && children.length === 0) return [];
 
     return [
       {
@@ -72,6 +82,10 @@ export function buildHeaderCatalogNav(locale: string, byHandle: CollectionLookup
       },
     ];
   });
+}
+
+export function buildMainHeaderNav(locale: string, byHandle: CollectionLookup): NavLink[] {
+  return [...buildHeaderCatalogNav(locale, byHandle), ...buildHeaderTrailingNav(locale, byHandle)];
 }
 
 export function buildHeaderTrailingNav(locale: string, byHandle: CollectionLookup): NavLink[] {
@@ -87,8 +101,4 @@ export function buildHeaderTrailingNav(locale: string, byHandle: CollectionLooku
   }
 
   return items;
-}
-
-export function buildMainHeaderNav(locale: string, byHandle: CollectionLookup): NavLink[] {
-  return [...buildHeaderCatalogNav(locale, byHandle), ...buildHeaderTrailingNav(locale, byHandle)];
 }
