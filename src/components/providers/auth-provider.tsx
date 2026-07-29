@@ -25,12 +25,13 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children, locale = 'en' }: { children: ReactNode; locale?: string }) {
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {
+    setIsLoading(true);
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5_000);
+    const timeout = setTimeout(() => controller.abort(), 3_000);
 
     try {
       const response = await fetch(`/${locale}/api/auth/me`, { signal: controller.signal });
@@ -49,7 +50,15 @@ export function AuthProvider({ children, locale = 'en' }: { children: ReactNode;
   }, [locale]);
 
   useEffect(() => {
-    void checkAuth();
+    const schedule = () => void checkAuth();
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(schedule, { timeout: 1_500 });
+      return () => window.cancelIdleCallback(id);
+    }
+
+    const timer = window.setTimeout(schedule, 0);
+    return () => window.clearTimeout(timer);
   }, [checkAuth]);
 
   const login = (redirectTo = `/${locale}/account`, email?: string) => {

@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { fetchCustomerByAccessToken } from '@/lib/auth/customer';
+import { clearAuthSessionCookies } from '@/lib/auth/session-cookies';
 
 export async function GET(
   _request: Request,
@@ -19,8 +20,16 @@ export async function GET(
 
   try {
     const customer = await fetchCustomerByAccessToken(accessToken, sessionLocale);
+    if (!customer) {
+      const response = NextResponse.json({ customer: null });
+      clearAuthSessionCookies(response);
+      return response;
+    }
+
     return NextResponse.json({ customer });
   } catch {
-    return NextResponse.json({ customer: null });
+    const response = NextResponse.json({ customer: null });
+    clearAuthSessionCookies(response);
+    return response;
   }
 }

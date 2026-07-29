@@ -2,20 +2,12 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { revokeCustomerAccountRefreshToken } from '@/lib/auth/customer-account-tokens';
+import { clearAuthSessionCookies } from '@/lib/auth/session-cookies';
 
 const ALLOWED_ORIGINS = [
   process.env.NEXT_PUBLIC_APP_URL,
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
 ].filter(Boolean) as string[];
-
-const AUTH_COOKIES = [
-  'access_token',
-  'refresh_token',
-  'access_token_hash',
-  'id_token',
-  'shopify_customer_id',
-  'shopify_locale',
-];
 
 export async function POST(request: Request) {
   const origin = request.headers.get('origin');
@@ -36,15 +28,7 @@ export async function POST(request: Request) {
   }
 
   const response = NextResponse.json({ success: true });
-  AUTH_COOKIES.forEach((name) => {
-    response.cookies.set(name, '', {
-      path: '/',
-      maxAge: 0,
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-    });
-  });
+  clearAuthSessionCookies(response);
 
   return response;
 }

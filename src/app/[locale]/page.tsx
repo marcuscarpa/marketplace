@@ -5,6 +5,7 @@ import {
   NEW_ARRIVALS,
   POPULAR_PRODUCTS,
   SPOTLIGHT_PRODUCT,
+  type CatalogProduct,
 } from '@/lib/catalog/data';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
 
@@ -14,26 +15,36 @@ interface HomePageProps {
   params: Promise<{ locale: string }>;
 }
 
+function pickEnriched(
+  products: CatalogProduct[],
+  byHandle: Map<string, CatalogProduct>,
+): CatalogProduct[] {
+  return products.map((product) => byHandle.get(product.handle) ?? product);
+}
+
 export default async function LocaleHomePage({ params }: HomePageProps) {
   const { locale } = await params;
 
-  const [popularProducts, newArrivals, cyclerProducts, bestsellerProducts, spotlightProduct] =
-    await Promise.all([
-      withShopifyHoverImages(POPULAR_PRODUCTS, locale),
-      withShopifyHoverImages(NEW_ARRIVALS, locale),
-      withShopifyHoverImages(CYCLER_PRODUCTS, locale),
-      withShopifyHoverImages(BESTSELLERS, locale),
-      withShopifyHoverImages([SPOTLIGHT_PRODUCT], locale).then((items) => items[0]!),
-    ]);
+  const enriched = await withShopifyHoverImages(
+    [
+      ...POPULAR_PRODUCTS,
+      ...NEW_ARRIVALS,
+      ...CYCLER_PRODUCTS,
+      ...BESTSELLERS,
+      SPOTLIGHT_PRODUCT,
+    ],
+    locale,
+  );
+  const byHandle = new Map(enriched.map((product) => [product.handle, product]));
 
   return (
     <HomePage
       locale={locale}
-      popularProducts={popularProducts}
-      newArrivals={newArrivals}
-      cyclerProducts={cyclerProducts}
-      bestsellerProducts={bestsellerProducts}
-      spotlightProduct={spotlightProduct}
+      popularProducts={pickEnriched(POPULAR_PRODUCTS, byHandle)}
+      newArrivals={pickEnriched(NEW_ARRIVALS, byHandle)}
+      cyclerProducts={pickEnriched(CYCLER_PRODUCTS, byHandle)}
+      bestsellerProducts={pickEnriched(BESTSELLERS, byHandle)}
+      spotlightProduct={pickEnriched([SPOTLIGHT_PRODUCT], byHandle)[0]!}
     />
   );
 }
