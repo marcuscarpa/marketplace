@@ -12,7 +12,7 @@ export interface CustomerAccountApiConfiguration {
 type CacheEntry<T> = { value: T; expiresAt: number };
 
 const TTL_MS = 60 * 60 * 1000;
-const DISCOVERY_TIMEOUT_MS = 3_000;
+const DISCOVERY_TIMEOUT_MS = 1_500;
 const openIdCache = new Map<string, CacheEntry<OpenIdConfiguration>>();
 const apiCache = new Map<string, CacheEntry<CustomerAccountApiConfiguration>>();
 

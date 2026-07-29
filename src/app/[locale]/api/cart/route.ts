@@ -38,7 +38,12 @@ export async function GET(
     }
 
     const client = getShopifyClient(locale);
-    const result = await client.execute<{ cart: ShopifyCart | null }>(GET_CART, { cartId });
+    const result = await Promise.race([
+      client.execute<{ cart: ShopifyCart | null }>(GET_CART, { cartId }),
+      new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Cart fetch timeout')), 3_000);
+      }),
+    ]);
 
     if (!result?.cart) {
       const response = NextResponse.json(EMPTY);

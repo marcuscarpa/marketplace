@@ -1,4 +1,4 @@
-var CACHE_VERSION = 'v6';
+var CACHE_VERSION = 'v7';
 var STATIC_CACHE = 'luxury-static-' + CACHE_VERSION;
 var API_CACHE = 'luxury-api-' + CACHE_VERSION;
 var NAV_CACHE = 'luxury-nav-' + CACHE_VERSION;
@@ -46,6 +46,10 @@ function isApiRequest(url) {
   return API_PATTERNS.some(function (p) { return p.test(url.pathname); });
 }
 
+function isDynamicApiRequest(url) {
+  return /\/api\/(?:auth|cart)(?:\/|$)/.test(url.pathname);
+}
+
 function isNavRequest(url) {
   return url.pathname !== OFFLINE_URL && NAV_PATTERNS.some(function (p) { return p.test(url.pathname); });
 }
@@ -90,6 +94,9 @@ self.addEventListener('fetch', function (event) {
 
   if (url.origin !== self.location.origin) return;
   if (request.method !== 'GET') return;
+
+  // Never intercept auth/cart — SW caching + long upstream waits blocked page load.
+  if (isDynamicApiRequest(url)) return;
 
   if (isApiRequest(url)) {
     event.respondWith(networkFirst(request, API_CACHE));
