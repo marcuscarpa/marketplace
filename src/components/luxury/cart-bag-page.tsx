@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 import { removeFromCartAction, updateCartLinesAction } from '@/actions/cart';
@@ -250,16 +249,16 @@ export function CartBagPage({
   const [localLines, setLocalLines] = useState(lines);
   const [pendingLineId, setPendingLineId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
-  const router = useRouter();
-  const { updateFromAction, refreshCart } = useCart();
+  const { updateFromAction } = useCart();
   const mutatingRef = useRef(false);
 
   const linesSignature = lines.map((l) => `${l.id}:${l.quantity}`).join('|');
 
   useEffect(() => {
     if (mutatingRef.current) return;
+    if (linesSignature === localLines.map((l) => `${l.id}:${l.quantity}`).join('|')) return;
     setLocalLines(lines);
-  }, [linesSignature, lines]);
+  }, [linesSignature, lines, localLines]);
 
   const isPt = locale === 'pt';
   const prefix = `/${locale}`;
@@ -296,11 +295,9 @@ export function CartBagPage({
           fd.set('lineId', lineId);
           fd.set('locale', locale);
           const result = await removeFromCartAction({ success: false, message: '' }, fd);
-          if (result.success && result.cart?.lines) {
-            setLocalLines(result.cart.lines);
+          if (result.success && result.cart) {
+            setLocalLines(result.cart.lines ?? []);
             updateFromAction(result);
-            void refreshCart();
-            router.refresh();
           } else {
             setLocalLines(previous);
           }
@@ -310,7 +307,7 @@ export function CartBagPage({
         }
       });
     },
-    [isMockCart, localLines, locale, refreshCart, router, updateFromAction]
+    [isMockCart, localLines, locale, updateFromAction]
   );
 
   const handleQuantityChange = useCallback(
@@ -337,11 +334,9 @@ export function CartBagPage({
           fd.set('quantity', String(next));
           fd.set('locale', locale);
           const result = await updateCartLinesAction({ success: false, message: '' }, fd);
-          if (result.success && result.cart?.lines) {
-            setLocalLines(result.cart.lines);
+          if (result.success && result.cart) {
+            setLocalLines(result.cart.lines ?? []);
             updateFromAction(result);
-            void refreshCart();
-            router.refresh();
           } else {
             setLocalLines(previous);
           }
@@ -351,7 +346,7 @@ export function CartBagPage({
         }
       });
     },
-    [isMockCart, localLines, locale, refreshCart, router, updateFromAction]
+    [isMockCart, localLines, locale, updateFromAction]
   );
 
   const handleCheckout = () => {

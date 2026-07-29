@@ -188,7 +188,7 @@ export function CartDrawer({ locale }: CartDrawerProps) {
   const [, startTransition] = useTransition();
   const mutatingRef = useRef(false);
 
-  const { cart, isLoading, isCartOpen, closeCart, updateFromAction, refreshCart } = useCart();
+  const { cart, isLoading, isCartOpen, closeCart, updateFromAction } = useCart();
 
   const isPt = locale === 'pt';
   const prefix = `/${locale}`;
@@ -322,12 +322,11 @@ export function CartDrawer({ locale }: CartDrawerProps) {
         fd.set('lineId', lineId);
         fd.set('locale', locale);
         const result = await removeFromCartAction({ success: false, message: '' }, fd);
-        if (result.success) {
+        if (result.success && result.cart) {
           updateFromAction(result);
           setOptimisticLines(null);
-          await refreshCart();
         } else {
-          setOptimisticLines(null);
+          setOptimisticLines(previous);
         }
       } finally {
         mutatingRef.current = false;
@@ -362,12 +361,11 @@ export function CartDrawer({ locale }: CartDrawerProps) {
         fd.set('quantity', String(next));
         fd.set('locale', locale);
         const result = await updateCartLinesAction({ success: false, message: '' }, fd);
-        if (result.success) {
+        if (result.success && result.cart) {
           updateFromAction(result);
           setOptimisticLines(null);
-          await refreshCart();
         } else {
-          setOptimisticLines(null);
+          setOptimisticLines(previous);
         }
       } finally {
         mutatingRef.current = false;
