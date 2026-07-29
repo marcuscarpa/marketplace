@@ -41,6 +41,27 @@ export function isShopifyConfigured(locale: string): boolean {
 
 type CachedClient = ReturnType<typeof createStorefrontApiClient>;
 const clientCache = new Map<string, Promise<CachedClient>>();
+const SHOPIFY_REQUEST_TIMEOUT_MS = 8_000;
+
+async function requestWithTimeout<T>(
+  promise: Promise<T>,
+  label: string,
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(
+          () => reject(new Error(`Shopify request timeout (${label})`)),
+          SHOPIFY_REQUEST_TIMEOUT_MS,
+        );
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
 
 async function getOrCreateClient(regionCode: string, storeDomain: string): Promise<CachedClient> {
   const cacheKey = `${regionCode}:${storeDomain}`;
@@ -86,7 +107,10 @@ export function getShopifyClient(locale: string) {
 
         try {
           const client = await getOrCreateClient(region.code, storeDomain);
-          const response = await client.request(query, { variables });
+          const response = await requestWithTimeout(
+            client.request(query, { variables }),
+            region.code,
+          );
 
           if (response.errors) {
             throw new Error(`Shopify GraphQL Error: ${JSON.stringify(response.errors)}`);
