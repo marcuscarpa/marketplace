@@ -155,6 +155,18 @@ export const pt: Messages = {
     clothing: 'Roupas',
     accessories: 'Acessórios',
     shoes: 'Calçados',
+    categories: {
+      'ready-to-wear': 'Prêt-à-porter',
+      swimwear: 'Moda praia & resort',
+      mens: 'Masculino',
+      dresses: 'Vestidos',
+      shoes: 'Calçados',
+      accessories: 'Acessórios',
+      bracelets: 'Joias',
+      denim: 'Jeans',
+      bags: 'Bolsas',
+      new: 'Novidades',
+    },
   },
   product: {
     view360: 'Visualização 360°',

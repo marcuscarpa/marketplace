@@ -97,6 +97,7 @@ export const GET_COLLECTION_BY_HANDLE = `
           description
           handle
           vendor
+          productType
           tags
           publishedAt
           totalInventory
@@ -127,6 +128,50 @@ export const GET_COLLECTION_BY_HANDLE = `
             type
             namespace
           }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_SALE_PRODUCTS = `
+  query GetSaleProducts($first: Int!, $query: String!) {
+    products(first: $first, query: $query) {
+      nodes {
+        id
+        title
+        description
+        handle
+        vendor
+        tags
+        publishedAt
+        totalInventory
+        images(first: 2) { nodes { url altText } }
+        options { name values }
+        priceRange { minVariantPrice { amount currencyCode } }
+        variants(first: 50) {
+          nodes {
+            id
+            availableForSale
+            price { amount currencyCode }
+            compareAtPrice { amount currencyCode }
+            selectedOptions { name value }
+          }
+        }
+        metafields(identifiers: [
+          { namespace: "luxury", key: "certificate_hash" }
+          { namespace: "luxury", key: "materials" }
+          { namespace: "luxury", key: "made_in" }
+          { namespace: "luxury", key: "video_360_url" }
+          { namespace: "luxury", key: "limited_edition_number" }
+          { namespace: "luxury", key: "care_instructions" }
+          { namespace: "reviews", key: "average_rating" }
+          { namespace: "reviews", key: "total_reviews" }
+        ]) {
+          key
+          value
+          type
+          namespace
         }
       }
     }

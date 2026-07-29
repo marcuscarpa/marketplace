@@ -12,10 +12,10 @@ async function refreshCache<T>(key: string, fetchFn: () => Promise<T>, ttl: numb
   }
 }
 
-export async function getCachedOrFetch<T>(
+async function readThroughCache<T>(
   key: string,
   fetchFn: () => Promise<T>,
-  ttl = 3600
+  ttl: number
 ): Promise<T> {
   const redis = getRedisClient();
 
@@ -42,5 +42,18 @@ export async function getCachedOrFetch<T>(
     await redis.set(key, JSON.stringify({ data }), 'EX', ttl);
     return data;
   });
+}
+
+export async function getCachedOrFetch<T>(
+  key: string,
+  fetchFn: () => Promise<T>,
+  ttl = 3600
+): Promise<T> {
+  try {
+    return await readThroughCache(key, fetchFn, ttl);
+  } catch (error) {
+    logger.warn('Cache unavailable, fetching directly', { key, error });
+    return fetchFn();
+  }
 }
 

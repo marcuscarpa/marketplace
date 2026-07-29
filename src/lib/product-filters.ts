@@ -4,15 +4,19 @@ import { isColorOption, isSizeOption } from '@/lib/shopify/variants';
 import type { ShopifyProduct } from '@/lib/shopify/types';
 
 export const CATEGORY_FILTERS = [
-  { label: 'Ready to Wear', handle: 'ready-to-wear', match: ['ready-to-wear', 'ready to wear'] },
-  { label: 'Swim & Resort', handle: 'swimwear', match: ['swimwear', 'swim', 'resort'] },
-  { label: 'New This Week', handle: 'new', match: ['new', 'new arrival'] },
-  { label: 'Accessories', handle: 'accessories', match: ['accessories', 'accessory'] },
-  { label: 'Jewellery', handle: 'bracelets', match: ['jewellery', 'jewelry', 'bracelets'] },
-  { label: 'Dresses', handle: 'dresses', match: ['dresses', 'dress'] },
-  { label: 'Denim', handle: 'denim', match: ['denim', 'jean', 'jeans'] },
-  { label: 'Bags', handle: 'bags', match: ['bags', 'bag'] },
+  { handle: 'ready-to-wear', match: ['ready-to-wear', 'ready to wear', 'linen shirt', 'linen pants', 'tops', 'pants', 'shorts', 'skirt', 'cover up'] },
+  { handle: 'swimwear', match: ['swimwear', 'swim', 'resort', 'bikini', 'one-piece', 'one piece', 'swim short'] },
+  { handle: 'mens', match: ['mens', "men's"] },
+  { handle: 'dresses', match: ['dresses', 'dress'] },
+  { handle: 'shoes', match: ['shoes', 'loafer', 'flip flop', 'footwear', 'sandal'] },
+  { handle: 'accessories', match: ['accessories', 'accessory', 'hats', 'hat', 'necessaire'] },
+  { handle: 'bracelets', match: ['jewellery', 'jewelry', 'bracelets'] },
+  { handle: 'denim', match: ['denim', 'jean', 'jeans'] },
+  { handle: 'bags', match: ['bags', 'bag'] },
+  { handle: 'new', match: ['new', 'new arrival'] },
 ] as const;
+
+export type CategoryFilterHandle = (typeof CATEGORY_FILTERS)[number]['handle'];
 
 export const COLOR_SWATCHES: Record<string, string> = {
   white: '#f5f5f5',
@@ -74,6 +78,7 @@ export interface FilterableProduct {
   id: string;
   handle: string;
   title: string;
+  productType?: string;
   price: number;
   available: boolean;
   colors: string[];
@@ -145,16 +150,107 @@ export const DEFAULT_FILTER_STATE: FilterState = {
   sort: 'featured',
 };
 
-const CLOTHING_SIZE_RE = /^(0P?|[0-4]|XS|S|M|L|XL|XXL)$/i;
-const SHOE_SIZE_RE = /^(3[4-9]|4[0-9]|5[0-2])$/;
-const ACCESSORY_SIZE_RE = /^(S|M|L|ONE\s*SIZE)$/i;
+/** Luxury numeric, letter (incl. BR P/M/G), and denim waist sizes. */
+const CLOTHING_SIZE_RE =
+  /^(0P?|[0-4]|PP?|GG?|XG(?:G)?|XS|S|M|L|XL|XXL|2[4-9]|3[0-2])$/i;
+/** EU shoe sizes (34–52). */
+const EU_SHOE_SIZE_RE = /^(3[4-9]|4[0-9]|5[0-2])$/;
+/** US/UK/AU men's shoe sizes (5–15, half sizes). */
+const US_SHOE_SIZE_RE = /^(?:[5-9]|1[0-5])(?:\.5)?$/;
+/** Bags, belts, etc. — not letter sizes shared with apparel. */
+const ACCESSORY_SIZE_RE = /^(ONE\s*SIZE|OS|U|UNI(?:VERSAL)?)$/i;
+/** Hat circumferences as stored in Shopify (e.g. 56-S, 57-M). */
+const HAT_SIZE_RE = /^\d{2}-[SML]$/i;
 
-export function classifySize(value: string): SizeGroup {
-  const v = value.trim();
-  if (SHOE_SIZE_RE.test(v)) return 'shoes';
-  if (ACCESSORY_SIZE_RE.test(v)) return 'accessories';
-  if (CLOTHING_SIZE_RE.test(v)) return 'clothing';
+const SHOE_PRODUCT_RE =
+  /shoes|loafer|sandal|flip.?flop|footwear|tennis knit|driver|wedge|boot|heel|sapato/i;
+const ACCESSORY_PRODUCT_RE =
+  /hats|hat\b|necessaire|bag\b|bolsa|jewel|bracelet|accessories|accessory|straw raffia/i;
+
+const CLOTHING_SIZE_ORDER = [
+  '0P',
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  'PP',
+  'P',
+  'XS',
+  'S',
+  'M',
+  'G',
+  'L',
+  'GG',
+  'XL',
+  'XG',
+  'XXL',
+  'XGG',
+] as const;
+
+type ProductKind = 'clothing' | 'accessories' | 'shoes';
+
+type SizeProductContext = Pick<FilterableProduct, 'categoryHints' | 'title' | 'productType'>;
+
+/** Strip Shopify prefixes like "Size 8" → "8" so filters match consistently. */
+export function normalizeSizeValue(value: string): string {
+  const trimmed = value.trim();
+  const prefixed = trimmed.match(/^size\s+(.+)$/i);
+  return prefixed ? prefixed[1]!.trim() : trimmed;
+}
+
+export function detectProductKind(product: SizeProductContext): ProductKind {
+  const blob = [product.productType ?? '', product.title, ...product.categoryHints]
+    .map(norm)
+    .join(' ');
+
+  if (SHOE_PRODUCT_RE.test(blob) || norm(product.productType ?? '') === 'shoes') {
+    return 'shoes';
+  }
+  if (ACCESSORY_PRODUCT_RE.test(blob) || norm(product.productType ?? '') === 'hats') {
+    return 'accessories';
+  }
   return 'clothing';
+}
+
+export function classifySizeForProduct(value: string, product: SizeProductContext): SizeGroup {
+  const size = normalizeSizeValue(value);
+  const kind = detectProductKind(product);
+
+  if (kind === 'shoes') return 'shoes';
+  if (kind === 'accessories') return 'accessories';
+
+  if (ACCESSORY_SIZE_RE.test(size) || HAT_SIZE_RE.test(size)) return 'accessories';
+  if (EU_SHOE_SIZE_RE.test(size) || US_SHOE_SIZE_RE.test(size)) return 'shoes';
+  if (CLOTHING_SIZE_RE.test(size)) return 'clothing';
+  return 'clothing';
+}
+
+/** Size-only fallback when product context is unavailable (catalog mocks). */
+export function classifySize(value: string): SizeGroup {
+  const size = normalizeSizeValue(value);
+  if (ACCESSORY_SIZE_RE.test(size) || HAT_SIZE_RE.test(size)) return 'accessories';
+  if (EU_SHOE_SIZE_RE.test(size) || US_SHOE_SIZE_RE.test(size)) return 'shoes';
+  if (CLOTHING_SIZE_RE.test(size)) return 'clothing';
+  return 'clothing';
+}
+
+function sortSizesForGroup(group: SizeGroup, sizes: string[]): string[] {
+  if (group === 'shoes') {
+    return [...sizes].sort((a, b) => parseFloat(a) - parseFloat(b));
+  }
+
+  if (group === 'clothing') {
+    const order = new Map(CLOTHING_SIZE_ORDER.map((size, index) => [size.toUpperCase(), index]));
+    return [...sizes].sort((a, b) => {
+      const ai = order.get(a.toUpperCase()) ?? 999;
+      const bi = order.get(b.toUpperCase()) ?? 999;
+      if (ai !== bi) return ai - bi;
+      return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+    });
+  }
+
+  return [...sizes].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 }
 
 function norm(s: string): string {
@@ -172,8 +268,15 @@ function materialsFromMetafields(
   return (luxury.materials ?? []).map((m) => m.trim()).filter(Boolean);
 }
 
-function hintsFromTagsAndTitle(tags: string[], title: string): string[] {
-  return [...tags, norm(title)];
+function hintsFromTagsAndTitle(tags: string[], title: string, productType?: string): string[] {
+  const hints = [...tags, norm(title)];
+  if (productType?.trim()) hints.push(norm(productType));
+  return hints;
+}
+
+function addNormalizedSize(target: Set<string>, value: string) {
+  const normalized = normalizeSizeValue(value);
+  if (normalized) target.add(normalized);
 }
 
 export function shopifyToFilterable(product: ShopifyProduct): FilterableProduct {
@@ -186,13 +289,13 @@ export function shopifyToFilterable(product: ShopifyProduct): FilterableProduct 
 
   for (const opt of product.options ?? []) {
     if (isColorOption(opt.name)) opt.values.forEach((v) => colors.add(v));
-    if (isSizeOption(opt.name)) opt.values.forEach((v) => sizes.add(v));
+    if (isSizeOption(opt.name)) opt.values.forEach((v) => addNormalizedSize(sizes, v));
   }
 
   for (const variant of variantNodes) {
     for (const opt of variant.selectedOptions ?? []) {
       if (isColorOption(opt.name)) colors.add(opt.value);
-      if (isSizeOption(opt.name)) sizes.add(opt.value);
+      if (isSizeOption(opt.name)) addNormalizedSize(sizes, opt.value);
     }
   }
 
@@ -211,13 +314,14 @@ export function shopifyToFilterable(product: ShopifyProduct): FilterableProduct 
     id: product.id,
     handle: product.handle,
     title: product.title,
+    productType: product.productType,
     price: Number(product.priceRange?.minVariantPrice?.amount ?? 0),
     available,
     colors: [...colors],
     sizes: [...sizes],
     materials: [...materials],
     sleeves: [...sleeves],
-    categoryHints: hintsFromTagsAndTitle(tags, product.title),
+    categoryHints: hintsFromTagsAndTitle(tags, product.title, product.productType),
   };
 }
 
@@ -256,7 +360,7 @@ export function extractFacets(products: FilterableProduct[]): ProductFacets {
 
   for (const p of products) {
     p.colors.forEach((c) => colors.add(c));
-    p.sizes.forEach((s) => sizes[classifySize(s)].add(s));
+    p.sizes.forEach((s) => sizes[classifySizeForProduct(s, p)].add(s));
     p.materials.forEach((m) => materials.add(m));
     p.sleeves.forEach((s) => sleeves.add(s));
   }
@@ -266,9 +370,9 @@ export function extractFacets(products: FilterableProduct[]): ProductFacets {
   return {
     colors: [...colors].sort(sortAlpha),
     sizes: {
-      clothing: [...sizes.clothing].sort(sortAlpha),
-      accessories: [...sizes.accessories].sort(sortAlpha),
-      shoes: [...sizes.shoes].sort(sortAlpha),
+      clothing: sortSizesForGroup('clothing', [...sizes.clothing]),
+      accessories: sortSizesForGroup('accessories', [...sizes.accessories]),
+      shoes: sortSizesForGroup('shoes', [...sizes.shoes]),
     },
     materials: [...materials].sort(sortAlpha),
     sleeves: [...sleeves].sort(sortAlpha),

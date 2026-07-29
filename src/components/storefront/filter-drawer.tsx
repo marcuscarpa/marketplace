@@ -404,7 +404,7 @@ export function FilterDrawer({
                           >
                             <RadioControl checked={checked} />
                             <span className="font-sans-ui text-[12px] uppercase tracking-[0.02em] text-ink">
-                              {cat.label}
+                              {flt.categories[cat.handle]}
                             </span>
                           </button>
                         </li>

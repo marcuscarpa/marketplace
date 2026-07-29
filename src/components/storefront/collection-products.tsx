@@ -32,6 +32,7 @@ interface ShopifyCollectionProductsProps {
   locale: string;
   collectionTitle: string;
   bestsellerHandles?: Set<string>;
+  forceSaleBadge?: boolean;
 }
 
 interface CollectionProductsProps {
@@ -96,6 +97,7 @@ export function ShopifyCollectionProducts({
   locale,
   collectionTitle,
   bestsellerHandles,
+  forceSaleBadge = false,
 }: ShopifyCollectionProductsProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTER_STATE);
@@ -117,16 +119,21 @@ export function ShopifyCollectionProducts({
       >
         {visibleProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {visibleProducts.map((product) => (
+            {visibleProducts.map((product) => {
+              const badges = resolveShopifyProductTags(product, { bestsellerHandles });
+              if (forceSaleBadge && !badges.includes('sale')) {
+                badges.unshift('sale');
+              }
+              return (
               <ProductCard
                 key={product.id}
                 product={{
                   ...product,
-                  badges: resolveShopifyProductTags(product, { bestsellerHandles }),
+                  badges,
                 }}
                 locale={locale}
               />
-            ))}
+            );})}
           </div>
         ) : (
           <p className="py-20 text-center font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799]">

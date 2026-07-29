@@ -152,6 +152,18 @@ export const en = {
     clothing: 'Clothing',
     accessories: 'Accessories',
     shoes: 'Shoes',
+    categories: {
+      'ready-to-wear': 'Ready to Wear',
+      swimwear: 'Swim & Resort',
+      mens: "Men's",
+      dresses: 'Dresses',
+      shoes: 'Shoes',
+      accessories: 'Accessories',
+      bracelets: 'Jewellery',
+      denim: 'Denim',
+      bags: 'Bags',
+      new: 'New This Week',
+    },
   },
   product: {
     view360: '360° View',

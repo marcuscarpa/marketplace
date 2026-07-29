@@ -30,11 +30,16 @@ export function getRedlockInstance(): RedlockInstance {
 }
 
 export async function withLock<T>(key: string, fn: () => Promise<T>, ttl = 5000): Promise<T> {
-  const redlock = getRedlockInstance();
-  const lock = await redlock.acquire([`lock:${key}`], ttl);
   try {
-    return await fn();
-  } finally {
-    await lock.release();
+    const redlock = getRedlockInstance();
+    const lock = await redlock.acquire([`lock:${key}`], ttl);
+    try {
+      return await fn();
+    } finally {
+      await lock.release();
+    }
+  } catch {
+    // ponytail: Redis/redlock unavailable — run without distributed lock
+    return fn();
   }
 }

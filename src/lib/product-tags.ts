@@ -77,7 +77,10 @@ export function resolveShopifyProductTags(
   const variant = product.variants?.nodes?.[0];
   const price = variant?.price?.amount ?? product.priceRange?.minVariantPrice.amount ?? '0';
   const compareAtPrice = variant?.compareAtPrice?.amount ?? null;
-  const bestsellerHandles = options.bestsellerHandles ?? STATIC_BESTSELLER_HANDLES;
+  const bestsellerHandles =
+    options.bestsellerHandles instanceof Set
+      ? options.bestsellerHandles
+      : STATIC_BESTSELLER_HANDLES;
 
   const tags: ProductTagKey[] = [];
 

@@ -33,6 +33,10 @@ const COLLECTION_OVERRIDES: Record<
     image: SITE_IMAGES.collectionNew,
     products: NEW_ARRIVALS,
   },
+  sale: {
+    title: 'Sale',
+    description: 'Select styles at special prices — while stocks last.',
+  },
 };
 
 function uniqueProducts(products: CatalogProduct[]): CatalogProduct[] {
@@ -68,6 +72,10 @@ export function getAllCatalogProducts(): CatalogProduct[] {
     ...BESTSELLERS,
     ...CYCLER_PRODUCTS,
   ]);
+}
+
+function getSaleCatalogProducts(): CatalogProduct[] {
+  return getAllCatalogProducts().filter((product) => Boolean(product.compareAtPrice));
 }
 
 export function getCatalogProductByHandle(handle: string): CatalogProduct | null {
@@ -120,12 +128,14 @@ export function getCatalogCollection(handle: string): CatalogCollection | null {
   if (!override && !category) return null;
 
   const products =
-    override?.products ??
-    (handle === 'all' || handle === 'women'
-      ? getAllCatalogProducts()
-      : category
-        ? getAllCatalogProducts().filter((p) => matchesCategoryHandle(p, handle))
-        : []);
+    handle === 'sale'
+      ? getSaleCatalogProducts()
+      : override?.products ??
+        (handle === 'all' || handle === 'women'
+          ? getAllCatalogProducts()
+          : category
+            ? getAllCatalogProducts().filter((p) => matchesCategoryHandle(p, handle))
+            : []);
 
   return {
     handle,

@@ -7,11 +7,14 @@ import {
 } from '@/components/storefront/collection-products';
 import { PageMain, SECTION_PADDING_BELOW_HEADER, SectionHeading } from '@/components/storefront/ui';
 import { getCatalogCollection } from '@/lib/catalog/catalog';
+import { SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { getSocialShareImageUrl } from '@/lib/site-metadata';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
 import { getBestsellerHandles } from '@/lib/shopify/bestsellers';
+import { STATIC_BESTSELLER_HANDLES } from '@/lib/product-tags';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
 import { GET_COLLECTION_BY_HANDLE } from '@/lib/shopify/queries';
+import { getSaleProducts } from '@/lib/shopify/sale-products';
 
 export const revalidate = 3600;
 
@@ -64,7 +67,17 @@ async function getCollection(handle: string, locale: string): Promise<Collection
         GET_COLLECTION_BY_HANDLE,
         { handle, first: 24 }
       );
-      if (data?.collection) return { source: 'shopify', collection: data.collection };
+      if (data?.collection) {
+        let collection = data.collection;
+        if (handle === SHOPIFY_COLLECTION.sale && collection.products.nodes.length === 0) {
+          const saleProducts = await getSaleProducts(locale);
+          collection = {
+            ...collection,
+            products: { nodes: saleProducts },
+          };
+        }
+        return { source: 'shopify', collection };
+      }
     } catch {
       // ponytail: fall through to static catalog when Shopify is unreachable
     }
@@ -149,7 +162,12 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
 
   const { collection } = result;
   const products = collection.products?.nodes || [];
-  const bestsellerHandles = await getBestsellerHandles(locale);
+  let bestsellerHandles = STATIC_BESTSELLER_HANDLES;
+  try {
+    bestsellerHandles = await getBestsellerHandles(locale);
+  } catch {
+    // ponytail: badges still render without dynamic bestseller list
+  }
 
   return (
     <PageMain padded={false}>
@@ -168,6 +186,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
           locale={locale}
           collectionTitle={collection.title}
           bestsellerHandles={bestsellerHandles}
+          forceSaleBadge={handle === SHOPIFY_COLLECTION.sale}
         />
       </section>
     </PageMain>

@@ -37,6 +37,7 @@ export interface ShopifyProduct {
   description: string;
   handle: string;
   vendor: string;
+  productType?: string;
   tags?: string[];
   publishedAt?: string | null;
   totalInventory?: number | null;
