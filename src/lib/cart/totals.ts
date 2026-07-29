@@ -16,6 +16,29 @@ export function lineMaxQuantity(line: CartLineItem): number {
   return Math.min(Math.max(stock, line.quantity), 99);
 }
 
+/** User-facing hint when quantity is capped by inventory. */
+export function lineStockHint(line: CartLineItem, locale: string): string | null {
+  const stock = line.quantityAvailable;
+  if (stock === null || stock === undefined) return null;
+  if (stock === 0 && line.quantity > 0) return null;
+
+  const max = lineMaxQuantity(line);
+  const isPt = locale === 'pt';
+
+  if (line.quantity >= max && max < 99) {
+    if (max === 1) {
+      return isPt ? 'Última unidade — não é possível aumentar' : 'Last unit — cannot increase quantity';
+    }
+    return isPt ? `Máximo ${max} disponíveis neste tamanho` : `Maximum ${max} available in this size`;
+  }
+
+  if (stock > 0 && stock <= 3) {
+    return isPt ? `Apenas ${stock} em estoque` : `Only ${stock} in stock`;
+  }
+
+  return null;
+}
+
 export function totalQuantityFromLines(lines: CartLineItem[]): number {
   return lines.reduce((sum, line) => sum + line.quantity, 0);
 }

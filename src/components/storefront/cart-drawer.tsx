@@ -14,6 +14,7 @@ import { useWishlist } from '@/hooks/use-wishlist';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import {
   lineMaxQuantity,
+  lineStockHint,
   lineTotal,
   removeLine,
   subtotalFromLines,
@@ -82,6 +83,7 @@ function CartLineRow({
   const inWishlist = isInWishlist(line.variantId);
   const pending = removing || updating;
   const lineTotalFormatted = formatCartPrice(String(lineTotal(line)), line.price.currencyCode, locale);
+  const stockHint = lineStockHint(line, locale);
 
   return (
     <div className="flex gap-4 border-b border-[#03060714] py-5">
@@ -119,18 +121,25 @@ function CartLineRow({
               <span className="shrink-0 tabular-nums">{size}</span>
             </div>
           )}
-          <div className="flex items-center justify-between gap-3 font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink">
-            <span className="shrink-0 text-[#03060799]">{isPt ? 'Quantidade' : 'Quantity'}</span>
-            <CartQtyStepper
-              quantity={line.quantity}
-              max={lineMaxQuantity(line)}
-              disabled={pending}
-              onChange={(next) => onQuantityChange(line.id, next)}
-              labels={{
-                decrease: isPt ? 'Diminuir quantidade' : 'Decrease quantity',
-                increase: isPt ? 'Aumentar quantidade' : 'Increase quantity',
-              }}
-            />
+          <div className="flex flex-col items-end gap-1.5">
+            <div className="flex items-center justify-between gap-3 font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink">
+              <span className="shrink-0 text-[#03060799]">{isPt ? 'Quantidade' : 'Quantity'}</span>
+              <CartQtyStepper
+                quantity={line.quantity}
+                max={lineMaxQuantity(line)}
+                disabled={pending}
+                onChange={(next) => onQuantityChange(line.id, next)}
+                labels={{
+                  decrease: isPt ? 'Diminuir quantidade' : 'Decrease quantity',
+                  increase: isPt ? 'Aumentar quantidade' : 'Increase quantity',
+                }}
+              />
+            </div>
+            {stockHint ? (
+              <p className="max-w-[180px] text-right text-[9px] uppercase tracking-[0.04em] text-[#03060799]">
+                {stockHint}
+              </p>
+            ) : null}
           </div>
           <div className="flex items-baseline justify-between gap-3 font-sans-ui text-[11px] uppercase tracking-[0.02em] text-ink">
             <span className="shrink-0 text-[#03060799]">{isPt ? 'Total artigo' : 'Item total'}</span>

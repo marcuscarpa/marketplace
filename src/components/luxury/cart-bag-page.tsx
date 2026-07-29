@@ -11,6 +11,7 @@ import { trackStartedCheckout } from '@/lib/analytics';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import {
   lineMaxQuantity,
+  lineStockHint,
   lineTotal,
   removeLine,
   subtotalFromLines,
@@ -100,6 +101,7 @@ function CartTableRow({
   const unitPrice = formatCartPrice(line.price.amount, line.price.currencyCode, locale);
   const totalPrice = formatCartPrice(String(lineTotal(line)), line.price.currencyCode, locale);
   const inWishlist = isInWishlist(line.variantId);
+  const stockHint = lineStockHint(line, locale);
 
   return (
     <article className="border-b border-[#03060714] py-8">
@@ -142,7 +144,7 @@ function CartTableRow({
 
         <p className="hidden text-center text-[11px] uppercase tracking-[0.02em] text-ink md:block">{size}</p>
 
-        <div className="mt-4 flex justify-start md:mt-0 md:justify-center">
+        <div className="mt-4 flex flex-col items-start md:mt-0 md:items-center">
           <CartQtyStepper
             quantity={line.quantity}
             max={lineMaxQuantity(line)}
@@ -153,6 +155,11 @@ function CartTableRow({
               increase: isPt ? 'Aumentar quantidade' : 'Increase quantity',
             }}
           />
+          {stockHint ? (
+            <p className="mt-2 max-w-[130px] text-center text-[9px] uppercase tracking-[0.04em] text-[#03060799]">
+              {stockHint}
+            </p>
+          ) : null}
         </div>
 
         <p className="mt-3 text-[11px] uppercase tracking-[0.02em] text-ink tabular-nums md:mt-0 md:text-right">
