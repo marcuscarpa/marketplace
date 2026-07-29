@@ -50,15 +50,8 @@ export function AuthProvider({ children, locale = 'en' }: { children: ReactNode;
   }, [locale]);
 
   useEffect(() => {
-    const schedule = () => void checkAuth();
-
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      const id = window.requestIdleCallback(schedule, { timeout: 1_500 });
-      return () => window.cancelIdleCallback(id);
-    }
-
-    const timer = window.setTimeout(schedule, 0);
-    return () => window.clearTimeout(timer);
+    const timer = setTimeout(() => void checkAuth(), 0);
+    return () => clearTimeout(timer);
   }, [checkAuth]);
 
   const login = (redirectTo = `/${locale}/account`, email?: string) => {
