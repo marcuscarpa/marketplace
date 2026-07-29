@@ -118,10 +118,7 @@ function buildMenuSections(locale: string, productLinks: NavLink[]): MenuSection
     products: { label: n.shop, links: productLinks },
     brand: {
       label: n.ourBrand,
-      links: [
-        { label: n.about, href: 'about' },
-        { label: n.locations, href: 'locations' },
-      ],
+      links: [{ label: n.locations, href: 'locations' }],
     },
     utility: [
       { label: n.faqs, href: 'faq' },

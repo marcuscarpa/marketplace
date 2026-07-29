@@ -78,7 +78,7 @@ export function buildMainHeaderNav(locale: string, byHandle: CollectionLookup): 
 
 export function buildHeaderTrailingNav(locale: string, byHandle: CollectionLookup): NavLink[] {
   const n = m(locale).nav;
-  const items: NavLink[] = [{ label: n.about, href: 'about' }];
+  const items: NavLink[] = [];
 
   if (!byHandle || byHandle.get('mens-collection')) {
     items.push({ label: n.men, href: collectionPath('mens-collection') });

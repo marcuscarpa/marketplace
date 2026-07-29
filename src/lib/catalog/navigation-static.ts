@@ -24,10 +24,7 @@ function buildStaticMenuSections(locale: string): MenuSections {
     },
     brand: {
       label: n.ourBrand,
-      links: [
-        { label: n.about, href: 'about' },
-        { label: n.locations, href: 'locations' },
-      ],
+      links: [{ label: n.locations, href: 'locations' }],
     },
     utility: [
       { label: n.faqs, href: 'faq' },

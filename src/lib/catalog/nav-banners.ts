@@ -28,7 +28,7 @@ const SWIMWEAR_GALLERY_IMAGES = [
   '/mega-menu-swimwear-3.webp',
 ] as const;
 
-const RTW_GALLERY_IMAGES = ['/Ready-to-Wear-1.webp', '/Ready-to-Wear-2.webp'] as const;
+const RTW_GALLERY_IMAGES = ['/Ready-to-Wear-1.webp', '/Ready-to-Wear-2.2.webp'] as const;
 
 function handleFromHref(href: string): string {
   return href.split('/').pop() ?? href;
