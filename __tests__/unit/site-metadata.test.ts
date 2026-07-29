@@ -42,7 +42,7 @@ describe('getSocialShareImageUrl', () => {
     delete process.env.NEXT_PUBLIC_SITE_URL;
     delete process.env.NEXT_PUBLIC_APP_URL;
     expect(getSocialShareImageUrl()).toBe(
-      'https://sinesia.jethro.agency/og-share.jpg?v=20260630'
+      'https://sinesia.jethro.agency/og-share.webp?v=20260729'
     );
     if (previousSite === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
     else process.env.NEXT_PUBLIC_SITE_URL = previousSite;
@@ -56,7 +56,7 @@ describe('getSocialShareImageUrl', () => {
     process.env.NEXT_PUBLIC_SITE_URL = '';
     process.env.NEXT_PUBLIC_APP_URL = 'https://sinesia.jethro.agency/en';
     expect(getSocialShareImageUrl()).toBe(
-      'https://sinesia.jethro.agency/og-share.jpg?v=20260630'
+      'https://sinesia.jethro.agency/og-share.webp?v=20260729'
     );
     if (previousSite === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
     else process.env.NEXT_PUBLIC_SITE_URL = previousSite;

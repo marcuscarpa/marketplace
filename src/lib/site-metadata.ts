@@ -1,10 +1,10 @@
 /** ponytail: presentation deploy only — swap NEXT_PUBLIC_APP_URL at production cutover. */
 export const PRESENTATION_APP_URL = 'https://sinesia.jethro.agency';
 
-/** ponytail: WhatsApp drops og:image above ~300KB; banner-hero.png is ~10MB. */
-const SOCIAL_SHARE_IMAGE_PATH = '/og-share.jpg';
-/** Bump when replacing og-share.jpg so WhatsApp/Facebook re-scrape the preview. */
-const SOCIAL_SHARE_IMAGE_VERSION = '20260630';
+/** ponytail: WhatsApp drops og:image above ~300KB; keep og-share under that limit. */
+const SOCIAL_SHARE_IMAGE_PATH = '/og-share.webp';
+/** Bump when replacing og-share.webp so WhatsApp/Facebook re-scrape the preview. */
+const SOCIAL_SHARE_IMAGE_VERSION = '20260729';
 
 export const SITE_DESCRIPTION =
   'Curated leather goods and accessories — enduring design and contemporary craftsmanship.';

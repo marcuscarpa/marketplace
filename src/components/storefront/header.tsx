@@ -21,7 +21,7 @@ interface HeaderProps {
   navigation: SiteNavigation;
 }
 
-const LOGO_SRC = '/logotipo.png';
+const LOGO_SRC = '/logotipo.webp';
 
 const PANEL_EASE = [0.76, 0, 0.24, 1] as const;
 const ITEM_EASE = [0.22, 1, 0.36, 1] as const;

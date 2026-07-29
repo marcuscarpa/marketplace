@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import { LazyAutoplayVideo } from '@/components/storefront/lazy-autoplay-video';
 import { SECTION_PADDING_FLUSH, ButtonShell } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
@@ -42,18 +43,12 @@ export function CollectionCta({ locale }: CollectionCtaProps) {
             href={`/${locale}/${item.href}`}
             className="group relative block h-[520px] overflow-hidden lg:h-[900px]"
           >
-            <div className="absolute inset-0 overflow-hidden bg-neutral-900">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                aria-label={item.imageAlt}
-                className="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover object-center transition-transform duration-700 group-hover:scale-[1.03] motion-safe:transition-[opacity,transform] motion-safe:duration-[520ms] motion-safe:ease-[cubic-bezier(0.33,1,0.68,1)]"
-              >
-                <source src={item.video} type="video/mp4" />
-              </video>
-            </div>
+            <LazyAutoplayVideo
+              src={item.video}
+              ariaLabel={item.imageAlt}
+              className="absolute inset-0 overflow-hidden bg-neutral-900"
+              videoClassName="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover object-center transition-transform duration-700 group-hover:scale-[1.03] motion-safe:transition-[opacity,transform] motion-safe:duration-[520ms] motion-safe:ease-[cubic-bezier(0.33,1,0.68,1)]"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div
               data-entrance-step={String(index + 1)}

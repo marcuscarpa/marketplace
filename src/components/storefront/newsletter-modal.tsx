@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import { NEWSLETTER_MODAL_STORAGE_KEY, useNewsletterModal } from '@/components/providers/newsletter-modal-provider';
 import { m } from '@/lib/i18n';
 
-const MODAL_IMAGE = '/bloco 3.1.png';
+const MODAL_IMAGE = '/bloco 3.1.webp';
 const SHOW_DELAY_MS = 2500;
 
 function IconClose({ className = 'h-3.5 w-3.5' }: { className?: string }) {
