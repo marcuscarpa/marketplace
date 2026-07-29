@@ -4,7 +4,22 @@ import { logger } from '@/lib/logger';
 
 const TOKEN_TITLE = 'Sinesia Headless Frontend';
 const ADMIN_TOKEN_CACHE_MS = 23 * 60 * 60 * 1000;
+const REDIS_READ_TIMEOUT_MS = 500;
 const STOREFRONT_TOKEN_REDIS_KEY = (region: string) => `shopify:storefront_token:${region}`;
+
+async function redisGetSafe(key: string): Promise<string | null> {
+  try {
+    const redis = getRedisClient();
+    return await Promise.race([
+      redis.get(key),
+      new Promise<null>((resolve) => {
+        setTimeout(() => resolve(null), REDIS_READ_TIMEOUT_MS);
+      }),
+    ]);
+  } catch {
+    return null;
+  }
+}
 
 type CachedAdminToken = { token: string; expiresAt: number };
 const adminTokenCache = new Map<string, CachedAdminToken>();
@@ -122,8 +137,7 @@ async function resolveStorefrontTokenFromCredentials(
   regionCode: string
 ): Promise<string> {
   try {
-    const redis = getRedisClient();
-    const cached = await redis.get(STOREFRONT_TOKEN_REDIS_KEY(regionCode));
+    const cached = await redisGetSafe(STOREFRONT_TOKEN_REDIS_KEY(regionCode));
     if (cached) return cached;
   } catch (error) {
     logger.warn('[shopify/token] Redis cache miss for storefront token', { regionCode, error });
