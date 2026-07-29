@@ -3,7 +3,6 @@
 import Link from 'next/link';
 
 import { WishlistGridCard } from '@/components/storefront/wishlist-grid-card';
-import { WishlistLoginWall } from '@/components/storefront/wishlist-login-wall';
 import { HEADER_OFFSET_TOP } from '@/components/storefront/ui';
 import { useAuth } from '@/hooks/use-auth';
 import { useWishlist } from '@/hooks/use-wishlist';
@@ -92,7 +91,7 @@ function WishlistProductGrid({
 
 export function WishlistPage({ locale }: WishlistPageProps) {
   const { items, removeItem, hydrated } = useWishlist();
-  const { customer, isLoading: authLoading, isAuthenticated, login } = useAuth();
+  const { customer } = useAuth();
   const isPt = locale === 'pt';
   const prefix = `/${locale}`;
 
@@ -113,7 +112,6 @@ export function WishlistPage({ locale }: WishlistPageProps) {
 
   const displayName = customer?.firstName?.trim();
   const pageTitle = displayName ? copy.title(displayName) : copy.defaultTitle;
-  const redirectTo = `${prefix}/wishlist`;
 
   if (!hydrated) {
     return (
@@ -133,17 +131,6 @@ export function WishlistPage({ locale }: WishlistPageProps) {
             {pageTitle}
           </h1>
         </header>
-
-        {!authLoading && !isAuthenticated && (
-          <>
-            <WishlistLoginWall
-              locale={locale}
-              onSignIn={(email) => login(redirectTo, email)}
-              onRegister={(email) => login(redirectTo, email)}
-            />
-            <div className="border-t border-[#03060714]" aria-hidden />
-          </>
-        )}
 
         <WishlistProductGrid
           items={items}
