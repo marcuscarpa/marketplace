@@ -1,8 +1,16 @@
+export interface NavBanner {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
 export interface NavLink {
   label: string;
   href: string;
   sale?: boolean;
   chevron?: boolean;
+  sectionTitle?: string;
+  banner?: NavBanner;
   children?: NavLink[];
 }
 

@@ -3,12 +3,22 @@ export const CATALOG_MENU_GROUPS = [
   {
     labelKey: 'newCollections' as const,
     handle: 'jardim-oriental',
-    children: ['enseada', 'green-tea', 'garden-collection', 'floral-print-collection'],
+    children: [
+      'enseada',
+      'green-tea',
+      'orchid-collection',
+      'florias',
+      'orquidea',
+      'trancoso',
+      'ocean-leque',
+      'pearl-tropical',
+      'pearl-collection',
+    ],
   },
   {
     labelKey: 'swimwear' as const,
     handle: 'swimwear',
-    children: ['bikini', 'bikini-bottom', 'bikini-top', 'cover-up', 'one-piece'],
+    children: ['bikini', 'bikini-bottom', 'bikini-top', 'cover-up', 'one-piece', 'cut-outs'],
   },
   {
     labelKey: 'readyToWear' as const,

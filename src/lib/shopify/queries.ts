@@ -191,6 +191,9 @@ export const GET_COLLECTIONS = `
         handle
         description
         image { url altText }
+        products(first: 1) {
+          nodes { id }
+        }
       }
     }
   }

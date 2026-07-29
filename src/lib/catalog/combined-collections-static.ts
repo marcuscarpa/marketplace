@@ -3,7 +3,10 @@ import {
   catalogGroupByHandle,
   type CatalogMenuLabelKey,
 } from '@/lib/catalog/catalog-menu-groups';
-import { isHiddenCollectionHandle } from '@/lib/catalog/collection-handles';
+import {
+  isHiddenCollectionHandle,
+  resolveCollectionHandle,
+} from '@/lib/catalog/collection-handles';
 import { m } from '@/lib/i18n';
 import type { ShopifyMenu } from '@/lib/shopify/menu-fetch';
 import { collectionHandleFromMenuUrl, isAccessoriesGroupUrl } from '@/lib/shopify/menu-url';
@@ -18,12 +21,15 @@ export function buildCombinedSourcesFromMenu(
   const combined: Record<string, readonly string[]> = {};
 
   for (const item of menu.items) {
-    const childHandles = (item.items ?? [])
-      .map((child) => collectionHandleFromMenuUrl(child.url))
-      .filter(
-        (handle): handle is string =>
-          handle !== null && !isHiddenCollectionHandle(handle)
-      );
+    const childHandles = [...new Set(
+      (item.items ?? [])
+        .map((child) => collectionHandleFromMenuUrl(child.url))
+        .filter(
+          (handle): handle is string =>
+            handle !== null && !isHiddenCollectionHandle(handle)
+        )
+        .map(resolveCollectionHandle)
+    )];
 
     if (childHandles.length === 0) continue;
 

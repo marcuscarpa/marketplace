@@ -21,7 +21,7 @@ const getMenuCombinedSources = unstable_cache(
     if (!menu) return {};
     return buildCombinedSourcesFromMenu(menu);
   },
-  ['menu-combined-sources'],
+  ['menu-combined-sources-v3'],
   { revalidate: 3600 }
 );
 
@@ -29,10 +29,14 @@ export async function resolveSourceHandles(
   handle: string,
   locale: string
 ): Promise<readonly string[]> {
+  const staticHandles = sourceHandlesForCollection(handle);
   const menuMap = await getMenuCombinedSources(locale);
   const fromMenu = menuMap[handle];
-  if (fromMenu?.length) return fromMenu;
-  return sourceHandlesForCollection(handle);
+
+  if (!fromMenu?.length) return staticHandles;
+  if (staticHandles.length <= 1) return fromMenu;
+
+  return [...new Set([...fromMenu, ...staticHandles])];
 }
 
 export async function isCombinedCollectionHandleForLocale(

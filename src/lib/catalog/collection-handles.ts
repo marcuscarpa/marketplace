@@ -13,6 +13,16 @@ export const SHOPIFY_COLLECTION = {
   men: 'mens-collection',
 } as const;
 
+/** Footer menu / old URLs → live Shopify collection handles. */
+export const MENU_COLLECTION_ALIASES: Record<string, string> = {
+  'garden-collection': 'orchid-collection',
+  'floral-print-collection': 'florias',
+};
+
+export function resolveCollectionHandle(handle: string): string {
+  return MENU_COLLECTION_ALIASES[handle] ?? handle;
+}
+
 /** Legacy storefront paths → live Shopify handles (never map a handle to itself). */
 export const LEGACY_COLLECTION_REDIRECTS: Record<string, string> = {
   new: SHOPIFY_COLLECTION.newArrivals,
@@ -20,6 +30,7 @@ export const LEGACY_COLLECTION_REDIRECTS: Record<string, string> = {
   women: SHOPIFY_COLLECTION.shopAll,
   'ready-to-wear': SHOPIFY_COLLECTION.readyToWear,
   collections: SHOPIFY_COLLECTION.featured,
+  ...MENU_COLLECTION_ALIASES,
 };
 
 export function collectionPath(handle: string): string {

@@ -29,6 +29,7 @@ describe('shopify menu', () => {
     const byHandle = new Map([
       ['jardim-oriental', { handle: 'jardim-oriental', title: 'Jardim Oriental' }],
       ['enseada', { handle: 'enseada', title: 'Enseada' }],
+      ['orchid-collection', { handle: 'orchid-collection', title: 'Orchid Collection' }],
       ['bags', { handle: 'bags', title: 'Bags' }],
       ['shoes', { handle: 'shoes', title: 'Shoes' }],
       ['hats', { handle: 'hats', title: 'Hats' }],
@@ -51,7 +52,7 @@ describe('shopify menu', () => {
                 type: 'COLLECTION',
               },
               {
-                title: 'Missing',
+                title: 'Garden Collection',
                 url: 'https://sinesiakarol.com/collections/garden-collection',
                 type: 'COLLECTION',
               },
@@ -73,7 +74,10 @@ describe('shopify menu', () => {
     );
 
     expect(nav[0]?.href).toBe('collections/jardim-oriental');
-    expect(nav[0]?.children?.map((c) => c.href)).toEqual(['collections/enseada']);
+    expect(nav[0]?.children?.map((c) => c.href)).toEqual([
+      'collections/enseada',
+      'collections/orchid-collection',
+    ]);
     expect(nav[1]?.href).toBe('collections/accessories');
     expect(nav[1]?.children?.map((c) => c.label)).toEqual(['Bags', 'Shoes', 'Hats']);
   });
@@ -121,7 +125,47 @@ describe('shopify menu', () => {
     expect(combined.accessories).toEqual(['hats']);
   });
 
+  it('maps legacy footer menu handles to live Shopify collections', () => {
+    const combined = buildCombinedSourcesFromMenu({
+      id: '1',
+      title: 'Footer',
+      items: [
+        {
+          title: '- New Collections',
+          url: 'https://sinesiakarol.com/collections/jardim-oriental',
+          type: 'COLLECTION',
+          items: [
+            { title: 'Enseada', url: 'https://sinesiakarol.com/collections/enseada', type: 'COLLECTION' },
+            {
+              title: 'Garden Collection',
+              url: 'https://sinesiakarol.com/collections/garden-collection',
+              type: 'COLLECTION',
+            },
+            {
+              title: 'Floral Print Collection',
+              url: 'https://sinesiakarol.com/collections/floral-print-collection',
+              type: 'COLLECTION',
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(combined['jardim-oriental']).toEqual(['enseada', 'orchid-collection', 'florias']);
+  });
+
   it('merges parent collections and keeps submenu collections separate', () => {
+    expect(sourceHandlesForCollection('jardim-oriental')).toEqual([
+      'enseada',
+      'green-tea',
+      'orchid-collection',
+      'florias',
+      'orquidea',
+      'trancoso',
+      'ocean-leque',
+      'pearl-tropical',
+      'pearl-collection',
+    ]);
     expect(sourceHandlesForCollection('accessories')).toEqual(['bags', 'shoes', 'hats']);
     expect(sourceHandlesForCollection('swimwear')).toEqual([
       'bikini',
@@ -129,6 +173,7 @@ describe('shopify menu', () => {
       'bikini-top',
       'cover-up',
       'one-piece',
+      'cut-outs',
     ]);
     expect(sourceHandlesForCollection('hats')).toEqual(['hats']);
     expect(sourceHandlesForCollection('bikini')).toEqual(['bikini']);

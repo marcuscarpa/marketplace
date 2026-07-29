@@ -9,6 +9,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { useCart } from '@/components/providers/cart-provider';
 import { useNewsletterModal } from '@/components/providers/newsletter-modal-provider';
 import { CartDrawer } from '@/components/storefront/cart-drawer';
+import { MegaMenuPanel } from '@/components/storefront/mega-menu-panel';
 import { useScroll } from '@/components/providers/scroll-provider';
 import { SearchOverlay } from '@/components/storefront/search-overlay';
 import { useWishlist } from '@/hooks/use-wishlist';
@@ -172,62 +173,107 @@ function NavHeaderItem({
   item,
   prefix,
   ink,
+  active,
   onNavigate,
 }: {
   item: NavLink;
   prefix: string;
   ink: string;
+  active?: boolean;
   onNavigate?: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(false);
   const hasChildren = (item.children?.length ?? 0) > 0;
-  const linkClass = `menu-text transition-opacity hover:opacity-60 ${
+  const linkClass = `menu-text flex h-full items-center transition-opacity hover:opacity-60 ${
     item.sale ? 'text-[#9c4a4a]' : ink
-  }`;
-
-  useEffect(() => {
-    if (!open) return;
-    const onPointerDown = (event: MouseEvent) => {
-      if (!ref.current?.contains(event.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', onPointerDown);
-    return () => document.removeEventListener('mousedown', onPointerDown);
-  }, [open]);
-
-  if (!hasChildren) {
-    return (
-      <Link href={`${prefix}/${item.href}`} onClick={onNavigate} className={linkClass}>
-        {item.label}
-      </Link>
-    );
-  }
+  } ${active ? 'nav__item__link--active' : ''}`;
 
   return (
-    <div
-      ref={ref}
-      className="relative flex items-center"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+    <Link
+      href={`${prefix}/${item.href}`}
+      onClick={onNavigate}
+      className={linkClass}
+      aria-haspopup={hasChildren ? 'true' : undefined}
+      aria-expanded={hasChildren ? active : undefined}
     >
-      <Link href={`${prefix}/${item.href}`} className={linkClass}>
-        {item.label}
-      </Link>
-      {open && (
-        <div className="absolute left-0 top-full z-[100] mt-2 min-w-[180px] border border-black/10 bg-white py-1 shadow-sm">
-          {item.children!.map((child) => (
-            <Link
-              key={child.href + child.label}
-              href={`${prefix}/${child.href}`}
-              onClick={onNavigate}
-              className="menu-text block px-3 py-2 text-ink transition-colors hover:bg-black/4"
-            >
-              {child.label}
-            </Link>
-          ))}
-        </div>
+      {item.label}
+    </Link>
+  );
+}
+
+function DesktopMainNav({
+  locale,
+  mainNav,
+  prefix,
+  ink,
+  heroNav,
+  blurActive,
+  searchOpen,
+  labels,
+}: {
+  locale: string;
+  mainNav: NavLink[];
+  prefix: string;
+  ink: string;
+  heroNav: boolean;
+  blurActive: boolean;
+  searchOpen: boolean;
+  labels: ReturnType<typeof m>['header'];
+}) {
+  const [activeItem, setActiveItem] = useState<NavLink | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearCloseTimer = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+
+  const handleItemEnter = (item: NavLink) => {
+    clearCloseTimer();
+    setActiveItem((item.children?.length ?? 0) > 0 ? item : null);
+  };
+
+  const scheduleClose = () => {
+    clearCloseTimer();
+    closeTimer.current = setTimeout(() => setActiveItem(null), 120);
+  };
+
+  useEffect(() => {
+    return () => clearCloseTimer();
+  }, []);
+
+  return (
+    <nav
+      aria-label={labels.mainNav}
+      className={`relative hidden border-t lg:block ${
+        heroNav && !blurActive && !searchOpen ? 'border-white/15' : 'border-black/8'
+      }`}
+      onMouseLeave={scheduleClose}
+    >
+      <ul className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center px-5 py-3">
+        {mainNav.map((item, index) => (
+          <li
+            key={item.href + item.label}
+            className="flex items-center"
+            onMouseEnter={() => handleItemEnter(item)}
+          >
+            {index > 0 && <NavSeparator light={heroNav} />}
+            <NavHeaderItem item={item} prefix={prefix} ink={ink} active={activeItem === item} />
+          </li>
+        ))}
+      </ul>
+
+      {activeItem && (
+        <MegaMenuPanel
+          item={activeItem}
+          prefix={prefix}
+          sectionTitle={m(locale).nav.shopByCategory}
+          onMouseEnter={clearCloseTimer}
+          onMouseLeave={scheduleClose}
+        />
       )}
-    </div>
+    </nav>
   );
 }
 
@@ -579,21 +625,16 @@ export function Header({ locale, navigation }: HeaderProps) {
           </div>
         </header>
 
-        <nav
-          aria-label={labels.mainNav}
-          className={`hidden border-t lg:block ${
-            heroNav && !blurActive && !searchOpen ? 'border-white/15' : 'border-black/8'
-          }`}
-        >
-          <ul className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center px-5 py-3">
-            {mainNav.map((item, index) => (
-              <li key={item.href + item.label} className="flex items-center">
-                {index > 0 && <NavSeparator light={heroNav} />}
-                <NavHeaderItem item={item} prefix={prefix} ink={ink} />
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <DesktopMainNav
+          locale={locale}
+          mainNav={mainNav}
+          prefix={prefix}
+          ink={ink}
+          heroNav={heroNav}
+          blurActive={blurActive}
+          searchOpen={searchOpen}
+          labels={labels}
+        />
       </div>
 
       <AnimatePresence>

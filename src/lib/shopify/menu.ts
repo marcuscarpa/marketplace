@@ -1,4 +1,10 @@
-import { collectionPath, isHiddenCollectionHandle } from '@/lib/catalog/collection-handles';
+import {
+  collectionPath,
+  isHiddenCollectionHandle,
+  resolveCollectionHandle,
+} from '@/lib/catalog/collection-handles';
+import { catalogGroupByHandle } from '@/lib/catalog/catalog-menu-groups';
+import { shouldShowNavCollection, type NavCollectionRef } from '@/lib/catalog/nav-collection';
 import {
   combinedCollectionTitle,
   combinedParentHrefForMenuItem,
@@ -18,7 +24,7 @@ function cleanMenuGroupTitle(title: string): string {
   return title.replace(/^-\s*/, '').trim();
 }
 
-type CollectionLookup = Map<string, { handle: string; title: string }>;
+type CollectionLookup = Map<string, NavCollectionRef>;
 
 const GROUP_LABEL_KEYS: Record<string, keyof ReturnType<typeof m>['nav']> = {
   'new collections': 'newCollections',
@@ -31,8 +37,13 @@ const GROUP_LABEL_KEYS: Record<string, keyof ReturnType<typeof m>['nav']> = {
 const CHILD_LABEL_KEYS: Record<string, keyof ReturnType<typeof m>['nav']> = {
   enseada: 'enseada',
   'green-tea': 'greenTea',
-  'garden-collection': 'gardenCollection',
-  'floral-print-collection': 'floralPrintCollection',
+  'orchid-collection': 'orchidCollection',
+  florias: 'florias',
+  orquidea: 'orquidea',
+  trancoso: 'trancoso',
+  'ocean-leque': 'oceanLeque',
+  'pearl-tropical': 'pearlTropical',
+  'pearl-collection': 'pearlCollection',
   bags: 'bags',
   shoes: 'shoes',
   hats: 'hats',
@@ -42,6 +53,7 @@ const CHILD_LABEL_KEYS: Record<string, keyof ReturnType<typeof m>['nav']> = {
   'bikini-top': 'bikiniTop',
   'cover-up': 'coverUp',
   'one-piece': 'onePiece',
+  'cut-outs': 'cutOuts',
   tops: 'tops',
   'pants-shorts': 'pantsShorts',
   skirts: 'skirts',
@@ -78,9 +90,10 @@ function childNavLinks(
   const links: NavLink[] = [];
   const handles: string[] = [];
   for (const item of items) {
-    const handle = collectionHandleFromMenuUrl(item.url);
-    if (!handle || isHiddenCollectionHandle(handle)) continue;
-    if (byHandle && !byHandle.has(handle)) continue;
+    const rawHandle = collectionHandleFromMenuUrl(item.url);
+    if (!rawHandle || isHiddenCollectionHandle(rawHandle)) continue;
+    const handle = resolveCollectionHandle(rawHandle);
+    if (byHandle && !shouldShowNavCollection(byHandle.get(handle))) continue;
 
     handles.push(handle);
     links.push({
@@ -104,6 +117,20 @@ export function buildCatalogNavFromFooterMenu(
     const { links: children, handles: childHandles } = childNavLinks(locale, item.items, byHandle);
     const parentHref = parentHrefForMenuItem(item, childHandles);
     const virtualHandle = parentHref.replace(/^collections\//, '');
+
+    const group = catalogGroupByHandle(virtualHandle);
+    if (group && byHandle) {
+      for (const handle of group.children) {
+        if (childHandles.includes(handle)) continue;
+        const collection = byHandle.get(handle);
+        if (!shouldShowNavCollection(collection)) continue;
+        childHandles.push(handle);
+        children.push({
+          label: childLabel(locale, handle, collection.title),
+          href: collectionPath(handle),
+        });
+      }
+    }
 
     if (byHandle && !byHandle.has(virtualHandle) && !isCombinedCollectionHandle(virtualHandle)) {
       if (children.length === 0) continue;

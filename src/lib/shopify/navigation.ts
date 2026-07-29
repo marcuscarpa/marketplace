@@ -4,6 +4,8 @@ import {
   SHOPIFY_COLLECTION,
 } from '@/lib/catalog/collection-handles';
 import { buildHeaderCatalogNav, buildHeaderTrailingNav } from '@/lib/catalog/header-nav';
+import { enrichNavWithBanners } from '@/lib/catalog/nav-banners';
+import { shouldShowNavCollection } from '@/lib/catalog/nav-collection';
 import type { MenuSections, NavLink, SiteNavigation } from '@/lib/catalog/navigation-types';
 import { getStaticNavigation } from '@/lib/catalog/navigation-static';
 import { m } from '@/lib/i18n';
@@ -18,6 +20,7 @@ import { GET_COLLECTIONS } from './queries';
 interface ShopifyCollectionNode {
   handle: string;
   title: string;
+  hasProducts: boolean;
 }
 
 
@@ -28,7 +31,7 @@ const DRAWER_GROUP_HANDLES: string[][] = [
     SHOPIFY_COLLECTION.swimwear,
     SHOPIFY_COLLECTION.readyToWear,
   ],
-  ['all-swim', 'bikini', 'bikini-top', 'bikini-bottom', 'one-piece', 'cover-up'],
+  ['all-swim', 'bikini', 'bikini-top', 'bikini-bottom', 'one-piece', 'cover-up', 'cut-outs'],
   ['dresses', 'tops', 'pants-shorts', 'skirts'],
   [
     'florias',
@@ -48,12 +51,23 @@ const DRAWER_GROUP_HANDLES: string[][] = [
 
 async function fetchCollections(locale: string): Promise<ShopifyCollectionNode[]> {
   const client = getShopifyClient(locale);
-  const data = await client.execute<{ collections: { nodes: ShopifyCollectionNode[] } }>(
-    GET_COLLECTIONS,
-    { first: 100 },
-    `shopify:collections:${locale}`
-  );
-  return data.collections.nodes.filter((c) => !isHiddenCollectionHandle(c.handle));
+  const data = await client.execute<{
+    collections: {
+      nodes: Array<{
+        handle: string;
+        title: string;
+        products: { nodes: Array<{ id: string }> };
+      }>;
+    };
+  }>(GET_COLLECTIONS, { first: 100 }, `shopify:collections-v2:${locale}`);
+
+  return data.collections.nodes
+    .filter((c) => !isHiddenCollectionHandle(c.handle))
+    .map((c) => ({
+      handle: c.handle,
+      title: c.title,
+      hasProducts: c.products.nodes.length > 0,
+    }));
 }
 
 function toNavLink(collection: ShopifyCollectionNode, options?: { sale?: boolean; chevron?: boolean }): NavLink {
@@ -71,7 +85,7 @@ function buildMainNav(locale: string, byHandle: Map<string, ShopifyCollectionNod
       ? buildCatalogNavFromFooterMenu(locale, footerMenu, byHandle)
       : buildHeaderCatalogNav(locale, byHandle);
 
-  return [...catalogNav, ...buildHeaderTrailingNav(locale, byHandle)];
+  return enrichNavWithBanners(locale, [...catalogNav, ...buildHeaderTrailingNav(locale, byHandle)]);
 }
 
 function buildDrawerLinks(byHandle: Map<string, ShopifyCollectionNode>): NavLink[] {
@@ -82,7 +96,7 @@ function buildDrawerLinks(byHandle: Map<string, ShopifyCollectionNode>): NavLink
     for (const handle of group) {
       if (seen.has(handle)) continue;
       const collection = byHandle.get(handle);
-      if (!collection) continue;
+      if (!shouldShowNavCollection(collection)) continue;
       seen.add(handle);
       links.push(toNavLink(collection, { chevron: handle === SHOPIFY_COLLECTION.shopAll }));
     }
@@ -90,6 +104,7 @@ function buildDrawerLinks(byHandle: Map<string, ShopifyCollectionNode>): NavLink
 
   for (const collection of byHandle.values()) {
     if (seen.has(collection.handle)) continue;
+    if (!shouldShowNavCollection(collection)) continue;
     seen.add(collection.handle);
     links.push(toNavLink(collection));
   }
