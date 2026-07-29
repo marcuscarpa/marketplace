@@ -4,6 +4,13 @@ export interface NavBanner {
   caption?: string;
 }
 
+export interface NavBannerTile {
+  src: string;
+  alt: string;
+  caption: string;
+  href: string;
+}
+
 export interface NavLink {
   label: string;
   href: string;
@@ -11,6 +18,7 @@ export interface NavLink {
   chevron?: boolean;
   sectionTitle?: string;
   banner?: NavBanner;
+  bannerGallery?: NavBannerTile[];
   children?: NavLink[];
 }
 
