@@ -14,7 +14,6 @@ import type { ShopifyProduct } from '@/lib/shopify/types';
 export const COLLECTION_PAGE_SIZE = 20;
 const FACET_SCAN_PAGE_SIZE = 50;
 const FACET_SCAN_MAX_PRODUCTS = 250;
-const FILTER_FETCH_BATCH = 40;
 
 type CollectionProductQuery = {
   collection: {
@@ -140,57 +139,11 @@ function hasActiveFilters(filters: FilterState, facets: ProductFacets): boolean 
   return activeFilterCount(filters, facets.price) > 0;
 }
 
-async function fetchFilteredSingleCollectionPage(
-  handle: string,
-  locale: string,
-  filters: FilterState,
-  facets: ProductFacets,
-  first: number,
-  after: string | null
-): Promise<CollectionProductsPage> {
-  let cursor = after;
-  let hasNext = true;
-  const matched: ShopifyProduct[] = [];
-  const seen = new Set<string>();
-  let lastCollection: CollectionProductQuery['collection'] = null;
-
-  while (matched.length < first && hasNext) {
-    const batch = await fetchShopifyCollectionPage(handle, locale, FILTER_FETCH_BATCH, cursor);
-    lastCollection = batch.collection;
-    hasNext = batch.pageInfo.hasNextPage;
-    cursor = batch.pageInfo.endCursor;
-
-    if (batch.products.length === 0) break;
-
-    const filterable = batch.products.map(shopifyToFilterable);
-    const allowed = new Set(applyFilters(filterable, filters).map((p) => p.id));
-
-    for (const product of batch.products) {
-      if (!allowed.has(product.id) || seen.has(product.id)) continue;
-      seen.add(product.id);
-      matched.push(product);
-      if (matched.length >= first) break;
-    }
-  }
-
-  return {
-    products: matched,
-    collection: lastCollection,
-    pageInfo: {
-      hasNextPage: hasNext,
-      endCursor: cursor,
-      offset: 0,
-    },
-  };
-}
-
-async function fetchCombinedCollectionPage(
-  handle: string,
-  locale: string,
+function sliceProductPage(
+  all: ShopifyProduct[],
   first: number,
   offset: number
-): Promise<CollectionProductsPage> {
-  const all = await fetchAllProductsForFacets(handle, locale);
+): CollectionProductsPage {
   const slice = all.slice(offset, offset + first);
   const nextOffset = offset + slice.length;
 
@@ -205,6 +158,42 @@ async function fetchCombinedCollectionPage(
   };
 }
 
+async function fetchCombinedCollectionPage(
+  handle: string,
+  locale: string,
+  first: number,
+  offset: number
+): Promise<CollectionProductsPage> {
+  const all = await fetchAllProductsForFacets(handle, locale);
+  return sliceProductPage(all, first, offset);
+}
+
+async function fetchSingleCollectionOffsetPage(
+  handle: string,
+  locale: string,
+  first: number,
+  offset: number
+): Promise<CollectionProductsPage> {
+  const all = await fetchProductsFromCollection(handle, locale);
+  const page = sliceProductPage(all, first, offset);
+  if (offset > 0) return page;
+
+  const meta = await fetchShopifyCollectionPage(handle, locale, 1, null);
+  return { ...page, collection: meta.collection };
+}
+
+function orderFilteredProducts(
+  all: ShopifyProduct[],
+  filters: FilterState
+): ShopifyProduct[] {
+  const filterable = all.map(shopifyToFilterable);
+  const filtered = applyFilters(filterable, filters);
+  const byId = new Map(all.map((p) => [p.id, p]));
+  return filtered
+    .map((p) => byId.get(p.id))
+    .filter((p): p is ShopifyProduct => p !== undefined);
+}
+
 async function fetchFilteredCombinedCollectionPage(
   handle: string,
   locale: string,
@@ -213,24 +202,24 @@ async function fetchFilteredCombinedCollectionPage(
   offset: number
 ): Promise<CollectionProductsPage> {
   const all = await fetchAllProductsForFacets(handle, locale);
-  const filterable = all.map(shopifyToFilterable);
-  const filtered = applyFilters(filterable, filters);
-  const byId = new Map(all.map((p) => [p.id, p]));
-  const ordered = filtered
-    .map((p) => byId.get(p.id))
-    .filter((p): p is ShopifyProduct => p !== undefined);
-  const slice = ordered.slice(offset, offset + first);
-  const nextOffset = offset + slice.length;
+  const ordered = orderFilteredProducts(all, filters);
+  return sliceProductPage(ordered, first, offset);
+}
 
-  return {
-    products: slice,
-    collection: null,
-    pageInfo: {
-      hasNextPage: nextOffset < ordered.length,
-      endCursor: null,
-      offset: nextOffset,
-    },
-  };
+async function fetchFilteredSingleCollectionOffsetPage(
+  handle: string,
+  locale: string,
+  filters: FilterState,
+  first: number,
+  offset: number
+): Promise<CollectionProductsPage> {
+  const all = await fetchProductsFromCollection(handle, locale);
+  const ordered = orderFilteredProducts(all, filters);
+  const page = sliceProductPage(ordered, first, offset);
+  if (offset > 0) return page;
+
+  const meta = await fetchShopifyCollectionPage(handle, locale, 1, null);
+  return { ...page, collection: meta.collection };
 }
 
 export async function fetchCollectionProductsPage(
@@ -261,10 +250,16 @@ export async function fetchCollectionProductsPage(
 
   const sourceHandle = sourceHandles[0]!;
   if (filtering) {
-    return fetchFilteredSingleCollectionPage(sourceHandle, locale, filters, facets, first, after);
+    return fetchFilteredSingleCollectionOffsetPage(
+      sourceHandle,
+      locale,
+      filters,
+      first,
+      offset
+    );
   }
 
-  return fetchShopifyCollectionPage(sourceHandle, locale, first, after);
+  return fetchSingleCollectionOffsetPage(sourceHandle, locale, first, offset);
 }
 
 /** Initial SSR payload: first page + facet metadata for filters. */

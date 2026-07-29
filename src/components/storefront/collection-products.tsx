@@ -177,6 +177,11 @@ export function ShopifyCollectionProducts({
   );
   const gridProducts = activeCount === 0 ? products : visibleProducts;
   const filterKey = useMemo(() => filterStateToParams(filters).toString(), [filters]);
+  const filtersRef = useRef(filters);
+  const facetsRef = useRef(facets);
+  filtersRef.current = filters;
+  facetsRef.current = facets;
+
   const fetchPageRef = useRef<
     (mode: 'replace' | 'append', next?: Partial<PageInfo>) => Promise<void>
   >(async () => {});
@@ -190,14 +195,18 @@ export function ShopifyCollectionProducts({
       setLoading(true);
 
       try {
-        const params = filterStateToParams(sanitizeFilters(filters, facets, filterable));
+        const currentFilters = filtersRef.current;
+        const currentFacets = facetsRef.current;
+        const currentFilterable = filterable;
+        const params = filterStateToParams(
+          sanitizeFilters(currentFilters, currentFacets, currentFilterable)
+        );
         params.set('locale', locale);
         params.set('first', String(CATALOG_PAGE_SIZE));
         if (mode === 'append') {
-          const cursorSource = next ?? pageInfoRef.current;
-          if (cursorSource.endCursor) params.set('after', cursorSource.endCursor);
-          if (cursorSource.offset != null && cursorSource.offset > 0) {
-            params.set('offset', String(cursorSource.offset));
+          const offsetSource = next ?? pageInfoRef.current;
+          if (offsetSource.offset != null && offsetSource.offset > 0) {
+            params.set('offset', String(offsetSource.offset));
           }
         }
 
@@ -242,7 +251,7 @@ export function ShopifyCollectionProducts({
         setLoading(false);
       }
     },
-    [collectionHandle, facets, filterable, filters, locale]
+    [collectionHandle, filterable, locale]
   );
   fetchPageRef.current = fetchPage;
 
@@ -252,7 +261,7 @@ export function ShopifyCollectionProducts({
       if (activeFilterCount(filters, facets.price) === 0) return;
     }
     void fetchPageRef.current('replace');
-  }, [filterKey, facets.price, filters, facets]);
+  }, [filterKey]);
 
   const loadMore = useCallback(() => {
     if (!pageInfoRef.current.hasNextPage || loadingRef.current) return;
