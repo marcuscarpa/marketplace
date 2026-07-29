@@ -29,8 +29,11 @@ export function AuthProvider({ children, locale = 'en' }: { children: ReactNode;
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5_000);
+
     try {
-      const response = await fetch(`/${locale}/api/auth/me`);
+      const response = await fetch(`/${locale}/api/auth/me`, { signal: controller.signal });
       if (response.ok) {
         const data = await response.json();
         setCustomer(data.customer ?? null);
@@ -40,6 +43,7 @@ export function AuthProvider({ children, locale = 'en' }: { children: ReactNode;
     } catch {
       setCustomer(null);
     } finally {
+      clearTimeout(timeout);
       setIsLoading(false);
     }
   }, [locale]);

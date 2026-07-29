@@ -65,17 +65,19 @@ export function WishlistProvider({
   );
 
   useEffect(() => {
+    refreshGuest();
+  }, [refreshGuest]);
+
+  useEffect(() => {
     if (authLoading) return;
 
     if (!isAuthenticated) {
       mergedGuestRef.current = false;
-      refreshGuest();
       return;
     }
 
-    setHydrated(false);
     void refreshServer();
-  }, [authLoading, isAuthenticated, refreshGuest, refreshServer]);
+  }, [authLoading, isAuthenticated, refreshServer]);
 
   useEffect(() => {
     if (authLoading || !isAuthenticated || mergedGuestRef.current) return;

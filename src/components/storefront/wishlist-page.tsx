@@ -115,7 +115,7 @@ export function WishlistPage({ locale }: WishlistPageProps) {
   const pageTitle = displayName ? copy.title(displayName) : copy.defaultTitle;
   const redirectTo = `${prefix}/wishlist`;
 
-  if (authLoading || !hydrated) {
+  if (!hydrated) {
     return (
       <div className={`bg-white pb-20 ${HEADER_OFFSET_TOP}`}>
         <div className="mx-auto max-w-[1310px] px-5 py-24 text-center font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799] md:px-8 lg:px-10">
@@ -134,7 +134,7 @@ export function WishlistPage({ locale }: WishlistPageProps) {
           </h1>
         </header>
 
-        {!isAuthenticated && (
+        {!authLoading && !isAuthenticated && (
           <>
             <WishlistLoginWall
               locale={locale}

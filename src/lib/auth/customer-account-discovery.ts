@@ -12,6 +12,7 @@ export interface CustomerAccountApiConfiguration {
 type CacheEntry<T> = { value: T; expiresAt: number };
 
 const TTL_MS = 60 * 60 * 1000;
+const DISCOVERY_TIMEOUT_MS = 5_000;
 const openIdCache = new Map<string, CacheEntry<OpenIdConfiguration>>();
 const apiCache = new Map<string, CacheEntry<CustomerAccountApiConfiguration>>();
 
@@ -19,6 +20,7 @@ async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
     headers: { Accept: 'application/json' },
     next: { revalidate: 3600 },
+    signal: AbortSignal.timeout(DISCOVERY_TIMEOUT_MS),
   });
 
   if (!response.ok) {

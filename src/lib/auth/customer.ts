@@ -65,6 +65,7 @@ export async function fetchCustomerByAccessToken(
       },
       body: JSON.stringify({ query }),
       cache: 'no-store',
+      signal: AbortSignal.timeout(5_000),
     });
 
     if (!response.ok) return null;
