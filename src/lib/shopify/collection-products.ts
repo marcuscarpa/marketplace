@@ -1,4 +1,4 @@
-import { sourceHandlesForCollection } from '@/lib/catalog/combined-collections';
+import { resolveSourceHandles } from '@/lib/catalog/combined-collections';
 import {
   activeFilterCount,
   applyFilters,
@@ -64,33 +64,68 @@ async function fetchShopifyCollectionPage(
   };
 }
 
+async function fetchProductsFromCollection(
+  handle: string,
+  locale: string,
+  maxProducts = FACET_SCAN_MAX_PRODUCTS
+): Promise<ShopifyProduct[]> {
+  const products: ShopifyProduct[] = [];
+  const seen = new Set<string>();
+  let after: string | null = null;
+  let hasNext = true;
+
+  while (hasNext && products.length < maxProducts) {
+    const page = await fetchShopifyCollectionPage(
+      handle,
+      locale,
+      FACET_SCAN_PAGE_SIZE,
+      after
+    );
+    for (const product of page.products) {
+      if (seen.has(product.id)) continue;
+      seen.add(product.id);
+      products.push(product);
+      if (products.length >= maxProducts) break;
+    }
+    hasNext = page.pageInfo.hasNextPage;
+    after = page.pageInfo.endCursor;
+  }
+
+  return products;
+}
+
+/** Round-robin merge so combined PLPs mix bags, shoes, and hats on every page. */
+function interleaveProductLists(lists: ShopifyProduct[][]): ShopifyProduct[] {
+  const seen = new Set<string>();
+  const merged: ShopifyProduct[] = [];
+  const maxLen = Math.max(0, ...lists.map((list) => list.length));
+
+  for (let index = 0; index < maxLen; index++) {
+    for (const list of lists) {
+      const product = list[index];
+      if (!product || seen.has(product.id)) continue;
+      seen.add(product.id);
+      merged.push(product);
+    }
+  }
+
+  return merged;
+}
+
 async function fetchAllProductsForFacets(
   handle: string,
   locale: string
 ): Promise<ShopifyProduct[]> {
-  const sourceHandles = sourceHandlesForCollection(handle);
-  const merged = new Map<string, ShopifyProduct>();
+  const sourceHandles = await resolveSourceHandles(handle, locale);
 
-  for (const sourceHandle of sourceHandles) {
-    let after: string | null = null;
-    let hasNext = true;
-
-    while (hasNext && merged.size < FACET_SCAN_MAX_PRODUCTS) {
-      const page = await fetchShopifyCollectionPage(
-        sourceHandle,
-        locale,
-        FACET_SCAN_PAGE_SIZE,
-        after
-      );
-      for (const product of page.products) {
-        merged.set(product.id, product);
-      }
-      hasNext = page.pageInfo.hasNextPage;
-      after = page.pageInfo.endCursor;
-    }
+  if (sourceHandles.length === 1) {
+    return fetchProductsFromCollection(sourceHandles[0]!, locale);
   }
 
-  return [...merged.values()];
+  const lists = await Promise.all(
+    sourceHandles.map((sourceHandle) => fetchProductsFromCollection(sourceHandle, locale))
+  );
+  return interleaveProductLists(lists);
 }
 
 export async function fetchCollectionFacets(
@@ -157,14 +192,15 @@ async function fetchCombinedCollectionPage(
 ): Promise<CollectionProductsPage> {
   const all = await fetchAllProductsForFacets(handle, locale);
   const slice = all.slice(offset, offset + first);
+  const nextOffset = offset + slice.length;
 
   return {
     products: slice,
     collection: null,
     pageInfo: {
-      hasNextPage: offset + first < all.length,
+      hasNextPage: nextOffset < all.length,
       endCursor: null,
-      offset: offset + slice.length,
+      offset: nextOffset,
     },
   };
 }
@@ -184,14 +220,15 @@ async function fetchFilteredCombinedCollectionPage(
     .map((p) => byId.get(p.id))
     .filter((p): p is ShopifyProduct => p !== undefined);
   const slice = ordered.slice(offset, offset + first);
+  const nextOffset = offset + slice.length;
 
   return {
     products: slice,
     collection: null,
     pageInfo: {
-      hasNextPage: offset + first < ordered.length,
+      hasNextPage: nextOffset < ordered.length,
       endCursor: null,
-      offset: offset + slice.length,
+      offset: nextOffset,
     },
   };
 }
@@ -212,7 +249,7 @@ export async function fetchCollectionProductsPage(
   const offset = options.offset ?? 0;
   const filters = options.filters;
   const facets = options.facets;
-  const sourceHandles = sourceHandlesForCollection(handle);
+  const sourceHandles = await resolveSourceHandles(handle, locale);
   const isCombined = sourceHandles.length > 1;
   const filtering = filters && facets && hasActiveFilters(filters, facets);
 

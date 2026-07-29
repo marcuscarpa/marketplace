@@ -188,13 +188,18 @@ export function ShopifyCollectionProducts({
         params.set('first', String(CATALOG_PAGE_SIZE));
         if (mode === 'append') {
           if (next?.endCursor) params.set('after', next.endCursor);
-          if (next?.offset) params.set('offset', String(next.offset));
+          if (next?.offset != null && next.offset > 0) {
+            params.set('offset', String(next.offset));
+          }
         }
 
         const res = await fetch(
           `/${locale}/api/collections/${collectionHandle}/products?${params.toString()}`
         );
-        if (!res.ok) return;
+        if (!res.ok) {
+          setPageInfo((current) => ({ ...current, hasNextPage: false }));
+          return;
+        }
 
         const data = (await res.json()) as {
           products: ShopifyCollectionProduct[];
@@ -203,16 +208,30 @@ export function ShopifyCollectionProducts({
 
         setProducts((current) => {
           if (mode === 'replace') return data.products;
+
           const seen = new Set(current.map((product) => product.id));
           const merged = [...current];
+          let added = 0;
           for (const product of data.products) {
             if (seen.has(product.id)) continue;
             seen.add(product.id);
             merged.push(product);
+            added++;
           }
+
+          const stopPagination =
+            added === 0 || data.products.length === 0;
+          setPageInfo(
+            stopPagination
+              ? { ...data.pageInfo, hasNextPage: false }
+              : data.pageInfo
+          );
           return merged;
         });
-        setPageInfo(data.pageInfo);
+
+        if (mode === 'replace') {
+          setPageInfo(data.pageInfo);
+        }
       } finally {
         loadingRef.current = false;
         setLoading(false);

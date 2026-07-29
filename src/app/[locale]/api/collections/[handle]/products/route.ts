@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import {
   buildFilterState,
+  DEFAULT_FILTER_STATE,
 } from '@/lib/product-filters';
 import {
   COLLECTION_PAGE_SIZE,
@@ -38,24 +39,31 @@ export async function GET(
   }
 
   try {
-    const facets = await fetchCollectionFacets(handle, locale);
+    const isPaginated =
+      (parsed.data.offset ?? 0) > 0 || Boolean(parsed.data.after);
     const filterParams = new URLSearchParams(url.searchParams);
     filterParams.delete('after');
     filterParams.delete('offset');
     filterParams.delete('first');
     filterParams.delete('locale');
-    const filters = buildFilterState(
-      Object.fromEntries(filterParams.entries()),
-      facets,
-      []
-    );
+    const hasFilterParams = [...filterParams.keys()].length > 0;
+
+    const facets =
+      isPaginated && !hasFilterParams
+        ? null
+        : await fetchCollectionFacets(handle, locale);
+
+    const filters =
+      facets === null
+        ? DEFAULT_FILTER_STATE
+        : buildFilterState(Object.fromEntries(filterParams.entries()), facets, []);
 
     let page = await fetchCollectionProductsPage(handle, locale, {
       first: parsed.data.first ?? COLLECTION_PAGE_SIZE,
       after: parsed.data.after ?? null,
       offset: parsed.data.offset ?? 0,
       filters,
-      facets,
+      facets: facets ?? undefined,
     });
 
     if (

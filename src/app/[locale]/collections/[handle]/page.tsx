@@ -10,6 +10,7 @@ import { getCatalogCollection } from '@/lib/catalog/catalog';
 import {
   combinedCollectionTitle,
   isCombinedCollectionHandle,
+  isCombinedCollectionHandleForLocale,
 } from '@/lib/catalog/combined-collections';
 import { SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { getSocialShareImageUrl } from '@/lib/site-metadata';
@@ -79,7 +80,7 @@ async function getCollection(handle: string, locale: string): Promise<Collection
       const { page, facets: _facets } = await fetchCollectionInitialPayload(handle, locale);
       const { products, collection, pageInfo } = page;
 
-      if (collection || isCombinedCollectionHandle(handle)) {
+      if (collection || isCombinedCollectionHandle(handle) || (await isCombinedCollectionHandleForLocale(handle, locale))) {
         const title =
           combinedCollectionTitle(handle, locale) ??
           collection?.title ??

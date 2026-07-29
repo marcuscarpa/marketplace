@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { sourceHandlesForCollection } from '@/lib/catalog/combined-collections';
+import {
+  buildCombinedSourcesFromMenu,
+  combinedParentHrefForMenuItem,
+  isCombinedCollectionHandle,
+  sourceHandlesForCollection,
+} from '@/lib/catalog/combined-collections';
 import {
   buildCatalogNavFromFooterMenu,
   collectionHandleFromMenuUrl,
@@ -73,8 +78,61 @@ describe('shopify menu', () => {
     expect(nav[1]?.children?.map((c) => c.label)).toEqual(['Bags', 'Shoes', 'Hats']);
   });
 
-  it('merges accessories source collections', () => {
+  it('routes parent menu items with children to combined PLPs', () => {
+    expect(
+      combinedParentHrefForMenuItem('https://sinesiakarol.com/collections/swimwear', ['bikini'])
+    ).toBe('swimwear');
+    expect(
+      combinedParentHrefForMenuItem('https://sinesiakarol.com/collections/hats/Hats+shoes+bags', [
+        'bags',
+        'shoes',
+        'hats',
+      ])
+    ).toBe('accessories');
+    expect(combinedParentHrefForMenuItem('https://sinesiakarol.com/collections/hats', [])).toBeNull();
+  });
+
+  it('builds combined sources from footer menu', () => {
+    const combined = buildCombinedSourcesFromMenu({
+      id: '1',
+      title: 'Footer',
+      items: [
+        {
+          title: 'Swimwear',
+          url: 'https://sinesiakarol.com/collections/swimwear',
+          type: 'COLLECTION',
+          items: [
+            { title: 'Bikini', url: 'https://sinesiakarol.com/collections/bikini', type: 'COLLECTION' },
+            { title: 'One Piece', url: 'https://sinesiakarol.com/collections/one-piece', type: 'COLLECTION' },
+          ],
+        },
+        {
+          title: 'Accessories',
+          url: 'https://sinesiakarol.com/collections/hats/Hats+shoes+bags',
+          type: 'COLLECTION',
+          items: [
+            { title: 'Hats', url: 'https://sinesiakarol.com/collections/hats', type: 'COLLECTION' },
+          ],
+        },
+      ],
+    });
+
+    expect(combined.swimwear).toEqual(['bikini', 'one-piece']);
+    expect(combined.accessories).toEqual(['hats']);
+  });
+
+  it('merges parent collections and keeps submenu collections separate', () => {
     expect(sourceHandlesForCollection('accessories')).toEqual(['bags', 'shoes', 'hats']);
-    expect(sourceHandlesForCollection('bags')).toEqual(['bags']);
+    expect(sourceHandlesForCollection('swimwear')).toEqual([
+      'bikini',
+      'bikini-bottom',
+      'bikini-top',
+      'cover-up',
+      'one-piece',
+    ]);
+    expect(sourceHandlesForCollection('hats')).toEqual(['hats']);
+    expect(sourceHandlesForCollection('bikini')).toEqual(['bikini']);
+    expect(isCombinedCollectionHandle('all-rtw')).toBe(true);
+    expect(isCombinedCollectionHandle('dresses')).toBe(false);
   });
 });

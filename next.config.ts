@@ -39,13 +39,18 @@ import { LEGACY_COLLECTION_REDIRECTS } from '@/lib/catalog/collection-handles';
 
 const locales = ['en', 'pt'] as const;
 
-const collectionRedirects = locales.flatMap((locale) =>
-  Object.entries(LEGACY_COLLECTION_REDIRECTS).map(([legacy, target]) => ({
+const collectionRedirects = locales.flatMap((locale) => [
+  ...Object.entries(LEGACY_COLLECTION_REDIRECTS).map(([legacy, target]) => ({
     source: `/${locale}/collections/${legacy}`,
     destination: `/${locale}/collections/${target}`,
     permanent: true,
-  }))
-);
+  })),
+  {
+    source: `/${locale}/collections/hats/:tags`,
+    destination: `/${locale}/collections/accessories`,
+    permanent: true,
+  },
+]);
 
 const nextConfig: NextConfig = {
   // ponytail: keep native Node resolution for observability/redis deps so dev
