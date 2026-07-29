@@ -175,6 +175,13 @@ export function ShopifyCollectionProducts({
     filters,
     facets
   );
+  const gridProducts = activeCount === 0 ? products : visibleProducts;
+  const filterKey = useMemo(() => filterStateToParams(filters).toString(), [filters]);
+  const fetchPageRef = useRef<
+    (mode: 'replace' | 'append', next?: Partial<PageInfo>) => Promise<void>
+  >(async () => {});
+  const pageInfoRef = useRef(pageInfo);
+  pageInfoRef.current = pageInfo;
 
   const fetchPage = useCallback(
     async (mode: 'replace' | 'append', next?: Partial<PageInfo>) => {
@@ -183,13 +190,14 @@ export function ShopifyCollectionProducts({
       setLoading(true);
 
       try {
-        const params = filterStateToParams(clean);
+        const params = filterStateToParams(sanitizeFilters(filters, facets, filterable));
         params.set('locale', locale);
         params.set('first', String(CATALOG_PAGE_SIZE));
         if (mode === 'append') {
-          if (next?.endCursor) params.set('after', next.endCursor);
-          if (next?.offset != null && next.offset > 0) {
-            params.set('offset', String(next.offset));
+          const cursorSource = next ?? pageInfoRef.current;
+          if (cursorSource.endCursor) params.set('after', cursorSource.endCursor);
+          if (cursorSource.offset != null && cursorSource.offset > 0) {
+            params.set('offset', String(cursorSource.offset));
           }
         }
 
@@ -206,59 +214,57 @@ export function ShopifyCollectionProducts({
           pageInfo: PageInfo;
         };
 
-        setProducts((current) => {
-          if (mode === 'replace') return data.products;
+        if (mode === 'replace') {
+          setProducts(data.products);
+          setPageInfo(data.pageInfo);
+          return;
+        }
 
+        let added = 0;
+        setProducts((current) => {
           const seen = new Set(current.map((product) => product.id));
           const merged = [...current];
-          let added = 0;
           for (const product of data.products) {
             if (seen.has(product.id)) continue;
             seen.add(product.id);
             merged.push(product);
             added++;
           }
-
-          const stopPagination =
-            added === 0 || data.products.length === 0;
-          setPageInfo(
-            stopPagination
-              ? { ...data.pageInfo, hasNextPage: false }
-              : data.pageInfo
-          );
           return merged;
         });
 
-        if (mode === 'replace') {
-          setPageInfo(data.pageInfo);
-        }
+        const stopPagination = added === 0 || data.products.length === 0;
+        setPageInfo(
+          stopPagination ? { ...data.pageInfo, hasNextPage: false } : data.pageInfo
+        );
       } finally {
         loadingRef.current = false;
         setLoading(false);
       }
     },
-    [clean, collectionHandle, locale]
+    [collectionHandle, facets, filterable, filters, locale]
   );
+  fetchPageRef.current = fetchPage;
 
   useEffect(() => {
     if (isFirstFilterEffect.current) {
       isFirstFilterEffect.current = false;
-      if (activeFilterCount(clean, facets.price) === 0) return;
+      if (activeFilterCount(filters, facets.price) === 0) return;
     }
-    void fetchPage('replace');
-  }, [clean, fetchPage, facets.price]);
+    void fetchPageRef.current('replace');
+  }, [filterKey, facets.price, filters, facets]);
 
   const loadMore = useCallback(() => {
-    if (!pageInfo.hasNextPage || loadingRef.current) return;
-    void fetchPage('append', pageInfo);
-  }, [fetchPage, pageInfo]);
+    if (!pageInfoRef.current.hasNextPage || loadingRef.current) return;
+    void fetchPageRef.current('append', pageInfoRef.current);
+  }, []);
 
   const sentinelRef = useInfiniteScroll(loadMore, pageInfo.hasNextPage && !loading);
 
   return (
     <>
       <CollectionGridShell
-        count={visibleProducts.length}
+        count={gridProducts.length}
         activeCount={activeCount}
         onOpenFilters={() => setDrawerOpen(true)}
         locale={locale}
@@ -273,9 +279,9 @@ export function ShopifyCollectionProducts({
           ) : null
         }
       >
-        {visibleProducts.length > 0 ? (
+        {gridProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {visibleProducts.map((product) => {
+            {gridProducts.map((product) => {
               const badges = resolveShopifyProductTags(product, { bestsellerHandles });
               if (forceSaleBadge && !badges.includes('sale')) {
                 badges.unshift('sale');
