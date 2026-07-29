@@ -72,7 +72,7 @@ function getReadyToWearBannerGallery(locale: string): NavBannerTile[] {
       alt: n.dresses,
       caption: n.dresses,
       href: collectionPath('dresses'),
-      imageClassName: 'object-contain object-top',
+      imageClassName: 'object-cover object-top',
     },
     {
       src: RTW_GALLERY_IMAGES[1],
