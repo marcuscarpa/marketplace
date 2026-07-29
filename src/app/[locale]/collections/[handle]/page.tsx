@@ -206,16 +206,13 @@ export default async function CollectionPage({ params, searchParams }: Collectio
 
   return (
     <PageMain padded={false}>
-      <header className="bg-gray-950 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl lg:text-5xl font-light tracking-tight mb-4">{collection.title}</h1>
-          {collection.description && (
-            <p className="text-lg text-gray-300 max-w-2xl">{collection.description}</p>
-          )}
-        </div>
-      </header>
-
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className={`mx-auto max-w-[1440px] px-5 pb-10 lg:pb-16`}>
+        <SectionHeading className="mb-4">{collection.title}</SectionHeading>
+        {collection.description && (
+          <p className="mb-10 max-w-2xl font-sans-ui text-[14px] uppercase leading-[140%] tracking-[0.02em] text-ink/60">
+            {collection.description}
+          </p>
+        )}
         <ShopifyCollectionProducts
           collectionHandle={handle}
           products={products}

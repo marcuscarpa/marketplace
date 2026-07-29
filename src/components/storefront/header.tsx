@@ -209,6 +209,7 @@ function DesktopMainNav({
   blurActive,
   searchOpen,
   labels,
+  onMegaMenuOpenChange,
 }: {
   locale: string;
   mainNav: NavLink[];
@@ -218,6 +219,7 @@ function DesktopMainNav({
   blurActive: boolean;
   searchOpen: boolean;
   labels: ReturnType<typeof m>['header'];
+  onMegaMenuOpenChange?: (open: boolean) => void;
 }) {
   const [activeItem, setActiveItem] = useState<NavLink | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -243,26 +245,31 @@ function DesktopMainNav({
     return () => clearCloseTimer();
   }, []);
 
+  useEffect(() => {
+    onMegaMenuOpenChange?.(activeItem !== null);
+  }, [activeItem, onMegaMenuOpenChange]);
+
   return (
-    <nav
-      aria-label={labels.mainNav}
-      className={`relative hidden border-t lg:block ${
-        heroNav && !blurActive && !searchOpen ? 'border-white/15' : 'border-black/8'
-      }`}
-      onMouseLeave={scheduleClose}
-    >
-      <ul className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center px-[30px] py-0">
-        {mainNav.map((item, index) => (
-          <li
-            key={item.href + item.label}
-            className="flex items-center"
-            onMouseEnter={() => handleItemEnter(item)}
-          >
-            {index > 0 && <NavSeparator light={heroNav} />}
-            <NavHeaderItem item={item} prefix={prefix} ink={ink} active={activeItem === item} />
-          </li>
-        ))}
-      </ul>
+    <div className="relative hidden lg:block" onMouseLeave={scheduleClose}>
+      <nav
+        aria-label={labels.mainNav}
+        className={`border-t ${
+          heroNav && !blurActive && !searchOpen ? 'border-white/15' : 'border-black/8'
+        }`}
+      >
+        <ul className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center px-[30px] py-0">
+          {mainNav.map((item, index) => (
+            <li
+              key={item.href + item.label}
+              className="flex items-center"
+              onMouseEnter={() => handleItemEnter(item)}
+            >
+              {index > 0 && <NavSeparator light={heroNav} />}
+              <NavHeaderItem item={item} prefix={prefix} ink={ink} active={activeItem === item} />
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       {activeItem && (
         <MegaMenuPanel
@@ -273,7 +280,7 @@ function DesktopMainNav({
           onMouseLeave={scheduleClose}
         />
       )}
-    </nav>
+    </div>
   );
 }
 
@@ -485,6 +492,7 @@ export function Header({ locale, navigation }: HeaderProps) {
   const { items: wishlistItems, hydrated: wishlistHydrated } = useWishlist();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -507,7 +515,7 @@ export function Header({ locale, navigation }: HeaderProps) {
   const labels = m(locale).header;
   const mainNav = navigation.mainNav;
   const menuSections = navigation.menuSections;
-  const ink = heroNav && !searchOpen && !blurActive ? 'text-white' : 'text-ink';
+  const ink = heroNav && !searchOpen && !blurActive && !megaMenuOpen ? 'text-white' : 'text-ink';
 
   return (
     <>
@@ -519,7 +527,11 @@ export function Header({ locale, navigation }: HeaderProps) {
 
       <div
         className={`fixed top-8 left-0 right-0 z-[81] transition-[background-color,backdrop-filter] duration-500 md:top-7 ${
-          searchOpen ? 'bg-white' : blurActive ? 'bg-white/20 backdrop-blur-[8px]' : menuOpen ? 'bg-white' : ''
+          searchOpen || menuOpen || megaMenuOpen
+            ? 'bg-white'
+            : blurActive
+              ? 'bg-white/20 backdrop-blur-[8px]'
+              : ''
         }`}
       >
         <header className="relative overflow-visible border-b border-transparent">
@@ -634,6 +646,7 @@ export function Header({ locale, navigation }: HeaderProps) {
           blurActive={blurActive}
           searchOpen={searchOpen}
           labels={labels}
+          onMegaMenuOpenChange={setMegaMenuOpen}
         />
       </div>
 

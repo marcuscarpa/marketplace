@@ -99,8 +99,8 @@ export function SectionHeading({ children, className = '', light = false }: Sect
   );
 }
 
-/** Clears fixed announcement bar + header + desktop nav (84px mobile / 121px desktop stack). */
-export const HEADER_OFFSET_TOP = 'pt-[calc(84px+2.5rem)] lg:pt-[121px]';
+/** Clears fixed announcement bar + header + desktop nav (84px mobile / 154px desktop stack). */
+export const HEADER_OFFSET_TOP = 'pt-[84px] lg:pt-[154px]';
 
 /** Section rhythm: 40px mobile / 64px desktop — common luxury retail spacing. */
 export const SECTION_PADDING = 'px-5 py-10 lg:py-16';

@@ -24,7 +24,7 @@ const NAV_BANNERS: Record<string, NavBanner> = {
     alt: 'Men',
   },
   sale: {
-    src: '/Banner%20Salle.webp',
+    src: '/banner-salle.webp',
     alt: 'Sale',
   },
 };
