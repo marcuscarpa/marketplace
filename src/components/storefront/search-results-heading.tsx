@@ -16,7 +16,7 @@ export function SearchResultsHeading({ locale, query, totalCount }: SearchResult
       </p>
       <h1 className="font-serif text-[clamp(2rem,3.33vw,3rem)] font-normal leading-none tracking-[-0.04em] text-ink">
         {copy.resultsTitle}{' '}
-        <span className="bg-[#EFDEDA] px-1">&ldquo;{query}&rdquo;</span>
+        <span className="bg-[#F7F6F3] px-1">&ldquo;{query}&rdquo;</span>
       </h1>
     </header>
   );
