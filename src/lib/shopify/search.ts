@@ -4,6 +4,7 @@ import { formatPrice } from '@/lib/catalog/data';
 import { searchCatalogProducts } from '@/lib/catalog/catalog';
 import type { CatalogProduct } from '@/lib/catalog/data';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
+import { shopifyImageUrl } from '@/lib/shopify/image-url';
 import { SEARCH_PRODUCTS } from '@/lib/shopify/queries';
 
 interface SearchVariant {
@@ -76,8 +77,8 @@ export function productCardToCatalogProduct(
     category: product.vendor ?? product.tags?.[0] ?? '',
     price: formatMoney(amount, currency, locale),
     handle: product.handle,
-    image: product.images?.nodes?.[0]?.url ?? '',
-    hoverImage: product.images?.nodes?.[1]?.url ?? undefined,
+    image: shopifyImageUrl(product.images?.nodes?.[0]?.url),
+    hoverImage: shopifyImageUrl(product.images?.nodes?.[1]?.url) || undefined,
     compareAtPrice:
       onSale && compareAmount ? formatMoney(compareAmount, currency, locale) : undefined,
   };
