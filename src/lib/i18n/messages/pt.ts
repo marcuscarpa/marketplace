@@ -104,9 +104,14 @@ export const pt: Messages = {
   footer: {
     shop: 'Loja',
     company: 'Empresa',
+    help: 'Ajuda',
+    social: 'Social',
     customerService: 'Atendimento',
     followUs: 'Siga-nos',
     stayInLoop: 'Fique por dentro',
+    newsletterTitle: 'Sinesia Karol Post',
+    newsletterDescription:
+      'Inscreva-se na nossa newsletter para receber novidades e ofertas exclusivas para assinantes',
     ordersShipping: 'Pedidos e envio',
     sizeGuide: 'Guia de tamanhos',
     privacyPolicy: 'Política de privacidade',
@@ -115,6 +120,7 @@ export const pt: Messages = {
     mobileTerms: 'Termos do serviço móvel',
     doNotSell: 'Não vender ou compartilhar meus dados',
     returnPolicy: 'Política de devolução',
+    emailLabel: 'Email',
     copyright: '© 2026 SINESIA KAROL. Todos os direitos reservados.',
   },
   home: {

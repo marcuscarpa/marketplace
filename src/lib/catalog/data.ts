@@ -33,6 +33,7 @@ export const SITE_IMAGES = {
   social4: '/bloco%209%2C%20imagem%204.webp?v=20260628',
   social5: '/bloco%209%2C%20imagem%205.webp?v=20260628',
   footerLogo: cdnAsset('images/MZ8vNpExE3iwzh3LhEfoCMswUNU.png?width=3200&height=2400'),
+  footerBackground: '/footer-image.jpeg',
 } as const;
 
 export const INSTAGRAM_HREF = {
