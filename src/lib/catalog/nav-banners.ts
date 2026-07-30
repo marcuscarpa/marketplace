@@ -9,7 +9,7 @@ const NAV_BANNERS: Record<string, NavBanner> = {
     alt: 'New Collections',
   },
   accessories: {
-    src: SITE_IMAGES.cycler3,
+    src: '/Acessorios-1.webp',
     alt: 'Accessories',
   },
   'mens-collection': {
