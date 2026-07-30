@@ -13,6 +13,7 @@ import { useCart } from '@/components/providers/cart-provider';
 import { CartRecommendationsCarousel } from '@/components/storefront/cart-recommendations-carousel';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
+import { resolveWishlistImage } from '@/lib/wishlist/resolve-image';
 import { canStartCheckout, navigateToCheckout, resolveCheckoutHref } from '@/lib/cart/checkout';
 import {
   lineMaxQuantity,
@@ -159,7 +160,7 @@ function CartLineRow({
                 handle: line.handle,
                 title: line.productTitle,
                 price: formatCartPrice(line.price.amount, line.price.currencyCode, locale),
-                image: line.imageUrl ?? '',
+                image: resolveWishlistImage(line.handle, line.imageUrl),
               });
             }}
             disabled={inWishlist}

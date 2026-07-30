@@ -60,7 +60,16 @@ export function normalizeWishlistItems(stored: WishlistStoredItem[]): WishlistSt
   if (stored.some(isLegacyItem)) return [];
 
   const refreshed = stored
-    .map((item) => refreshFromCatalog(item) ?? (isLegacyItem(item) ? null : item))
+    .map((item) => {
+      const fromCatalog = refreshFromCatalog(item);
+      if (fromCatalog) return fromCatalog;
+      if (isLegacyItem(item)) return null;
+      if (!item.image) {
+        const catalog = getCatalogProductByHandle(item.handle);
+        if (catalog?.image) return { ...item, image: catalog.image };
+      }
+      return item;
+    })
     .filter(Boolean) as WishlistStoredItem[];
 
   const seen = new Set<string>();

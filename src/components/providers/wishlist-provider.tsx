@@ -2,7 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 
-import { getWishlistItems, toggleWishlist } from '@/actions/wishlist';
+import { getWishlistItems, hydrateGuestWishlistItems, toggleWishlist } from '@/actions/wishlist';
+import { normalizeWishlistItems } from '@/lib/catalog/wishlist-seed';
 import { useAuth } from '@/hooks/use-auth';
 import { type WishlistStoredItem } from '@/lib/catalog/wishlist-seed';
 import { clearGuestWishlist, readGuestWishlist, writeGuestWishlist } from '@/lib/wishlist/guest-storage';
@@ -43,10 +44,29 @@ export function WishlistProvider({
     }
   }, [locale]);
 
-  const refreshGuest = useCallback(() => {
-    setItems(readGuestWishlist());
-    setHydrated(true);
-  }, []);
+  const refreshGuest = useCallback(async () => {
+    const stored = readGuestWishlist();
+    const normalized = normalizeWishlistItems(stored);
+    const needsShopify = normalized.some((item) => !item.image);
+
+    try {
+      const hydrated = needsShopify
+        ? await hydrateGuestWishlistItems(normalized, locale)
+        : normalized;
+
+      if (hydrated.length !== stored.length || JSON.stringify(hydrated) !== JSON.stringify(stored)) {
+        writeGuestWishlist(hydrated);
+      }
+      setItems(hydrated);
+    } catch {
+      if (normalized.length !== stored.length || JSON.stringify(normalized) !== JSON.stringify(stored)) {
+        writeGuestWishlist(normalized);
+      }
+      setItems(normalized);
+    } finally {
+      setHydrated(true);
+    }
+  }, [locale]);
 
   const syncToggle = useCallback(
     async (productId: string) => {
@@ -65,7 +85,7 @@ export function WishlistProvider({
   );
 
   useEffect(() => {
-    refreshGuest();
+    void refreshGuest();
   }, [refreshGuest]);
 
   useEffect(() => {

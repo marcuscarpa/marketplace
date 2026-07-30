@@ -166,3 +166,20 @@ export async function getWishlistItems(locale: string): Promise<WishlistStoredIt
 
   return products.filter(Boolean).map((product) => productToWishlistItem(product!, locale));
 }
+
+/** Guest localStorage snapshots may omit images — refresh from Shopify when missing. */
+export async function hydrateGuestWishlistItems(
+  items: WishlistStoredItem[],
+  locale: string
+): Promise<WishlistStoredItem[]> {
+  if (items.length === 0) return [];
+
+  return Promise.all(
+    items.map(async (item) => {
+      if (item.image) return item;
+      const product = await getProductByHandle(item.handle, locale);
+      if (product) return productToWishlistItem(product, locale);
+      return item;
+    })
+  );
+}

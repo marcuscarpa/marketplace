@@ -10,6 +10,7 @@ import { useCart } from '@/components/providers/cart-provider';
 import { trackStartedCheckout } from '@/lib/analytics';
 import { canStartCheckout, navigateToCheckout, resolveCheckoutHref } from '@/lib/cart/checkout';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
+import { resolveWishlistImage } from '@/lib/wishlist/resolve-image';
 import {
   lineMaxQuantity,
   lineStockHint,
@@ -180,7 +181,7 @@ function CartTableRow({
               handle: line.handle,
               title: line.productTitle,
               price: unitPrice,
-              image: line.imageUrl ?? '',
+              image: resolveWishlistImage(line.handle, line.imageUrl),
             });
           }}
           disabled={inWishlist}
