@@ -540,145 +540,316 @@ select {
   letter-spacing: -0.04em;
 }
 
-/* Search autocomplete — 80% of Zimmermann reference (784×~544, sidebar 192) */
-.search-autocomplete {
+/* Search drawer — Kindred of Ireland reference */
+.header-search {
   position: fixed;
+  inset: 0;
   z-index: 9999;
-  width: 784px;
-  max-width: calc(100vw - 24px);
-  border: 1px solid #ddd;
+  pointer-events: auto;
+}
+
+.header-search__background-close {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+.header-search__content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 100vw);
   background: #fff;
-  overflow: hidden;
-  box-shadow:
-    0 3px 5px rgba(61, 62, 66, 0.05),
-    0 3px 20px rgba(75, 76, 83, 0.15);
-  font-family: var(--font-sans);
-  font-size: 9px;
-  font-weight: 300;
-  line-height: 1.5;
-  color: #303030;
-  display: grid;
-  grid-template-columns: 192px minmax(0, 1fr);
-  grid-template-areas: 'sidebar content';
-}
-
-.search-autocomplete__sidebar {
-  grid-area: sidebar;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-}
-
-.search-autocomplete__section {
-  padding: 16px;
-}
-
-.search-autocomplete__facets {
-  margin-top: -16px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.search-autocomplete__content {
-  grid-area: content;
-  padding: 16px;
-  min-height: 420px;
-  max-height: min(460px, calc(80vh - 100px));
+  border-left: 1px solid #f2ede8;
   overflow-y: auto;
+  scrollbar-width: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
 }
 
-.search-autocomplete__heading {
-  font-size: 9px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: #000;
+.header-search__content::-webkit-scrollbar {
+  display: none;
 }
 
-.search-autocomplete__term {
-  display: block;
-  width: 100%;
-  padding: 6px;
-  text-align: left;
-  text-transform: lowercase;
-  letter-spacing: 0.02em;
-  color: rgba(0, 0, 0, 0.8);
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  font: inherit;
-}
-
-.search-autocomplete__term:hover {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-.search-autocomplete__term--active {
-  background: #f5f5f5;
-  color: #000;
-}
-
-.search-autocomplete__category-link {
-  display: block;
-  width: 100%;
-  padding: 6px;
+.header-search__close {
+  position: absolute;
+  top: 14px;
+  right: 15px;
+  z-index: 2;
+  padding: 10px;
   border: 0;
   background: transparent;
-  text-align: left;
-  text-transform: uppercase;
-  font: inherit;
-  letter-spacing: 0.02em;
-  color: rgba(0, 0, 0, 0.8);
+  color: #000;
   cursor: pointer;
 }
 
-.search-autocomplete__category-link:hover {
-  opacity: 0.6;
-}
-
-.search-autocomplete__products {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 16px;
-  row-gap: 19px;
-}
-
-.search-autocomplete__product-image {
-  position: relative;
-  width: 128px;
-  max-width: 100%;
-  aspect-ratio: 514 / 668;
-  overflow: hidden;
-  background: #fff;
-  line-height: 0;
-}
-
-.search-autocomplete__product-image img {
-  object-fit: cover;
-  object-position: center top;
-}
-
-.search-autocomplete__product-title {
+.header-search__input {
   display: block;
+  width: calc(100% - 48px);
+  height: 60px;
+  margin: 0 24px;
+  border: 0;
+  border-bottom: 1px solid #f2ede8;
+  background: none;
+  outline: none;
+  padding: 10px 70px 10px 0;
+  color: #000;
+}
+
+.header-search__input::placeholder {
+  color: #000;
+}
+
+.header-search__input.h5,
+.header-search__input.h5::placeholder {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1.3;
+}
+
+.header-search__popular-searches {
+  width: 100%;
+  padding: 24px;
+}
+
+.header-popular-categories__title.text-cta,
+.header-search .text-cta {
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-family: var(--font-sans);
+}
+
+.popular-searches {
+  list-style: none;
+  padding: 16px 0 0;
+  margin: 24px 0 0;
+  border-top: 1px solid #f2ede8;
+}
+
+.popular-searches__item {
   margin-top: 8px;
-  font-size: 9px;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  line-height: 1.4;
-  color: rgba(48, 48, 48, 0.85);
+}
+
+.popular-searches__item a {
+  color: #000;
+  display: inline-block;
+  position: relative;
+  font-size: 14px;
+  font-family: var(--font-sans);
   text-decoration: none;
 }
 
-.search-autocomplete__product-title:hover {
+.popular-searches__item a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  border-radius: 5px;
+  height: 0.05em;
+  bottom: 0;
+  left: 0;
+  background: #000;
+  transform-origin: right bottom;
+  transition: transform 0.3s ease-out;
+}
+
+.popular-searches__item a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left bottom;
+}
+
+#predictive-search {
+  width: 100%;
+  margin: 0;
+}
+
+.header-search .search-autocomplete {
+  width: 100%;
+}
+
+.search-autocomplete__tabs {
+  padding: 18px 0 24px;
+  margin: 0 24px;
+  border-bottom: 1px solid #f2ede8;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.search-tab {
+  position: relative;
+  background: none;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  padding: 0;
+}
+
+.search-tab + .search-tab {
+  margin-left: 16px;
+}
+
+.search-tab::before {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 100%;
+  height: 1px;
+  background: #000;
+  transition: right 0.3s ease-in;
+}
+
+.search-tab.active {
+  pointer-events: none;
+}
+
+.search-tab.active::before {
+  right: 0;
+}
+
+.search-tab:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.search-panel {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: calc(100vh - 130px);
+}
+
+.search-panel > div {
+  width: 100%;
+}
+
+.search-autocomplete__status {
+  width: 100%;
+  padding: 24px;
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  color: #878787;
+  font-family: var(--font-sans);
+}
+
+.search-autocomplete__products {
+  padding: 0 24px;
+  width: 100%;
+  margin: 0 0 auto;
+}
+
+.search-result-row {
+  display: flex;
+  overflow: hidden;
+  padding: 16px 0;
+  border-bottom: 1px solid #f2ede8;
+}
+
+.search-result-row__image {
+  width: 72px;
+  min-width: 72px;
+  margin-right: 8px;
+}
+
+.search-result-row__image a {
+  display: block;
+  padding-bottom: 126%;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-result-row__image img {
+  object-fit: cover;
+}
+
+.search-result-row__details {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.search-result-row__top {
+  display: flex;
+  width: 100%;
+  margin: 0 0 auto;
+}
+
+.search-result-row__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-row__title.h6,
+.search-result-row__title.h6 a {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.3;
+  color: #000;
+  text-decoration: none;
+}
+
+.search-result-row__title a:hover {
   opacity: 0.6;
 }
 
-.search-autocomplete__product-price {
-  margin-top: 5px;
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: rgba(48, 48, 48, 0.6);
+.search-result-row__price {
+  margin-left: auto;
+  padding-left: 15px;
+  text-align: right;
+  padding-top: 3px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  color: #000;
+  white-space: nowrap;
+}
+
+.search-result-row__price-sale {
+  color: #9c4a4a;
+}
+
+.search-autocomplete__view-all {
+  padding: 16px 24px;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  margin: auto 0 0;
+  background: #fbf8f5;
+  border-top: 1px solid #f2ede8;
+}
+
+.search-autocomplete__view-all .second-button {
+  display: block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+}
+
+.second-button {
+  display: inline-block;
+  vertical-align: top;
+  border: none;
+  cursor: pointer;
+  border-radius: 0;
+  background: #000;
+  padding: 10px 15px;
+  transition: background 0.3s ease-in;
+  color: #fff !important;
+  font-family: var(--font-sans);
+}
+
+.second-button:hover {
+  background: #33301f;
 }
 
 /* ── Mega menu (Mytheresa flyout dimensions) ── */
@@ -843,16 +1014,8 @@ select {
 }
 
 @media (max-width: 900px) {
-  .search-autocomplete__products {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .search-autocomplete__content {
-    min-height: 340px;
-  }
-
-  .search-autocomplete__product-image {
-    width: 112px;
+  .header-search__content {
+    width: 100vw;
   }
 }
 

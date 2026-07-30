@@ -18,11 +18,11 @@ export function getSearchCopy(locale: string) {
   const t = m(locale);
   const isPt = locale === 'pt';
   return {
-    placeholder: isPt ? 'Buscar produtos' : 'Search items',
+    placeholder: isPt ? 'Digite para buscar' : 'Type to search',
     popular: isPt ? 'Buscas populares' : 'Popular searches',
     category: t.collection.category,
-    items: isPt ? 'Itens' : 'Items',
-    viewAll: t.common.seeAll,
+    items: isPt ? 'Produtos' : 'Products',
+    viewAll: isPt ? 'Ver todos os resultados' : 'View all results',
     was: isPt ? 'Antes' : 'Was',
     now: isPt ? 'Agora' : 'Now',
     noResults: isPt ? 'Nenhum item encontrado' : 'No items found',
