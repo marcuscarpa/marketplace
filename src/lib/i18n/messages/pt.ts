@@ -270,7 +270,7 @@ export const pt: Messages = {
     shipping: 'Pedidos e envio',
     shippingPageTitle: 'Política de envio',
     contactPageTitle: 'Entre em contato',
-    returns: 'Política de devolução',
+    returns: 'Devoluções e Trocas',
     faq: 'Perguntas frequentes',
     contact: 'Contato',
     sizeChart: 'Guia de tamanhos',

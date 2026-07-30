@@ -266,7 +266,7 @@ export const en = {
     shipping: 'Orders & Shipping',
     shippingPageTitle: 'Shipping Policy',
     contactPageTitle: 'Make Contact',
-    returns: 'Returns Policy',
+    returns: 'Returns and Exchanges',
     faq: 'FAQs',
     contact: 'Contact Us',
     sizeChart: 'Size Guide',

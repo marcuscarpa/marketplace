@@ -60,9 +60,7 @@ export function ReturnsContent({ locale }: { locale: string }) {
           non-refundable. If you receive a refund, the cost of any returned shipping will be deducted from your refund.
           You should consider using a trackable shipping service or purchasing shipping insurance for items of value.
         </p>
-        <p>
-          Depending on where you live, the time it may take for your exchanged product to reach you, may vary.
-        </p>
+        <p>Depending on where you live, the time it may take for your exchanged product to reach you, may vary.</p>
       </section>
 
       <section>
