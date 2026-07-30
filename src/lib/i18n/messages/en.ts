@@ -104,6 +104,8 @@ export const en = {
     customerService: 'Customer Service',
     followUs: 'Follow us',
     stayInLoop: 'Stay in the loop',
+    newsletterDescription:
+      'Sign-up to our newsletter to receive updates and offers exclusive to our subscribers',
     ordersShipping: 'Orders & Shipping',
     sizeGuide: 'Size Guide',
     privacyPolicy: 'Privacy Policy',

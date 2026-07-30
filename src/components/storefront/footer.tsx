@@ -1,9 +1,11 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 
-import { getFooterLinks, instagramHref } from '@/lib/catalog/data';
+import { useScroll } from '@/components/providers';
+import { getFooterLinks, instagramHref, SITE_IMAGES } from '@/lib/catalog/data';
 import type { SiteNavigation } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
@@ -12,45 +14,59 @@ interface FooterProps {
   navigation: SiteNavigation;
 }
 
-function SocialIcon({ icon }: { icon: 'instagram' }) {
-  if (icon !== 'instagram') return null;
+const FOOTER_SCENE_HEIGHT = 650;
+const FOOTER_SCENE_HEIGHT_MOBILE = 872;
+const PANEL_VIEWPORT_GAP = 32;
+const MIN_IMAGE_ABOVE = 32;
 
-  const props = { width: 12, height: 12, viewBox: '0 0 24 24', fill: 'currentColor', 'aria-hidden': true as const };
-
-  return (
-    <svg {...props}>
-      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 0 1 0 7.998zm6.406-11.845a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z" />
-    </svg>
-  );
-}
-
-function FooterColumn({
+function FooterMenuBlock({
   title,
   titleId,
   links,
   locale,
-  className = '',
+  external = false,
 }: {
   title: string;
   titleId: string;
   links: readonly { label: string; href: string }[];
   locale: string;
-  className?: string;
+  external?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className={className}>
-      <h2 id={titleId} className="mb-0.5 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">
+    <div className="site-footer__menu-block">
+      <h5
+        id={titleId}
+        className={`site-footer__menu-heading${open ? ' is-open' : ''}`}
+        onClick={() => setOpen((value) => !value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setOpen((value) => !value);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={open}
+        aria-controls={`${titleId}-menu`}
+      >
         {title}
-      </h2>
-      <ul aria-labelledby={titleId} className="flex flex-col gap-0.5">
+      </h5>
+      <ul
+        id={`${titleId}-menu`}
+        aria-labelledby={titleId}
+        className={`site-footer__menu${open ? ' is-open' : ''}`}
+      >
         {links.map((link) => (
           <li key={link.href}>
-            <Link
-              href={`/${locale}/${link.href}`}
-              className="font-sans-ui text-[15px] leading-[1.33] text-ink transition-opacity hover:opacity-60"
-            >
-              {link.label}
-            </Link>
+            {external ? (
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
+                {link.label}
+              </a>
+            ) : (
+              <Link href={`/${locale}/${link.href}`}>{link.label}</Link>
+            )}
           </li>
         ))}
       </ul>
@@ -58,7 +74,7 @@ function FooterColumn({
   );
 }
 
-function NewsletterBox({ locale }: { locale: string }) {
+function NewsletterForm({ locale }: { locale: string }) {
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
   const f = m(locale).footer;
@@ -66,141 +82,177 @@ function NewsletterBox({ locale }: { locale: string }) {
 
   useEffect(() => setMounted(true), []);
 
-  function onSubmit(e: FormEvent) {
-    e.preventDefault();
+  function onSubmit(event: FormEvent) {
+    event.preventDefault();
     setEmail('');
   }
 
   if (!mounted) {
     return (
-      <div className="mt-3" aria-hidden>
-        <p className="mb-2 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">{f.stayInLoop}</p>
-        <div className="flex flex-col gap-2">
-          <div className="rounded border border-[#e6e6e6] bg-white px-3 py-2.5">
-            <span className="font-sans-ui text-[15px] text-ink/40">{c.emailPlaceholder}</span>
-          </div>
-          <div className="rounded bg-ink py-2.5 text-center font-sans-ui text-[15px] font-bold text-white">
-            {c.subscribe}
-          </div>
-        </div>
+      <div className="site-footer-newsletter__form" aria-hidden>
+        <div className="site-footer-newsletter__input">{c.emailPlaceholder}</div>
+        <div className="site-footer-newsletter__button">{c.subscribe}</div>
       </div>
     );
   }
 
   return (
-    <div className="mt-3">
-      <h2 className="mb-2 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">{f.stayInLoop}</h2>
-      <form
-        onSubmit={onSubmit}
-        className="flex flex-col gap-2"
+    <form
+      onSubmit={onSubmit}
+      className="site-footer-newsletter__form"
+      autoComplete="off"
+      data-lpignore="true"
+      data-1p-ignore="true"
+      data-bwignore="true"
+      data-form-type="other"
+    >
+      <input
+        type="email"
+        name="newsletter"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        placeholder={c.emailPlaceholder}
+        required
         autoComplete="off"
         data-lpignore="true"
         data-1p-ignore="true"
         data-bwignore="true"
-        data-form-type="other"
-      >
-        <input
-          type="email"
-          name="newsletter"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder={c.emailPlaceholder}
-          required
-          autoComplete="off"
-          data-lpignore="true"
-          data-1p-ignore="true"
-          data-bwignore="true"
-          className="w-full rounded border border-[#e6e6e6] bg-white px-3 py-2.5 font-sans-ui text-[15px] text-ink outline-none placeholder:text-ink/40 focus:border-ink/30"
-        />
-        <button
-          type="submit"
-          className="w-full rounded bg-ink py-2.5 font-sans-ui text-[15px] font-bold text-white transition-opacity hover:opacity-80"
-        >
-          {c.subscribe}
-        </button>
-      </form>
-    </div>
+        className="site-footer-newsletter__input"
+        aria-label={f.stayInLoop}
+      />
+      <button type="submit" className="site-footer-newsletter__button">
+        {c.subscribe}
+      </button>
+    </form>
   );
 }
 
-export function Footer({ locale, navigation }: FooterProps) {
+export function Footer({ locale }: FooterProps) {
   const f = m(locale).footer;
   const links = getFooterLinks(locale);
-  const menuColumns = [
-    [f.shop, navigation.footerShop],
-    [f.company, links.company],
-    [f.customerService, links.others],
-  ] as const;
+  const socialLinks = [{ label: 'Instagram', href: instagramHref(locale) }];
+  const copyrightLinks = links.legal.slice(0, 3);
+  const { scrollY } = useScroll();
+  const footerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [panelOffset, setPanelOffset] = useState(MIN_IMAGE_ABOVE);
+
+  const updatePanelOffset = useCallback(() => {
+    const footer = footerRef.current;
+    const container = containerRef.current;
+    if (!footer || !container) return;
+
+    const footerRect = footer.getBoundingClientRect();
+    const panelHeight = container.offsetHeight;
+    const sceneHeight =
+      window.innerWidth <= 767 ? FOOTER_SCENE_HEIGHT_MOBILE : FOOTER_SCENE_HEIGHT;
+    const maxImageAbove = Math.max(MIN_IMAGE_ABOVE, sceneHeight - panelHeight - MIN_IMAGE_ABOVE);
+    const targetPanelTop = window.innerHeight - panelHeight - PANEL_VIEWPORT_GAP;
+    const imageAbove = Math.max(
+      MIN_IMAGE_ABOVE,
+      Math.min(maxImageAbove, targetPanelTop - footerRect.top),
+    );
+
+    setPanelOffset((current) => (current === imageAbove ? current : imageAbove));
+  }, []);
+
+  useEffect(() => {
+    updatePanelOffset();
+  }, [scrollY, updatePanelOffset]);
+
+  useEffect(() => {
+    const footer = footerRef.current;
+    if (!footer) return;
+
+    let frame = 0;
+    let active = false;
+
+    const loop = () => {
+      updatePanelOffset();
+      if (active) frame = requestAnimationFrame(loop);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        active = entry?.isIntersecting ?? false;
+        if (active) {
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(loop);
+        } else {
+          cancelAnimationFrame(frame);
+          updatePanelOffset();
+        }
+      },
+      { threshold: [0, 0.01, 0.25, 0.5, 0.75, 1] },
+    );
+
+    observer.observe(footer);
+    window.addEventListener('resize', updatePanelOffset);
+
+    return () => {
+      active = false;
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener('resize', updatePanelOffset);
+    };
+  }, [updatePanelOffset]);
 
   return (
-    <footer className="bg-cream text-ink">
-      <div className="mx-auto max-w-[1440px] px-5 py-[30px] lg:px-5">
-        <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-3 lg:grid-cols-4">
-          <div className="col-start-1 flex flex-col gap-3 lg:contents">
-            <FooterColumn
-              title={menuColumns[0][0]}
-              titleId="footer-0"
-              links={menuColumns[0][1]}
-              locale={locale}
-              className="lg:order-1"
-            />
-            <FooterColumn
-              title={menuColumns[2][0]}
-              titleId="footer-2"
-              links={menuColumns[2][1]}
-              locale={locale}
-              className="lg:order-3"
-            />
-          </div>
+    <footer ref={footerRef} className="site-footer">
+      <div className="site-footer__background-image" aria-hidden>
+        <Image
+          src={SITE_IMAGES.footerBackground}
+          alt=""
+          fill
+          sizes="100vw"
+          className="animate-fade-in object-cover"
+          priority={false}
+        />
+      </div>
 
-          <div className="col-start-2 flex flex-col gap-3 lg:contents">
-            <FooterColumn
-              title={menuColumns[1][0]}
-              titleId="footer-1"
-              links={menuColumns[1][1]}
-              locale={locale}
-              className="lg:order-2"
-            />
-            <div className="lg:order-4">
-              <h2 id="footer-socials" className="mb-0.5 font-sans-ui text-[15px] font-bold leading-[1.33] text-ink">
-                {f.followUs}
-              </h2>
-              <ul aria-labelledby="footer-socials" className="flex items-center gap-1.5">
-                <li>
-                  <a
-                    href={instagramHref(locale)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Instagram"
-                    title="Instagram"
-                    className="inline-flex text-ink transition-opacity hover:opacity-60"
-                  >
-                    <SocialIcon icon="instagram" />
-                  </a>
-                </li>
-              </ul>
-              <NewsletterBox locale={locale} />
+      <div className="site-footer__outer">
+        <div className="site-footer__d-flex">
+          <div
+            ref={containerRef}
+            className="site-footer__container"
+            style={{ marginTop: panelOffset }}
+          >
+            <div className="site-footer__background-content">
+              <nav aria-label="Footer" className="site-footer__top">
+                <FooterMenuBlock title={f.company} titleId="footer-company" links={links.company} locale={locale} />
+                <FooterMenuBlock
+                  title={f.customerService}
+                  titleId="footer-help"
+                  links={links.others}
+                  locale={locale}
+                />
+                <FooterMenuBlock
+                  title={f.followUs}
+                  titleId="footer-social"
+                  links={socialLinks}
+                  locale={locale}
+                  external
+                />
+
+                <div className="site-footer__newsletter">
+                  <h5 className="site-footer__newsletter-heading">{f.stayInLoop}</h5>
+                  <p className="site-footer__newsletter-description">{f.newsletterDescription}</p>
+                  <NewsletterForm locale={locale} />
+                </div>
+              </nav>
+
+              <div className="site-footer__copyright">
+                <p className="site-footer__copyright-text">{f.copyright}</p>
+                <ul className="site-footer__copyright-menu">
+                  {copyrightLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link href={`/${locale}/${link.href}`}>{link.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
-        </nav>
-
-        <hr className="mt-3 border-0 border-t border-[#e6e6e6]" />
-
-        <div className="pt-1.5">
-          <ul className="flex flex-wrap gap-x-6 gap-y-2">
-            {links.legal.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={`/${locale}/${link.href}`}
-                  className="font-sans-ui text-[15px] leading-[1.33] text-ink underline underline-offset-2 transition-opacity hover:opacity-60"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-1.5 font-sans-ui text-[13px] leading-[1.31] text-ink/60">{f.copyright}</p>
         </div>
       </div>
     </footer>
