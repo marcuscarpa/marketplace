@@ -3,13 +3,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { PRODUCT_IMAGE_HOVER } from '@/components/storefront/ui';
 import { useDebounce } from '@/hooks/use-debounce';
 import {
   POPULAR_SEARCHES,
+  getSearchCategories,
   getSearchCopy,
 } from '@/lib/catalog/search-config';
 import type { SearchResultFormatted } from '@/lib/shopify/search';
@@ -22,18 +23,6 @@ interface SearchOverlayProps {
   categories?: Array<{ label: string; href: string; query: string }>;
 }
 
-const PANEL_EASE = [0.76, 0, 0.24, 1] as const;
-
-const panelVariants = {
-  closed: { x: '100%' },
-  open: { x: 0, transition: { duration: 0.3, ease: PANEL_EASE } },
-};
-
-const backdropVariants = {
-  closed: { opacity: 0 },
-  open: { opacity: 1, transition: { duration: 0.3 } },
-};
-
 function IconSearch({ className = 'h-[18px] w-[18px]' }: { className?: string }) {
   return (
     <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
@@ -43,187 +32,192 @@ function IconSearch({ className = 'h-[18px] w-[18px]' }: { className?: string })
   );
 }
 
-function IconCloseSmall() {
+function IconClose({ className = 'h-[18px] w-[18px]' }: { className?: string }) {
   return (
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path
-        d="M0.146468 0.854096C-0.0487939 0.658834 -0.0487939 0.342251 0.146468 0.146989C0.34173 -0.048273 0.658313 -0.0482732 0.853575 0.146989L8.9853 8.27872C9.18056 8.47398 9.18056 8.79056 8.9853 8.98582C8.79004 9.18109 8.47346 9.18109 8.2782 8.98582L0.146468 0.854096Z"
-        fill="currentColor"
-      />
-      <path
-        d="M0.853575 8.98582C0.658313 9.18109 0.34173 9.18109 0.146468 8.98582C-0.0487939 8.79056 -0.048794 8.47398 0.146468 8.27872L8.2782 0.146989C8.47346 -0.048273 8.79004 -0.048273 8.9853 0.146989C9.18056 0.342251 9.18056 0.658834 8.9853 0.854096L0.853575 8.98582Z"
-        fill="currentColor"
-      />
+    <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+      <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
     </svg>
   );
 }
 
-function SearchResultRow({
+function IconChevron() {
+  return (
+    <svg aria-hidden="true" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SearchResultCard({
   product,
   locale,
+  copy,
 }: {
   product: SearchResultFormatted;
   locale: string;
+  copy: ReturnType<typeof getSearchCopy>;
 }) {
   const href = `/${locale}/products/${product.handle}`;
 
   return (
-    <div className="search-result-row">
-      <div className="search-result-row__image">
-        <Link href={href}>
-          {product.image ? (
+    <article className="group">
+      <Link href={href} className="search-autocomplete__product-image block">
+        {product.image ? (
+          <div className={`absolute inset-0 ${PRODUCT_IMAGE_HOVER}`}>
             <Image
               src={product.image}
               alt={product.title}
               fill
-              sizes="72px"
-              className="object-cover"
+              sizes="(max-width: 900px) 28vw, 128px"
+              className={`object-cover object-top transition-opacity duration-300 ${
+                product.hoverImage ? 'group-hover:opacity-0' : ''
+              }`}
             />
-          ) : (
-            <div className="absolute inset-0 bg-[#f2ede8]" />
-          )}
-        </Link>
-      </div>
-      <div className="search-result-row__details">
-        <div className="search-result-row__top">
-          <div className="search-result-row__title h6">
-            <Link href={href}>{product.title}</Link>
-          </div>
-          <div className="search-result-row__price">
-            {product.onSale && product.compareAtPrice ? (
-              <span className="search-result-row__price-sale">{product.price}</span>
-            ) : (
-              product.price
+            {product.hoverImage && (
+              <Image
+                src={product.hoverImage}
+                alt=""
+                fill
+                sizes="(max-width: 900px) 28vw, 128px"
+                className="object-cover object-top opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                aria-hidden
+              />
             )}
           </div>
+        ) : (
+          <div className="absolute inset-0 bg-[#f7f7f7]" />
+        )}
+      </Link>
+      <Link href={href} className="search-autocomplete__product-title">
+        {product.title}
+      </Link>
+      {product.onSale && product.compareAtPrice ? (
+        <div className="mt-1 flex gap-4 text-[9px] uppercase tracking-[0.02em]">
+          <div>
+            <p className="text-[#303030]/45">{copy.was}</p>
+            <p className="text-[#303030]/60">{product.compareAtPrice}</p>
+          </div>
+          <div>
+            <p className="text-[#9c4a4a]">{copy.now}</p>
+            <p className="text-[#9c4a4a]">{product.price}</p>
+          </div>
         </div>
-      </div>
-    </div>
+      ) : (
+        <p className="search-autocomplete__product-price">{product.price}</p>
+      )}
+    </article>
   );
 }
 
-function SearchDrawer({
+function SearchDropdownPanel({
   panelId,
+  panelRef,
   locale,
   copy,
+  categories,
   popularTerms,
   query,
-  setQuery,
+  activeTerm,
+  effectiveQuery,
   results,
   loading,
-  effectiveQuery,
+  position,
+  onTermSelect,
   onClose,
-  onSubmit,
 }: {
   panelId: string;
+  panelRef: React.RefObject<HTMLDivElement | null>;
   locale: string;
   copy: ReturnType<typeof getSearchCopy>;
+  categories: ReturnType<typeof getSearchCategories>;
   popularTerms: readonly string[];
   query: string;
-  setQuery: (value: string) => void;
+  activeTerm: string;
+  effectiveQuery: string;
   results: SearchResultFormatted[];
   loading: boolean;
-  effectiveQuery: string;
+  position: { top: number; right: number };
+  onTermSelect: (term: string) => void;
   onClose: () => void;
-  onSubmit: (event: React.FormEvent) => void;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const hasQuery = query.trim().length >= 2;
-  const showResults = hasQuery || loading;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => inputRef.current?.focus(), 120);
-    return () => window.clearTimeout(timer);
-  }, []);
-
   return (
-    <motion.div
+    <div
+      ref={panelRef}
       id={panelId}
       role="dialog"
       aria-modal="true"
       aria-label={copy.placeholder}
-      className="header-search__content"
-      variants={panelVariants}
-      initial="closed"
-      animate="open"
-      exit="closed"
+      className="search-autocomplete"
+      style={{ top: position.top, right: position.right }}
     >
-      <button type="button" className="header-search__close text-cta" aria-label="Close search" onClick={onClose}>
-        <IconCloseSmall />
-      </button>
-
-      <form action={`/${locale}/search`} onSubmit={onSubmit}>
-        <input type="hidden" name="type" value="product" />
-        <input
-          ref={inputRef}
-          type="text"
-          className="header-search__input h5"
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="none"
-          spellCheck={false}
-          name="q"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={copy.placeholder}
-          aria-label={copy.placeholder}
-          maxLength={128}
-        />
-      </form>
-
-      {!showResults && (
-        <div className="header-search__popular-searches">
-          <div className="header-popular-categories__title text-cta">{copy.popular}</div>
-          <ul className="popular-searches">
-            {popularTerms.map((term) => (
-              <li key={term} className="popular-searches__item">
-                <Link href={`/${locale}/search?q=${encodeURIComponent(term)}`} onClick={onClose}>
-                  {term}
-                </Link>
-              </li>
-            ))}
+      <aside className="search-autocomplete__sidebar">
+        <div className="search-autocomplete__section">
+          <h2 className="search-autocomplete__heading">{copy.popular}</h2>
+          <ul role="list" aria-label={copy.popular} className="mt-3">
+            {popularTerms.map((term) => {
+              const active = !query.trim() && activeTerm === term;
+              return (
+                <li key={term}>
+                  <button
+                    type="button"
+                    onClick={() => onTermSelect(term)}
+                    className={`search-autocomplete__term${active ? ' search-autocomplete__term--active' : ''}`}
+                  >
+                    <em className="not-italic">{term}</em>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
-      )}
 
-      {showResults && (
-        <div id="predictive-search" tabIndex={-1}>
-          <div className="search-autocomplete">
-            <div className="search-autocomplete__tabs">
-              <button type="button" className="search-tab text-cta active" disabled>
-                {copy.items}
-              </button>
-            </div>
-
-            <div className="search-panel display show">
-              {loading ? (
-                <p className="search-autocomplete__status">{copy.searching}</p>
-              ) : results.length === 0 ? (
-                <p className="search-autocomplete__status">{copy.noResults}</p>
-              ) : (
-                <div className="search-autocomplete__products">
-                  {results.map((product) => (
-                    <SearchResultRow key={product.id} product={product} locale={locale} />
-                  ))}
-                </div>
-              )}
-
-              {results.length > 0 && (
-                <div className="search-autocomplete__view-all">
-                  <Link
-                    href={`/${locale}/search?q=${encodeURIComponent(effectiveQuery)}`}
-                    onClick={onClose}
-                    className="second-button text-cta"
+        <div className="search-autocomplete__section search-autocomplete__facets">
+          <h2 className="search-autocomplete__heading">{copy.category}</h2>
+          <ul role="list" aria-label={copy.category} className="mt-3">
+            {categories.map((category) => {
+              const active = !query.trim() && activeTerm === category.query;
+              return (
+                <li key={category.href}>
+                  <button
+                    type="button"
+                    onClick={() => onTermSelect(category.query)}
+                    className={`search-autocomplete__term search-autocomplete__category-link${active ? ' search-autocomplete__term--active' : ''}`}
                   >
-                    {copy.viewAll}
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
+                    {category.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         </div>
-      )}
-    </motion.div>
+      </aside>
+
+      <div className="search-autocomplete__content">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <h2 className="search-autocomplete__heading">{copy.items}</h2>
+          <Link
+            href={`/${locale}/search?q=${encodeURIComponent(effectiveQuery)}`}
+            onClick={onClose}
+            className="inline-flex items-center gap-0.5 text-[8px] uppercase tracking-[0.08em] text-black no-underline transition-opacity hover:opacity-60"
+          >
+            {copy.viewAll}
+            <IconChevron />
+          </Link>
+        </div>
+
+        {loading ? (
+          <p className="py-12 text-center uppercase tracking-[0.02em] text-black/45">{copy.searching}</p>
+        ) : results.length === 0 ? (
+          <p className="py-12 text-center uppercase tracking-[0.02em] text-black/45">{copy.noResults}</p>
+        ) : (
+          <div className="search-autocomplete__products">
+            {results.map((product) => (
+              <SearchResultCard key={product.id} product={product} locale={locale} copy={copy} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -232,37 +226,55 @@ export function SearchOverlay({
   light = false,
   open,
   onOpenChange,
+  categories: categoriesProp,
 }: SearchOverlayProps) {
   const router = useRouter();
   const panelId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [panelPos, setPanelPos] = useState({ top: 0, right: 20 });
 
   const copy = getSearchCopy(locale);
+  const categories = categoriesProp ?? getSearchCategories(locale);
   const popularTerms = POPULAR_SEARCHES[locale === 'pt' ? 'pt' : 'en'];
 
   const [query, setQuery] = useState('');
+  const [activeTerm, setActiveTerm] = useState<string>(popularTerms[0]);
   const [results, setResults] = useState<SearchResultFormatted[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const effectiveQuery = query.trim();
+  const effectiveQuery = query.trim() || activeTerm;
   const debouncedQuery = useDebounce(effectiveQuery, 300);
 
   const close = useCallback(() => {
     onOpenChange(false);
     setQuery('');
-    setResults([]);
-  }, [onOpenChange]);
+    setActiveTerm(popularTerms[0]);
+  }, [onOpenChange, popularTerms]);
+
+  const updatePanelPos = useCallback(() => {
+    const anchor = anchorRef.current;
+    if (!anchor) return;
+
+    const rect = anchor.getBoundingClientRect();
+    setPanelPos({
+      top: rect.top + 40,
+      right: Math.max(12, window.innerWidth - rect.right),
+    });
+  }, []);
 
   const fetchResults = useCallback(
     async (term: string) => {
       if (term.trim().length < 2) {
         setResults([]);
-        setLoading(false);
         return;
       }
       setLoading(true);
       try {
-        const params = new URLSearchParams({ q: term.trim(), locale, first: '8' });
+        const params = new URLSearchParams({ q: term.trim(), locale, first: '6' });
         const response = await fetch(`/${locale}/api/search?${params.toString()}`);
         if (!response.ok) {
           setResults([]);
@@ -281,13 +293,16 @@ export function SearchOverlay({
 
   useEffect(() => setMounted(true), []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open) return;
-    document.body.style.overflow = 'hidden';
+    updatePanelPos();
+    window.addEventListener('resize', updatePanelPos);
+    window.addEventListener('scroll', updatePanelPos, true);
     return () => {
-      document.body.style.overflow = '';
+      window.removeEventListener('resize', updatePanelPos);
+      window.removeEventListener('scroll', updatePanelPos, true);
     };
-  }, [open]);
+  }, [open, updatePanelPos]);
 
   useEffect(() => {
     if (!open) return;
@@ -303,9 +318,26 @@ export function SearchOverlay({
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [open, close]);
 
+  useEffect(() => {
+    if (!open) return;
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 50);
+    return () => window.clearTimeout(timer);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target) || panelRef.current?.contains(target)) return;
+      close();
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
+  }, [open, close]);
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const term = query.trim();
+    const term = query.trim() || activeTerm;
     if (term.length < 2) return;
     close();
     router.push(`/${locale}/search?q=${encodeURIComponent(term)}`);
@@ -313,54 +345,86 @@ export function SearchOverlay({
 
   const ink = light && !open ? 'text-white' : 'text-ink';
 
-  const drawer = mounted
-    ? createPortal(
-        <AnimatePresence>
-          {open && (
-            <div key="header-search" className="header-search display active">
-              <motion.button
-                type="button"
-                className="header-search__background-close"
-                aria-label="Close search"
-                variants={backdropVariants}
-                initial="closed"
-                animate="open"
-                exit="closed"
-                onClick={close}
-              />
-              <SearchDrawer
-                panelId={panelId}
-                locale={locale}
-                copy={copy}
-                popularTerms={popularTerms}
-                query={query}
-                setQuery={setQuery}
-                results={results}
-                loading={loading}
-                effectiveQuery={effectiveQuery}
-                onClose={close}
-                onSubmit={handleSubmit}
-              />
-            </div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )
-    : null;
+  const dropdown =
+    open && mounted
+      ? createPortal(
+          <SearchDropdownPanel
+            panelId={panelId}
+            panelRef={panelRef}
+            locale={locale}
+            copy={copy}
+            categories={categories}
+            popularTerms={popularTerms}
+            query={query}
+            activeTerm={activeTerm}
+            effectiveQuery={effectiveQuery}
+            results={results}
+            loading={loading}
+            position={panelPos}
+            onTermSelect={(term) => {
+              setQuery('');
+              setActiveTerm(term);
+            }}
+            onClose={close}
+          />,
+          document.body
+        )
+      : null;
 
   return (
-    <>
-      <button
-        type="button"
-        aria-label={copy.placeholder}
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => onOpenChange(true)}
-        className={`flex h-9 w-9 shrink-0 items-center justify-center transition-opacity hover:opacity-60 ${ink}`}
-      >
-        <IconSearch />
-      </button>
-      {drawer}
-    </>
+    <div
+      ref={rootRef}
+      className={`relative z-[200] shrink-0 ${open ? 'w-[min(300px,calc(100vw-96px))]' : 'w-9'}`}
+    >
+      {!open ? (
+        <button
+          type="button"
+          aria-label={copy.placeholder}
+          aria-expanded={false}
+          aria-controls={panelId}
+          onClick={() => onOpenChange(true)}
+          className={`flex h-9 w-9 items-center justify-center transition-opacity hover:opacity-60 ${ink}`}
+        >
+          <IconSearch />
+        </button>
+      ) : (
+        <form onSubmit={handleSubmit} className="w-full">
+          <div ref={anchorRef} className="flex w-full items-center justify-end">
+            <button
+              type="submit"
+              aria-label={copy.placeholder}
+              className="flex h-9 w-9 shrink-0 items-center justify-center text-ink transition-opacity hover:opacity-60"
+            >
+              <IconSearch />
+            </button>
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={copy.placeholder}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              maxLength={128}
+              aria-label={copy.placeholder}
+              aria-controls={panelId}
+              aria-expanded={true}
+              className="min-w-0 flex-1 border-0 bg-transparent py-2 font-sans-ui text-[11px] font-light uppercase tracking-[0.08em] text-ink outline-none placeholder:text-ink/35"
+            />
+            <button
+              type="button"
+              aria-label="Close search"
+              onClick={close}
+              className="flex h-9 w-9 shrink-0 items-center justify-center text-ink transition-opacity hover:opacity-60"
+            >
+              <IconClose />
+            </button>
+          </div>
+        </form>
+      )}
+      {dropdown}
+    </div>
   );
 }

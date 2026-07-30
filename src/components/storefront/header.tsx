@@ -579,47 +579,60 @@ export function Header({ locale, navigation }: HeaderProps) {
             </Link>
 
             <div className="relative flex flex-1 items-center justify-end overflow-visible gap-0.5 sm:gap-1">
-              <div className="hidden items-center lg:flex">
-                <HeaderIcon href={`${prefix}/account/login`} label={labels.account} light={heroNav}>
-                  <IconAccount />
-                </HeaderIcon>
-                <div className="relative">
-                  <HeaderIcon href={`${prefix}/wishlist`} label={labels.wishlist} light={heroNav}>
-                    <IconWishlist />
-                  </HeaderIcon>
-                  {wishlistCount > 0 && (
-                    <span className="pointer-events-none absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-ink px-0.5 text-[8px] font-normal text-white">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <SearchOverlay
-                locale={locale}
-                light={heroNav}
-                open={searchOpen}
-                onOpenChange={setSearchOpen}
-                categories={navigation.searchCategories}
-              />
-              <div className="relative flex items-center">
-                <HeaderIcon
-                  label={cartCount > 0 ? labels.shoppingBagCount(cartCount) : labels.shoppingBag}
+              {!searchOpen && (
+                <>
+                  <div className="hidden items-center lg:flex">
+                    <HeaderIcon href={`${prefix}/account/login`} label={labels.account} light={heroNav}>
+                      <IconAccount />
+                    </HeaderIcon>
+                    <div className="relative">
+                      <HeaderIcon href={`${prefix}/wishlist`} label={labels.wishlist} light={heroNav}>
+                        <IconWishlist />
+                      </HeaderIcon>
+                      {wishlistCount > 0 && (
+                        <span className="pointer-events-none absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-ink px-0.5 text-[8px] font-normal text-white">
+                          {wishlistCount}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <SearchOverlay
+                    locale={locale}
+                    light={heroNav}
+                    open={searchOpen}
+                    onOpenChange={setSearchOpen}
+                    categories={navigation.searchCategories}
+                  />
+                  <div className="relative flex items-center">
+                    <HeaderIcon
+                      label={cartCount > 0 ? labels.shoppingBagCount(cartCount) : labels.shoppingBag}
+                      light={heroNav}
+                      onClick={openCart}
+                      expanded={isCartOpen}
+                    >
+                      <IconCart />
+                    </HeaderIcon>
+                    {cartCount > 0 && (
+                      <span
+                        className={`pointer-events-none absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-0.5 text-[8px] font-normal tabular-nums ${
+                          heroNav ? 'bg-white text-ink' : 'bg-ink text-white'
+                        }`}
+                      >
+                        {cartCount}
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
+              {searchOpen && (
+                <SearchOverlay
+                  locale={locale}
                   light={heroNav}
-                  onClick={openCart}
-                  expanded={isCartOpen}
-                >
-                  <IconCart />
-                </HeaderIcon>
-                {cartCount > 0 && (
-                  <span
-                    className={`pointer-events-none absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-0.5 text-[8px] font-normal tabular-nums ${
-                      heroNav ? 'bg-white text-ink' : 'bg-ink text-white'
-                    }`}
-                  >
-                    {cartCount}
-                  </span>
-                )}
-              </div>
+                  open={searchOpen}
+                  onOpenChange={setSearchOpen}
+                  categories={navigation.searchCategories}
+                />
+              )}
             </div>
           </div>
         </header>
