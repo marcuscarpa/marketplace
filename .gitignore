@@ -20,6 +20,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 tmp-*.html
+tmp-*.png
+audit-*.png
+footer-fixed-*.png
+footer-local*.png
+scripts/*-out.txt
 
 # OS
 .DS_Store
