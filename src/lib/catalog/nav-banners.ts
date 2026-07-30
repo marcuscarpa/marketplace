@@ -5,7 +5,7 @@ import { m } from '@/lib/i18n';
 
 const NAV_BANNERS: Record<string, NavBanner> = {
   'jardim-oriental': {
-    src: '/New-Collections-1.webp',
+    src: '/New-Collections%20-1.webp',
     alt: 'New Collections',
   },
   accessories: {
