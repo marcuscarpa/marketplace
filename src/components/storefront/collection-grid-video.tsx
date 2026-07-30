@@ -84,9 +84,9 @@ export function CollectionGridVideo({
             <Image
               src={posterImage}
               alt=""
-              width={88}
-              height={118}
-              className="block h-[88px] w-[66px] object-cover object-top sm:h-[118px] sm:w-[88px]"
+              width={70}
+              height={94}
+              className="block h-[70px] w-[53px] object-cover object-top sm:h-[94px] sm:w-[70px]"
             />
           </Link>
         </div>
