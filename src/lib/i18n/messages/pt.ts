@@ -107,8 +107,6 @@ export const pt: Messages = {
     customerService: 'Atendimento',
     followUs: 'Siga-nos',
     stayInLoop: 'Fique por dentro',
-    newsletterDescription:
-      'Inscreva-se na nossa newsletter para receber novidades e ofertas exclusivas para assinantes',
     ordersShipping: 'Pedidos e envio',
     sizeGuide: 'Guia de tamanhos',
     privacyPolicy: 'Política de privacidade',
