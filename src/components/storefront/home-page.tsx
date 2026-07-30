@@ -43,7 +43,7 @@ export function HomePage({
       <ProductCycler locale={locale} products={cyclerProducts} />
       <Bestsellers locale={locale} products={bestsellerProducts} />
       <CollectionSpotlight locale={locale} product={spotlightProduct} />
-      <AboutSection locale={locale} />
+      <AboutSection />
       <WhyShopSection locale={locale} />
       <SocialFeed locale={locale} />
     </HeroCurtainStage>
