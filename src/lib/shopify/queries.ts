@@ -1,6 +1,7 @@
 export const SEARCH_PRODUCTS = `
   query SearchProducts($query: String!, $first: Int!) {
     search(query: $query, first: $first, types: [PRODUCT]) {
+      totalCount
       nodes {
         ... on Product {
           id

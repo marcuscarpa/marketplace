@@ -156,6 +156,17 @@ export const pt: Messages = {
     womenCollectionImageAlt: 'Mulher em look resort elegante com bolsa estruturada',
     selectVariantOnPage: 'Selecione a cor na página do produto',
   },
+  search: {
+    title: 'Busca',
+    metaDescription: 'Buscar produtos de luxo',
+    resultsForCount: (n: number) => `${n} ${n === 1 ? 'RESULTADO' : 'RESULTADOS'} PARA`,
+    resultsTitle: 'Resultados da busca por',
+    empty: 'Nenhum resultado encontrado',
+    emptyHint: 'Tente buscar por outros termos ou navegue pelas coleções',
+    browseCollections: 'Ver todas as coleções',
+    placeholder: 'Busque por produtos de luxo',
+    minChars: 'Digite pelo menos 2 caracteres para buscar',
+  },
   collection: {
     notFound: 'Coleção não encontrada',
     empty: 'Ainda não há produtos nesta coleção.',

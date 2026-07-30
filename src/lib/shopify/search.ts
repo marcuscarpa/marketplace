@@ -26,8 +26,19 @@ export interface SearchResult {
 
 interface SearchResponse {
   search: {
+    totalCount: number;
     nodes: SearchResult[];
   };
+}
+
+interface SearchFetchResult {
+  nodes: SearchResult[];
+  totalCount: number;
+}
+
+export interface SearchPageResult {
+  products: ProductCardProduct[];
+  totalCount: number;
 }
 
 export interface SearchResultFormatted {
@@ -49,6 +60,29 @@ function formatMoney(amount: string, currencyCode: string, locale: string) {
   }).format(Number(amount));
 }
 
+export function productCardToCatalogProduct(
+  product: ProductCardProduct,
+  locale: string
+): CatalogProduct {
+  const variant = product.variants?.nodes?.[0];
+  const currency =
+    variant?.price.currencyCode ?? product.priceRange.minVariantPrice.currencyCode;
+  const amount = variant?.price.amount ?? product.priceRange.minVariantPrice.amount;
+  const compareAmount = variant?.compareAtPrice?.amount ?? null;
+  const onSale = compareAmount !== null && Number(compareAmount) > Number(amount);
+
+  return {
+    title: product.title,
+    category: product.vendor ?? product.tags?.[0] ?? '',
+    price: formatMoney(amount, currency, locale),
+    handle: product.handle,
+    image: product.images?.nodes?.[0]?.url ?? '',
+    hoverImage: product.images?.nodes?.[1]?.url ?? undefined,
+    compareAtPrice:
+      onSale && compareAmount ? formatMoney(compareAmount, currency, locale) : undefined,
+  };
+}
+
 export function formatSearchResult(product: SearchResult, locale: string): SearchResultFormatted {
   const variant = product.variants?.nodes?.[0];
   const currency = variant?.price.currencyCode ?? product.priceRange.minVariantPrice.currencyCode;
@@ -68,25 +102,37 @@ export function formatSearchResult(product: SearchResult, locale: string): Searc
   };
 }
 
-export async function searchProducts(
+async function fetchSearchResults(
   query: string,
   locale: string,
-  first = 20
-): Promise<SearchResult[]> {
+  first: number
+): Promise<SearchFetchResult> {
   if (!query || query.trim().length < 2) {
-    return [];
+    return { nodes: [], totalCount: 0 };
   }
 
   const cacheKey = `search:${locale}:${query.trim().substring(0, 200).toLowerCase()}:${first}`;
   const client = getShopifyClient(locale);
 
-  return getCachedOrFetch<SearchResult[]>(cacheKey, async () => {
+  return getCachedOrFetch<SearchFetchResult>(cacheKey, async () => {
     const data = await client.execute<SearchResponse>(SEARCH_PRODUCTS, {
       query: query.trim(),
       first,
     });
-    return data?.search?.nodes ?? [];
+    return {
+      nodes: data?.search?.nodes ?? [],
+      totalCount: data?.search?.totalCount ?? 0,
+    };
   }, 300);
+}
+
+export async function searchProducts(
+  query: string,
+  locale: string,
+  first = 20
+): Promise<SearchResult[]> {
+  const { nodes } = await fetchSearchResults(query, locale, first);
+  return nodes;
 }
 
 export async function searchProductsFormatted(
@@ -149,20 +195,27 @@ function catalogProductToCard(product: CatalogProduct, locale: string): ProductC
 export async function searchProductsForDisplay(
   query: string,
   locale: string,
-  first = 24
-): Promise<ProductCardProduct[]> {
+  first = 50
+): Promise<SearchPageResult> {
   if (isShopifyConfigured(locale)) {
     try {
-      const results = await searchProducts(query, locale, first);
-      if (results.length > 0) {
-        return results.map(searchResultToProductCard);
+      const { nodes, totalCount } = await fetchSearchResults(query, locale, first);
+      if (nodes.length > 0) {
+        return {
+          products: nodes.map(searchResultToProductCard),
+          totalCount: totalCount || nodes.length,
+        };
       }
     } catch {
       // ponytail: fall through to static catalog
     }
   }
 
-  return searchCatalogProducts(query, first).map((product) => catalogProductToCard(product, locale));
+  const catalog = searchCatalogProducts(query, first);
+  return {
+    products: catalog.map((product) => catalogProductToCard(product, locale)),
+    totalCount: catalog.length,
+  };
 }
 
 /** Shopify first; static catalog when empty or unavailable. */

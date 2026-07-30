@@ -153,6 +153,17 @@ export const en = {
     womenCollectionImageAlt: 'Woman in tailored resort wear holding a structured handbag',
     selectVariantOnPage: 'Select color on product page',
   },
+  search: {
+    title: 'Search',
+    metaDescription: 'Search luxury products',
+    resultsForCount: (n: number) => `${n} ${n === 1 ? 'RESULT' : 'RESULTS'} FOR`,
+    resultsTitle: 'Search results for',
+    empty: 'No results found',
+    emptyHint: 'Try searching for different terms or browse our collections',
+    browseCollections: 'View all collections',
+    placeholder: 'Search for luxury products',
+    minChars: 'Enter at least 2 characters to search',
+  },
   collection: {
     notFound: 'Collection not found',
     empty: 'No products in this collection yet.',
