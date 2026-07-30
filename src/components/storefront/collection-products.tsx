@@ -3,10 +3,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FilterDrawer, FilterTrigger } from '@/components/storefront/filter-drawer';
+import { CollectionGridVideo } from '@/components/storefront/collection-grid-video';
 import { PopularCard } from '@/components/storefront/product-card';
 import { PRODUCT_GAP } from '@/components/storefront/ui';
 import { ProductCard } from '@/components/ui/product-card';
 import type { CatalogProduct } from '@/lib/catalog/data';
+import {
+  COLLECTION_GRID_VIDEO_SLOT_COUNT,
+  getCollectionGridVideo,
+} from '@/lib/catalog/collection-grid-video';
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll';
 import { m } from '@/lib/i18n';
 import { resolveCatalogProductTags, resolveShopifyProductTags } from '@/lib/product-tags';
@@ -176,6 +181,12 @@ export function ShopifyCollectionProducts({
     facets
   );
   const gridProducts = activeCount === 0 ? products : visibleProducts;
+  const gridVideo = activeCount === 0 ? getCollectionGridVideo(collectionHandle) : null;
+  const gridVideoProductOffset = gridVideo ? COLLECTION_GRID_VIDEO_SLOT_COUNT : 0;
+  const productsForGrid =
+    gridVideoProductOffset > 0
+      ? gridProducts.slice(gridVideoProductOffset)
+      : gridProducts;
   const filterKey = useMemo(() => filterStateToParams(filters).toString(), [filters]);
   const filtersRef = useRef(filters);
   const facetsRef = useRef(facets);
@@ -290,7 +301,8 @@ export function ShopifyCollectionProducts({
       >
         {gridProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {gridProducts.map((product) => {
+            {gridVideo && <CollectionGridVideo src={gridVideo.src} alt={gridVideo.alt} />}
+            {productsForGrid.map((product) => {
               const badges = resolveShopifyProductTags(product, { bestsellerHandles });
               if (forceSaleBadge && !badges.includes('sale')) {
                 badges.unshift('sale');
