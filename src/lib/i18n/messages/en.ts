@@ -40,6 +40,7 @@ export const en = {
       `Select country. Currently ${country}, ${currency}`,
     loginCreateAccount: 'Login | Create Account',
     newsletter: 'Newsletter',
+    announcement: 'Take 10% off your first order',
   },
   markets: {
     us: { country: 'United States', currency: '$ USD' },

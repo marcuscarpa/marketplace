@@ -56,7 +56,7 @@ const data = await page.evaluate(({ a, c }) => {
   );
 
   const annBar = [...document.querySelectorAll('*')].find(
-    (el) => el.textContent?.includes('Discounts for new customers') && el.children.length <= 3
+    (el) => el.textContent?.includes('Take 10% off your first order') && el.children.length <= 3
   );
 
   return {

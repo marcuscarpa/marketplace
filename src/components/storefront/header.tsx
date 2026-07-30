@@ -520,8 +520,8 @@ export function Header({ locale, navigation }: HeaderProps) {
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-[80] flex h-8 items-center justify-center bg-cream px-5 pb-0 pt-0.5 md:h-7">
-        <p className="text-center text-[10px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink font-sans-ui">
-          Discounts for new customers until next week!
+        <p className="announcement-bar__text text-center text-[10px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink font-sans-ui">
+          {labels.announcement}
         </p>
       </div>
 

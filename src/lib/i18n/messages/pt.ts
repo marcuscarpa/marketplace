@@ -43,6 +43,7 @@ export const pt: Messages = {
       `Selecionar país. Atualmente ${country}, ${currency}`,
     loginCreateAccount: 'Entrar | Criar conta',
     newsletter: 'Newsletter',
+    announcement: '10% de desconto no seu primeiro pedido',
   },
   markets: {
     us: { country: 'Estados Unidos', currency: '$ USD' },
