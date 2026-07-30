@@ -301,7 +301,15 @@ export function ShopifyCollectionProducts({
       >
         {gridProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {gridVideo && <CollectionGridVideo src={gridVideo.src} alt={gridVideo.alt} />}
+            {gridVideo && (
+              <CollectionGridVideo
+                src={gridVideo.src}
+                alt={gridVideo.alt}
+                locale={locale}
+                productHandle={gridVideo.productHandle}
+                posterImage={gridVideo.posterImage}
+              />
+            )}
             {productsForGrid.map((product) => {
               const badges = resolveShopifyProductTags(product, { bestsellerHandles });
               if (forceSaleBadge && !badges.includes('sale')) {

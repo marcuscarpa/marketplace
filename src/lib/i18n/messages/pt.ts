@@ -154,6 +154,7 @@ export const pt: Messages = {
     notFound: 'Coleção não encontrada',
     empty: 'Ainda não há produtos nesta coleção.',
     noMatch: 'Nenhum produto corresponde aos filtros.',
+    buyNow: 'Compre agora',
     clearFilters: 'Limpar filtros',
     productCount: (n: number) => (n === 1 ? '1 produto' : `${n} produtos`),
     sortBy: 'Ordenar por',

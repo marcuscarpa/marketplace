@@ -151,6 +151,7 @@ export const en = {
     notFound: 'Collection not found',
     empty: 'No products in this collection yet.',
     noMatch: 'No products match your filters.',
+    buyNow: 'Buy now',
     clearFilters: 'Clear filters',
     productCount: (n: number) => (n === 1 ? '1 product' : `${n} products`),
     sortBy: 'Sort by',
