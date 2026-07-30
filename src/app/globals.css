@@ -139,19 +139,19 @@ select {
     opacity: 0;
     font-weight: 400;
   }
-  14% {
+  8% {
     opacity: 1;
     font-weight: 400;
   }
-  32% {
+  24% {
     opacity: 1;
     font-weight: 600;
   }
-  48% {
+  45% {
     opacity: 1;
     font-weight: 600;
   }
-  68% {
+  58% {
     opacity: 0;
     font-weight: 600;
   }
@@ -164,7 +164,7 @@ select {
 .announcement-bar__text {
   opacity: 0;
   font-weight: 400;
-  animation: announcement-cycle 7.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation: announcement-cycle 5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .animate-slide-up {
