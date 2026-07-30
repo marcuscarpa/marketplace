@@ -4,10 +4,12 @@ import { m } from '@/lib/i18n';
 
 export function getHelpMenu(locale: string) {
   const h = m(locale).help;
+  const n = m(locale).nav;
   return [
     { slug: 'shipping', label: h.shipping, icon: 'shipping' as HelpIconName },
     { slug: 'returns', label: h.returns, icon: 'returns' as HelpIconName },
     { slug: 'contact', label: h.contact, icon: 'contact' as HelpIconName },
+    { slug: 'locations', label: n.locations, icon: 'pin' as HelpIconName },
     { slug: 'size-chart', label: h.sizeChart, icon: 'size-chart' as HelpIconName },
     { slug: 'privacy', label: h.privacy, icon: 'privacy' as HelpIconName },
   ] as const;

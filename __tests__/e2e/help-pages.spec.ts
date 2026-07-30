@@ -4,6 +4,7 @@ const HELP_PAGES = [
   { path: '/en/shipping', title: 'Shipping Policy' },
   { path: '/en/returns', title: 'Returns and Exchanges' },
   { path: '/en/contact', title: 'Make Contact' },
+  { path: '/en/locations', title: 'Locations' },
   { path: '/en/size-chart', title: 'Size Guide' },
   { path: '/en/privacy', title: 'Privacy Policy' },
   { path: '/en/terms', title: 'Terms and Conditions' },

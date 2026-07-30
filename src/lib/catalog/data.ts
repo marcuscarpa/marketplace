@@ -215,6 +215,7 @@ export function getFooterLinks(locale: string) {
     others: [
       { label: f.ordersShipping, href: 'shipping' },
       { label: f.sizeGuide, href: 'size-chart' },
+      { label: n.locations, href: 'locations' },
       { label: n.contact, href: 'contact' },
     ],
     legal: [

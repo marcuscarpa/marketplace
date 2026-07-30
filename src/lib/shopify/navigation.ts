@@ -123,6 +123,7 @@ function buildMenuSections(locale: string, productLinks: NavLink[]): MenuSection
     },
     utility: [
       { label: f.sizeGuide, href: 'size-chart' },
+      { label: n.locations, href: 'locations' },
       { label: n.contact, href: 'contact' },
     ],
     utilityMobile: [

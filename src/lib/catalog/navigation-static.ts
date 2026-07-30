@@ -29,6 +29,7 @@ function buildStaticMenuSections(locale: string): MenuSections {
     },
     utility: [
       { label: f.sizeGuide, href: 'size-chart' },
+      { label: n.locations, href: 'locations' },
       { label: n.contact, href: 'contact' },
     ],
     utilityMobile: [

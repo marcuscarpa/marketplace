@@ -276,6 +276,9 @@ export const en = {
     faqSubtitle: 'Explore our frequently asked questions',
     shippingSubtitle: 'The Online Boutique policy and processes',
     contactSubtitle: 'Contact information for client and business enquiries',
+    locationsSubtitle: 'Our boutique teams look forward to welcoming you.',
+    phone: 'Phone',
+    locationsContactHint: 'Contact us for boutique hours and appointments.',
   },
   pwa: {
     update: 'A new version is available',

@@ -551,6 +551,9 @@ export function Header({ locale, navigation }: HeaderProps) {
               <div className="hidden items-center lg:flex">
                 <MarketChooser locale={locale} light={heroNav} />
                 <span className="mx-3" />
+                <HeaderIcon href={`${prefix}/locations`} label={labels.boutiqueLocator} light={heroNav}>
+                  <IconPin />
+                </HeaderIcon>
                 <HeaderIcon href={`${prefix}/contact`} label={labels.contactUs} light={heroNav}>
                   <IconPhone />
                 </HeaderIcon>
@@ -743,6 +746,12 @@ export function Header({ locale, navigation }: HeaderProps) {
                       setMenuOpen(false);
                       openNewsletter();
                     }}
+                  />
+                  <MenuUtilityRow
+                    icon={<IconPin />}
+                    label={labels.boutiqueLocator}
+                    href={`${prefix}/locations`}
+                    onClick={() => setMenuOpen(false)}
                   />
                   <MenuUtilityRow
                     icon={<IconPhone />}

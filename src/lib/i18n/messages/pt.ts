@@ -280,6 +280,9 @@ export const pt: Messages = {
     faqSubtitle: 'Explore nossas perguntas frequentes',
     shippingSubtitle: 'Política e processos da Boutique Online',
     contactSubtitle: 'Informações de contato para clientes e parceiros',
+    locationsSubtitle: 'Nossas equipes aguardam a sua visita.',
+    phone: 'Telefone',
+    locationsContactHint: 'Entre em contato para horários e agendamentos nas boutiques.',
   },
   pwa: {
     update: 'Nova versão disponível',
