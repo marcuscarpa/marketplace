@@ -57,6 +57,10 @@ const CHILD_LABEL_KEYS: Record<string, keyof ReturnType<typeof m>['nav']> = {
   tops: 'tops',
   'pants-shorts': 'pantsShorts',
   skirts: 'skirts',
+  'mens-shirts': 'mensShirts',
+  'mens-shorts': 'mensShorts',
+  'mens-pants': 'mensPants',
+  'mens-shoes': 'mensShoes',
 };
 
 function groupLabel(locale: string, rawTitle: string): string {

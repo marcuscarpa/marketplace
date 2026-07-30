@@ -1,3 +1,8 @@
+import {
+  filterProductsForTagCollection,
+  getTagFilteredCollectionConfig,
+  isTagFilteredCollectionHandle,
+} from '@/lib/catalog/tag-filtered-collections';
 import { resolveSourceHandles } from '@/lib/catalog/combined-collections';
 import {
   activeFilterCount,
@@ -115,6 +120,12 @@ async function fetchAllProductsForFacets(
   handle: string,
   locale: string
 ): Promise<ShopifyProduct[]> {
+  const tagConfig = getTagFilteredCollectionConfig(handle);
+  if (tagConfig) {
+    const parentProducts = await fetchProductsFromCollection(tagConfig.parentHandle, locale);
+    return filterProductsForTagCollection(parentProducts, handle);
+  }
+
   const sourceHandles = await resolveSourceHandles(handle, locale);
 
   if (sourceHandles.length === 1) {
@@ -238,6 +249,16 @@ export async function fetchCollectionProductsPage(
   const offset = options.offset ?? 0;
   const filters = options.filters;
   const facets = options.facets;
+
+  if (isTagFilteredCollectionHandle(handle)) {
+    const all = await fetchAllProductsForFacets(handle, locale);
+    if (filters && facets && hasActiveFilters(filters, facets)) {
+      const ordered = orderFilteredProducts(all, filters);
+      return sliceProductPage(ordered, first, offset);
+    }
+    return sliceProductPage(all, first, offset);
+  }
+
   const sourceHandles = await resolveSourceHandles(handle, locale);
   const isCombined = sourceHandles.length > 1;
   const filtering = filters && facets && hasActiveFilters(filters, facets);

@@ -12,6 +12,10 @@ import {
   isCombinedCollectionHandle,
   isCombinedCollectionHandleForLocale,
 } from '@/lib/catalog/combined-collections';
+import {
+  isTagFilteredCollectionHandle,
+  tagFilteredCollectionTitle,
+} from '@/lib/catalog/tag-filtered-collections';
 import { SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { getSocialShareImageUrl } from '@/lib/site-metadata';
 import { withShopifyHoverImages } from '@/lib/catalog/shopify-images';
@@ -80,8 +84,14 @@ async function getCollection(handle: string, locale: string): Promise<Collection
       const { page, facets: _facets } = await fetchCollectionInitialPayload(handle, locale);
       const { products, collection, pageInfo } = page;
 
-      if (collection || isCombinedCollectionHandle(handle) || (await isCombinedCollectionHandleForLocale(handle, locale))) {
+      if (
+        collection ||
+        isCombinedCollectionHandle(handle) ||
+        isTagFilteredCollectionHandle(handle) ||
+        (await isCombinedCollectionHandleForLocale(handle, locale))
+      ) {
         const title =
+          tagFilteredCollectionTitle(handle, locale) ??
           combinedCollectionTitle(handle, locale) ??
           collection?.title ??
           handle;

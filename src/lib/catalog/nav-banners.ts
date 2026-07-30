@@ -1,5 +1,4 @@
 import { collectionPath } from '@/lib/catalog/collection-handles';
-import { SITE_IMAGES } from '@/lib/catalog/data';
 import type { NavBanner, NavBannerTile, NavLink } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
@@ -13,7 +12,7 @@ const NAV_BANNERS: Record<string, NavBanner> = {
     alt: 'Accessories',
   },
   'mens-collection': {
-    src: SITE_IMAGES.collectionWomen,
+    src: '/Men-1.png',
     alt: 'Men',
   },
   sale: {

@@ -3,6 +3,7 @@ import { CATALOG_MENU_GROUPS } from '@/lib/catalog/catalog-menu-groups';
 import { isCombinedCollectionHandle } from '@/lib/catalog/combined-collections-static';
 import { shouldShowNavCollection, type NavCollectionRef } from '@/lib/catalog/nav-collection';
 import { enrichNavWithBanners } from '@/lib/catalog/nav-banners';
+import { MENS_SUBCOLLECTION_HANDLES } from '@/lib/catalog/tag-filtered-collections';
 import type { NavLink } from '@/lib/catalog/navigation-types';
 import { m } from '@/lib/i18n';
 
@@ -29,6 +30,10 @@ const CHILD_LABEL_KEYS: Record<string, keyof ReturnType<typeof m>['nav']> = {
   bags: 'bags',
   shoes: 'shoes',
   hats: 'hats',
+  'mens-shirts': 'mensShirts',
+  'mens-shorts': 'mensShorts',
+  'mens-pants': 'mensPants',
+  'mens-shoes': 'mensShoes',
 };
 
 type CollectionLookup = Map<string, NavCollectionRef> | null;
@@ -81,7 +86,16 @@ export function buildHeaderTrailingNav(locale: string, byHandle: CollectionLooku
   const items: NavLink[] = [];
 
   if (!byHandle || byHandle.get('mens-collection')) {
-    items.push({ label: n.men, href: collectionPath('mens-collection') });
+    const mensChildren: NavLink[] = MENS_SUBCOLLECTION_HANDLES.map((handle) => ({
+      label: childLabel(locale, handle, handle),
+      href: collectionPath(handle),
+    }));
+
+    items.push({
+      label: n.men,
+      href: collectionPath('mens-collection'),
+      children: mensChildren,
+    });
   }
 
   if (!byHandle || byHandle.get('sale')) {
