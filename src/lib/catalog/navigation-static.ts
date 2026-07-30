@@ -9,6 +9,7 @@ function buildStaticMainNav(locale: string): NavLink[] {
 
 function buildStaticMenuSections(locale: string): MenuSections {
   const n = m(locale).nav;
+  const f = m(locale).footer;
   return {
     products: {
       label: n.shop,
@@ -23,13 +24,12 @@ function buildStaticMenuSections(locale: string): MenuSections {
       ],
     },
     brand: {
-      label: n.ourBrand,
-      links: [{ label: n.locations, href: 'locations' }],
+      label: n.aboutUs,
+      links: [],
     },
     utility: [
-      { label: n.faqs, href: 'faq' },
+      { label: f.sizeGuide, href: 'size-chart' },
       { label: n.contact, href: 'contact' },
-      { label: n.newsroom, href: 'newsroom' },
     ],
     utilityMobile: [
       { label: n.search, href: 'search' },

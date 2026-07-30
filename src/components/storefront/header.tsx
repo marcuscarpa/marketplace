@@ -551,9 +551,6 @@ export function Header({ locale, navigation }: HeaderProps) {
               <div className="hidden items-center lg:flex">
                 <MarketChooser locale={locale} light={heroNav} />
                 <span className="mx-3" />
-                <HeaderIcon href={`${prefix}/locations`} label={labels.boutiqueLocator} light={heroNav}>
-                  <IconPin />
-                </HeaderIcon>
                 <HeaderIcon href={`${prefix}/contact`} label={labels.contactUs} light={heroNav}>
                   <IconPhone />
                 </HeaderIcon>
@@ -704,25 +701,6 @@ export function Header({ locale, navigation }: HeaderProps) {
                 </motion.ul>
 
                 <motion.div
-                  variants={listVariants}
-                  initial="closed"
-                  animate="open"
-                  className="px-8 pb-6 pt-1"
-                >
-                  {menuSections.brand.links.map((link) => (
-                    <motion.div key={link.href} variants={itemVariants}>
-                      <Link
-                        href={`${prefix}/${link.href}`}
-                        onClick={() => setMenuOpen(false)}
-                        className="menu-text block -mx-8 px-8 py-2 text-ink transition-colors hover:bg-cream"
-                      >
-                        {link.label}
-                      </Link>
-                    </motion.div>
-                  ))}
-                </motion.div>
-
-                <motion.div
                   variants={itemVariants}
                   initial="closed"
                   animate="open"
@@ -765,12 +743,6 @@ export function Header({ locale, navigation }: HeaderProps) {
                       setMenuOpen(false);
                       openNewsletter();
                     }}
-                  />
-                  <MenuUtilityRow
-                    icon={<IconPin />}
-                    label={labels.boutiqueLocator}
-                    href={`${prefix}/locations`}
-                    onClick={() => setMenuOpen(false)}
                   />
                   <MenuUtilityRow
                     icon={<IconPhone />}

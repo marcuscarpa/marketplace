@@ -7,7 +7,6 @@ export function getHelpMenu(locale: string) {
   return [
     { slug: 'shipping', label: h.shipping, icon: 'shipping' as HelpIconName },
     { slug: 'returns', label: h.returns, icon: 'returns' as HelpIconName },
-    { slug: 'faq', label: h.faq, icon: 'faq' as HelpIconName },
     { slug: 'contact', label: h.contact, icon: 'contact' as HelpIconName },
     { slug: 'size-chart', label: h.sizeChart, icon: 'size-chart' as HelpIconName },
     { slug: 'privacy', label: h.privacy, icon: 'privacy' as HelpIconName },

@@ -6,11 +6,8 @@ export function ShippingPolicyBlock({ locale }: { locale: string }) {
   return (
     <section
       id="shipping-policy"
-      className="scroll-mt-32 border-b border-neutral-200 pb-12 mb-12 max-w-3xl mx-auto font-sans-ui text-sm leading-relaxed text-neutral-700"
+      className="scroll-mt-32 max-w-3xl font-sans-ui text-sm leading-relaxed text-neutral-700"
     >
-      <h2 className="mb-6 text-center font-serif text-xl uppercase tracking-[0.08em] text-neutral-900">
-        {policy.title}
-      </h2>
       <div className="space-y-4">
         {policy.paragraphs.map((paragraph) => (
           <p key={paragraph}>

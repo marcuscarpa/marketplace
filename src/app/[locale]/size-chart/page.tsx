@@ -22,7 +22,6 @@ export default async function SizeChartPage({ params }: PageProps) {
       currentSlug="size-chart"
       breadcrumbLabel="Size Guide"
       title="Size Guide"
-      subtitle="Item size measurements and international conversions"
       showContactCta={false}
     >
       <SizeChartTables />

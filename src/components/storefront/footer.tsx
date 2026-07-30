@@ -120,11 +120,7 @@ export function Footer({ locale }: FooterProps) {
   const f = m(locale).footer;
   const links = getFooterLinks(locale);
 
-  const copyrightLinks = [
-    { label: f.termsOfUse, href: 'terms' },
-    { label: f.privacyPolicy, href: 'privacy' },
-    { label: f.returnPolicy, href: 'returns' },
-  ];
+  const copyrightLinks = links.legal;
 
   const socialLinks = [{ label: 'Instagram', href: instagramHref(locale), external: true }];
 
@@ -146,12 +142,14 @@ export function Footer({ locale }: FooterProps) {
           <div className="site-footer__container">
             <div className="site-footer__background-content">
               <div className="site-footer__top">
-                <FooterMenuBlock
-                  title={f.company}
-                  titleId="footer-company"
-                  links={links.company}
-                  locale={locale}
-                />
+                {links.company.length > 0 ? (
+                  <FooterMenuBlock
+                    title={f.company}
+                    titleId="footer-company"
+                    links={links.company}
+                    locale={locale}
+                  />
+                ) : null}
                 <FooterMenuBlock
                   title={f.help}
                   titleId="footer-help"

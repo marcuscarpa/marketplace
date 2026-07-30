@@ -1,7 +1,5 @@
-import { HelpAccordion } from '@/components/help/help-accordion';
 import { HelpPageLayout } from '@/components/help/help-page-layout';
 import { ShippingPolicyBlock } from '@/components/help/shipping-policy-block';
-import { getShippingSections, getShippingSteps } from '@/lib/help/shipping-content';
 import { m } from '@/lib/i18n';
 
 interface PageProps {
@@ -11,8 +9,8 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const { locale } = await params;
   return {
-    title: locale === 'pt' ? 'Encomendas e Envio | Sinesia Karol' : 'Orders & Shipping | Sinesia Karol',
-    description: 'Shipping policy and delivery information for Sinesia Karol Online Boutique.',
+    title: locale === 'pt' ? 'Política de Envio | Sinesia Karol' : 'Shipping Policy | Sinesia Karol',
+    description: 'Shipping policy and delivery information for Sinesia Karol.',
   };
 }
 
@@ -25,12 +23,9 @@ export default async function ShippingPage({ params }: PageProps) {
       locale={locale}
       currentSlug="shipping"
       breadcrumbLabel={help.shipping}
-      title={help.shipping}
-      subtitle={help.shippingSubtitle}
-      steps={getShippingSteps(locale)}
+      title={help.shippingPageTitle}
     >
       <ShippingPolicyBlock locale={locale} />
-      <HelpAccordion items={getShippingSections(locale)} />
     </HelpPageLayout>
   );
 }

@@ -211,23 +211,19 @@ export function getFooterLinks(locale: string) {
       { label: n.collections, href: collectionPath(SHOPIFY_COLLECTION.featured) },
       { label: n.accessories, href: collectionPath(SHOPIFY_COLLECTION.accessories) },
     ],
-    company: [
-      { label: n.about, href: 'about' },
-      { label: n.locations, href: 'locations' },
-    ],
+    company: [],
     others: [
-      { label: n.faqs, href: 'faq' },
       { label: f.ordersShipping, href: 'shipping' },
       { label: f.sizeGuide, href: 'size-chart' },
       { label: n.contact, href: 'contact' },
     ],
     legal: [
-      { label: f.privacyPolicy, href: 'privacy' },
       { label: f.cookiePolicy, href: 'cookies' },
-      { label: f.termsOfUse, href: 'terms' },
       { label: f.mobileTerms, href: 'mobile-terms' },
-      { label: f.doNotSell, href: 'do-not-sell' },
-      { label: f.returnPolicy, href: 'returns' },
+      { label: f.privacyPolicy, href: 'privacy' },
+      { label: f.returnsExchanges, href: 'returns' },
+      { label: f.termsAndConditions, href: 'terms' },
+      { label: f.termsOfUse, href: 'terms-of-use' },
     ],
   };
 }
@@ -242,8 +238,5 @@ export const MENU_LINKS = [
   { label: 'Bags', href: 'collections/bags' },
   { label: 'Bracelets', href: 'collections/bracelets' },
   { label: 'Accessories', href: 'collections/accessories' },
-  { label: 'About', href: 'about' },
-  { label: 'Values', href: 'values' },
-  { label: 'Newsroom', href: 'newsroom' },
   { label: 'Contact', href: 'contact' },
 ] as const;
