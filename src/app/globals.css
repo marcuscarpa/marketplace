@@ -134,30 +134,37 @@ select {
   animation: fadeIn 0.3s ease-out;
 }
 
-@keyframes announcement-fade-in {
-  from {
+@keyframes announcement-cycle {
+  0% {
     opacity: 0;
+    font-weight: 400;
   }
-  to {
+  14% {
     opacity: 1;
+    font-weight: 400;
   }
-}
-
-@keyframes announcement-breathe {
-  0%,
+  32% {
+    opacity: 1;
+    font-weight: 600;
+  }
+  48% {
+    opacity: 1;
+    font-weight: 600;
+  }
+  68% {
+    opacity: 0;
+    font-weight: 600;
+  }
   100% {
-    opacity: 0.62;
-  }
-  50% {
-    opacity: 1;
+    opacity: 0;
+    font-weight: 400;
   }
 }
 
 .announcement-bar__text {
   opacity: 0;
-  animation:
-    announcement-fade-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards,
-    announcement-breathe 4.8s ease-in-out 1.1s infinite;
+  font-weight: 400;
+  animation: announcement-cycle 7.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .animate-slide-up {
