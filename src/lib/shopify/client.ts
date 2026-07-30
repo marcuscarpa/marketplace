@@ -1,4 +1,5 @@
 import { createStorefrontApiClient } from '@shopify/storefront-api-client';
+import { isPlaceholderShopifyDomain } from '@/lib/cart/checkout';
 import { shopifyBreaker } from '@/lib/circuit-breaker';
 import { getRedisClient } from '@/lib/redis/client';
 import { logger } from '@/lib/logger';
@@ -21,17 +22,13 @@ function getStaticTokenForRegion(regionCode: string): string {
   return map[regionCode] ?? env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_US;
 }
 
-function isPlaceholderDomain(domain: string): boolean {
-  return !domain || domain.includes('test-') || domain.includes('dev-placeholder');
-}
-
 export function isShopifyConfigured(locale: string): boolean {
   try {
     const region = getRegion(locale);
     const domain = region.shopifyDomain;
     const token = getStaticTokenForRegion(region.code);
 
-    if (isPlaceholderDomain(domain)) return false;
+    if (isPlaceholderShopifyDomain(domain)) return false;
     if (hasStaticStorefrontToken(token)) return true;
     return region.code === 'US' && hasClientCredentials();
   } catch {

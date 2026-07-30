@@ -7,11 +7,13 @@ import { useCallback, useEffect, useId, useRef, useState, useTransition } from '
 import { createPortal } from 'react-dom';
 
 import { getCartRecommendationsAction, removeFromCartAction, updateCartLinesAction } from '@/actions/cart';
+import { trackStartedCheckout } from '@/lib/analytics';
 import { CartQtyStepper } from '@/components/cart/cart-qty-stepper';
 import { useCart } from '@/components/providers/cart-provider';
 import { CartRecommendationsCarousel } from '@/components/storefront/cart-recommendations-carousel';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
+import { canStartCheckout, navigateToCheckout, resolveCheckoutHref } from '@/lib/cart/checkout';
 import {
   lineMaxQuantity,
   lineStockHint,
@@ -202,6 +204,7 @@ export function CartDrawer({ locale }: CartDrawerProps) {
   const isPt = locale === 'pt';
   const prefix = `/${locale}`;
   const isMockCart = isMockCartId(cart.id);
+  const checkoutHref = resolveCheckoutHref(cart.checkoutUrl, locale);
 
   const cartLinesSignature = cart.lines.map((l) => `${l.id}:${l.quantity}`).join('|');
 
@@ -218,6 +221,25 @@ export function CartDrawer({ locale }: CartDrawerProps) {
   const lines = isMockCart && mockLines ? mockLines : optimisticLines ?? cart.lines;
   const count = totalQuantityFromLines(lines);
   const subtotal = subtotalFromLines(lines) ?? cart.cost?.subtotalAmount ?? null;
+  const checkoutReady = canStartCheckout({
+    isMockCart,
+    hasLines: lines.length > 0,
+  });
+
+  const handleCheckout = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      if (!subtotal || !checkoutReady) return;
+      trackStartedCheckout({
+        totalQuantity: count,
+        totalAmount: subtotal.amount,
+        currency: subtotal.currencyCode,
+        itemCount: lines.length,
+      });
+      navigateToCheckout(checkoutHref);
+    },
+    [subtotal, checkoutReady, count, lines.length, checkoutHref],
+  );
 
   useEffect(() => setMounted(true), []);
 
@@ -471,9 +493,10 @@ export function CartDrawer({ locale }: CartDrawerProps) {
                       {subtotal.currencyCode} {formatCartPrice(subtotal.amount, subtotal.currencyCode, locale)}
                     </span>
                   </div>
-                  {lines.length > 0 ? (
+                  {checkoutReady ? (
                     <a
-                      href={`${prefix}/api/cart/checkout`}
+                      href={checkoutHref}
+                      onClick={handleCheckout}
                       className="mb-3 block w-full bg-[#4a4a4a] py-3.5 text-center font-sans-ui text-[12px] uppercase tracking-[0.02em] text-white transition-colors hover:bg-[#000000]"
                     >
                       Checkout

@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { isPlaceholderShopifyDomain } from '@/lib/cart/checkout';
 import { getEnv } from '@/lib/env';
 
 export interface Region {
@@ -120,6 +121,15 @@ export const getRegion = (code: string): Region => {
   const localeToRegion: Record<string, string> = { en: 'us', pt: 'br' };
   const regionKey = regions[normalized] ? normalized : localeToRegion[normalized];
   const r = regionKey ? regions[regionKey] : undefined;
-  if (r !== undefined) return r;
-  return usRegion;
+  const resolved = r ?? usRegion;
+
+  // ponytail: one live store — fall back to US when regional env is still a placeholder
+  if (
+    isPlaceholderShopifyDomain(resolved.shopifyDomain) &&
+    !isPlaceholderShopifyDomain(usRegion.shopifyDomain)
+  ) {
+    return usRegion;
+  }
+
+  return resolved;
 };

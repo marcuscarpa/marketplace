@@ -8,6 +8,7 @@ import { removeFromCartAction, updateCartLinesAction } from '@/actions/cart';
 import { CartQtyStepper } from '@/components/cart/cart-qty-stepper';
 import { useCart } from '@/components/providers/cart-provider';
 import { trackStartedCheckout } from '@/lib/analytics';
+import { canStartCheckout, navigateToCheckout, resolveCheckoutHref } from '@/lib/cart/checkout';
 import { formatCartPrice, type CartLineItem } from '@/lib/cart/display';
 import {
   lineMaxQuantity,
@@ -30,6 +31,7 @@ interface CartBagPageProps {
   lines: CartLineItem[];
   subtotal: { amount: string; currencyCode: string } | null;
   totalQuantity: number;
+  checkoutUrl?: string | null;
   checkoutDisabled: boolean;
   cartDisabled: boolean;
   isMockCart?: boolean;
@@ -248,6 +250,7 @@ export function CartBagPage({
   lines,
   subtotal,
   totalQuantity,
+  checkoutUrl: serverCheckoutUrl,
   checkoutDisabled,
   cartDisabled,
   isMockCart = false,
@@ -256,7 +259,7 @@ export function CartBagPage({
   const [localLines, setLocalLines] = useState(lines);
   const [pendingLineId, setPendingLineId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
-  const { updateFromAction } = useCart();
+  const { cart, updateFromAction } = useCart();
   const mutatingRef = useRef(false);
 
   const linesSignature = lines.map((l) => `${l.id}:${l.quantity}`).join('|');
@@ -269,6 +272,12 @@ export function CartBagPage({
 
   const isPt = locale === 'pt';
   const prefix = `/${locale}`;
+  const checkoutHref = resolveCheckoutHref(cart.checkoutUrl ?? serverCheckoutUrl, locale);
+  const checkoutReady = canStartCheckout({
+    isMockCart,
+    checkoutDisabled,
+    hasLines: localLines.length > 0,
+  });
   const displayTotalQuantity = totalQuantityFromLines(localLines);
   const displaySubtotal = subtotalFromLines(localLines) ?? subtotal;
 
@@ -356,14 +365,16 @@ export function CartBagPage({
     [isMockCart, localLines, locale, updateFromAction]
   );
 
-  const handleCheckout = () => {
-    if (!displaySubtotal) return;
+  const handleCheckout = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    if (!displaySubtotal || !checkoutReady) return;
     trackStartedCheckout({
       totalQuantity: displayTotalQuantity,
       totalAmount: displaySubtotal.amount,
       currency: displaySubtotal.currencyCode,
       itemCount: localLines.length,
     });
+    navigateToCheckout(checkoutHref);
   };
 
   const shippingAmount = 0;
@@ -427,13 +438,13 @@ export function CartBagPage({
                 </div>
 
                 <div className="mx-auto mt-8 max-w-[640px]">
-                  {checkoutDisabled ? (
+                  {!checkoutReady ? (
                     <div className="mb-4 w-full bg-ink/40 py-4 text-center text-[12px] uppercase tracking-[0.02em] text-white">
                       {copy.checkoutDisabled}
                     </div>
                   ) : (
                     <a
-                      href={`${prefix}/api/cart/checkout`}
+                      href={checkoutHref}
                       onClick={handleCheckout}
                       className="mb-4 block w-full bg-[#4a4a4a] py-4 text-center text-[12px] uppercase tracking-[0.02em] text-white transition-colors hover:bg-[#000000]"
                     >

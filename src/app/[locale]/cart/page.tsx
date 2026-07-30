@@ -51,7 +51,8 @@ export default async function CartPage({ params }: CartPageProps) {
         lines={mock.lines}
         subtotal={mock.cost?.subtotalAmount ?? null}
         totalQuantity={mock.totalQuantity}
-        checkoutDisabled={false}
+        checkoutUrl={mock.checkoutUrl}
+        checkoutDisabled={true}
         cartDisabled={false}
         isMockCart
         recommendations={recommendations}
@@ -76,6 +77,7 @@ export default async function CartPage({ params }: CartPageProps) {
       lines={lines}
       subtotal={serialized?.cost?.subtotalAmount ?? null}
       totalQuantity={serialized?.totalQuantity ?? 0}
+      checkoutUrl={serialized?.checkoutUrl ?? null}
       checkoutDisabled={checkoutDisabled}
       cartDisabled={cartDisabled}
       recommendations={recommendations}
