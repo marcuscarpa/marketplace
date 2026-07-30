@@ -5,7 +5,7 @@ import { ProductCard } from '@/components/ui/product-card';
 import { SearchBar } from '@/components/ui/search-bar';
 import { PageMain } from '@/components/storefront/ui';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
-import { searchProducts } from '@/lib/shopify/search';
+import { searchProductsForDisplay } from '@/lib/shopify/search';
 
 interface SearchPageProps {
   params: Promise<{ locale: string }>;
@@ -25,7 +25,7 @@ export async function generateMetadata({ params, searchParams }: SearchPageProps
 
 async function getSearchResults(query: string, locale: string) {
   if (!query || query.trim().length < 2) return [];
-  return searchProducts(query, locale, 24);
+  return searchProductsForDisplay(query, locale, 24);
 }
 
 export default async function SearchPage({ params, searchParams }: SearchPageProps) {

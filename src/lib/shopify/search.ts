@@ -1,15 +1,10 @@
 import { getCachedOrFetch } from '@/lib/cache/stampede';
+import type { ProductCardProduct } from '@/components/ui/types';
 import { formatPrice } from '@/lib/catalog/data';
 import { searchCatalogProducts } from '@/lib/catalog/catalog';
+import type { CatalogProduct } from '@/lib/catalog/data';
 import { getShopifyClient, isShopifyConfigured } from '@/lib/shopify/client';
 import { SEARCH_PRODUCTS } from '@/lib/shopify/queries';
-
-interface LuxuryMetafield {
-  namespace: string;
-  key: string;
-  value: string;
-  type: string;
-}
 
 interface SearchVariant {
   id: string;
@@ -27,7 +22,6 @@ export interface SearchResult {
   images: { nodes: Array<{ url: string; altText: string | null }> };
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
   variants?: { nodes: SearchVariant[] };
-  metafields?: LuxuryMetafield[];
 }
 
 interface SearchResponse {
@@ -115,6 +109,60 @@ function catalogFallbackResults(query: string, first: number): SearchResultForma
     compareAtPrice: product.compareAtPrice ?? null,
     onSale: Boolean(product.compareAtPrice),
   }));
+}
+
+function searchResultToProductCard(product: SearchResult): ProductCardProduct {
+  return {
+    id: product.id,
+    title: product.title,
+    handle: product.handle,
+    vendor: product.vendor,
+    tags: product.tags,
+    images: product.images,
+    priceRange: product.priceRange,
+    variants: product.variants,
+  };
+}
+
+function catalogProductToCard(product: CatalogProduct, locale: string): ProductCardProduct {
+  const amount = product.price.replace(/[^\d.]/g, '') || '0';
+  const currencyCode = locale === 'pt' ? 'BRL' : 'USD';
+  const images = [product.image, product.hoverImage].filter(Boolean) as string[];
+
+  return {
+    id: product.handle,
+    title: product.title,
+    handle: product.handle,
+    images: {
+      nodes: images.map((url, index) => ({
+        url,
+        altText: index === 0 ? product.title : `${product.title} — alt`,
+      })),
+    },
+    priceRange: {
+      minVariantPrice: { amount, currencyCode },
+    },
+  };
+}
+
+/** Shopify Storefront search for full search page; static catalog when unavailable. */
+export async function searchProductsForDisplay(
+  query: string,
+  locale: string,
+  first = 24
+): Promise<ProductCardProduct[]> {
+  if (isShopifyConfigured(locale)) {
+    try {
+      const results = await searchProducts(query, locale, first);
+      if (results.length > 0) {
+        return results.map(searchResultToProductCard);
+      }
+    } catch {
+      // ponytail: fall through to static catalog
+    }
+  }
+
+  return searchCatalogProducts(query, first).map((product) => catalogProductToCard(product, locale));
 }
 
 /** Shopify first; static catalog when empty or unavailable. */

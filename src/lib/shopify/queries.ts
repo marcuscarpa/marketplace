@@ -18,12 +18,6 @@ export const SEARCH_PRODUCTS = `
           }
           vendor
           tags
-          metafields(namespace: "luxury") {
-            key
-            value
-            type
-            namespace
-          }
         }
       }
     }
