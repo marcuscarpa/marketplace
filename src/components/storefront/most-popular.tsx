@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { SITE_IMAGES, type CatalogProduct } from '@/lib/catalog/data';
 import { PopularCard } from '@/components/storefront/product-card';
 import { EntranceView } from '@/components/storefront/entrance-view';
+import { HEADING_MB, SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
 import { m } from '@/lib/i18n';
 
 interface MostPopularProps {
@@ -19,14 +20,11 @@ export function MostPopular({ locale, products }: MostPopularProps) {
     <EntranceView
       id="most-popular"
       stagger
-      className="flex w-full flex-col gap-6 px-5 py-10 min-[1440px]:gap-8 min-[1440px]:py-16"
+      className={`mx-auto flex w-full max-w-[1440px] flex-col ${SECTION_PADDING}`}
     >
-      <h3
-        data-entrance-step="1"
-        className="font-serif text-[32px] font-normal leading-none tracking-[-0.04em] text-ink min-[1440px]:text-[48px]"
-      >
-        {h.mostPopular}
-      </h3>
+      <div data-entrance-step="1">
+        <SectionHeading className={HEADING_MB}>{h.mostPopular}</SectionHeading>
+      </div>
 
       <div
         data-entrance-step="2"
