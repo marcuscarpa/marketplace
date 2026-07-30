@@ -2,6 +2,7 @@ export interface NavBanner {
   src: string;
   alt: string;
   caption?: string;
+  imageClassName?: string;
 }
 
 export interface NavBannerTile {

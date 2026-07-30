@@ -14,6 +14,7 @@ const NAV_BANNERS: Record<string, NavBanner> = {
   'mens-collection': {
     src: '/Men-1.png',
     alt: 'Men',
+    imageClassName: 'object-cover object-[center_82%]',
   },
   sale: {
     src: '/Sales-1.webp',

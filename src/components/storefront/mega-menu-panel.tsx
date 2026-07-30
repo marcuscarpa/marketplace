@@ -85,7 +85,7 @@ export function MegaMenuPanel({
                     alt={banner.alt}
                     fill
                     sizes="(min-width: 1024px) 1020px, 100vw"
-                    className="object-cover"
+                    className={banner.imageClassName ?? 'object-cover'}
                     priority
                   />
                 </div>
