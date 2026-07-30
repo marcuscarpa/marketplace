@@ -2,11 +2,12 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 
-import { getWishlistItems, hydrateGuestWishlistItems, toggleWishlist } from '@/actions/wishlist';
+import { getWishlistItems, hydrateGuestWishlistItems, mergeGuestWishlist, toggleWishlist } from '@/actions/wishlist';
 import { normalizeWishlistItems } from '@/lib/catalog/wishlist-seed';
 import { useAuth } from '@/hooks/use-auth';
 import { type WishlistStoredItem } from '@/lib/catalog/wishlist-seed';
 import { clearGuestWishlist, readGuestWishlist, writeGuestWishlist } from '@/lib/wishlist/guest-storage';
+import { isShopifyProductGid } from '@/lib/wishlist/schema';
 
 interface WishlistContextType {
   items: WishlistStoredItem[];
@@ -69,9 +70,9 @@ export function WishlistProvider({
   }, [locale]);
 
   const syncToggle = useCallback(
-    async (productId: string) => {
+    async (item: WishlistStoredItem) => {
       const formData = new FormData();
-      formData.set('productId', productId);
+      formData.set('productId', item.productId && isShopifyProductGid(item.productId) ? item.productId : item.handle);
       formData.set('locale', locale);
       const result = await toggleWishlist({ success: false, message: '' }, formData);
       if (result.success) {
@@ -110,13 +111,11 @@ export function WishlistProvider({
 
     mergedGuestRef.current = true;
     void (async () => {
-      for (const item of guestItems) {
-        await syncToggle(item.handle);
-      }
+      await mergeGuestWishlist(guestItems, locale);
       clearGuestWishlist();
       await refreshServer();
     })();
-  }, [authLoading, isAuthenticated, refreshServer, syncToggle]);
+  }, [authLoading, isAuthenticated, locale, refreshServer]);
 
   const addItem = useCallback(
     (item: WishlistStoredItem) => {
@@ -132,7 +131,7 @@ export function WishlistProvider({
       }
 
       setItems((prev) => [...prev, item]);
-      void syncToggle(item.handle).then((ok) => {
+      void syncToggle(item).then((ok) => {
         if (!ok) {
           setItems((prev) => prev.filter((i) => i.handle !== item.handle));
         }
@@ -155,9 +154,12 @@ export function WishlistProvider({
       }
 
       setItems((prev) => prev.filter((i) => i.id !== id && i.handle !== id));
-      void syncToggle(id).then((ok) => {
-        if (!ok) void refreshServer();
-      });
+      const target = items.find((i) => i.id === id || i.handle === id);
+      if (target) {
+        void syncToggle(target).then((ok) => {
+          if (!ok) void refreshServer();
+        });
+      }
     },
     [isAuthenticated, items, refreshServer, syncToggle]
   );
@@ -176,7 +178,7 @@ export function WishlistProvider({
     }
     void (async () => {
       for (const item of snapshot) {
-        await syncToggle(item.handle);
+        await syncToggle(item);
       }
     })();
   }, [isAuthenticated, items, syncToggle]);

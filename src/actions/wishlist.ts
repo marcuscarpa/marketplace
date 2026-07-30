@@ -7,9 +7,16 @@ import { getWishlistOwnerId } from '@/lib/auth/customer';
 import { type WishlistStoredItem } from '@/lib/catalog/wishlist-seed';
 import { formatPriceForLocale } from '@/lib/locale-currency';
 import { logger } from '@/lib/logger';
-import { getRedisClient } from '@/lib/redis/client';
-import { getProductByHandle } from '@/lib/shopify/loader';
+import { getProductByHandle, getProductsByIds } from '@/lib/shopify/loader';
 import type { ShopifyProductVariant } from '@/lib/shopify/types';
+import {
+  getWishlistProductGids,
+  mergeGuestWishlistItems,
+  resolveProductRefToGid,
+  setWishlistProductGids,
+  validateProductGids,
+} from '@/lib/wishlist/metafield-storage';
+import { isShopifyProductGid, uniqueProductGids } from '@/lib/wishlist/schema';
 
 const toggleWishlistSchema = z.object({
   productId: z.string().min(1, 'Product ID is required'),
@@ -47,7 +54,10 @@ function wishlistBadge(
   return null;
 }
 
-function productToWishlistItem(product: NonNullable<Awaited<ReturnType<typeof getProductByHandle>>>, locale: string): WishlistStoredItem {
+function productToWishlistItem(
+  product: NonNullable<Awaited<ReturnType<typeof getProductByHandle>>>,
+  locale: string,
+): WishlistStoredItem {
   const variant = pickVariant(product.variants.nodes);
   const images = product.images.nodes;
   const priceAmount = variant?.price.amount ?? product.priceRange.minVariantPrice.amount;
@@ -71,14 +81,19 @@ function productToWishlistItem(product: NonNullable<Awaited<ReturnType<typeof ge
   };
 }
 
+function gidsToWishlistItems(gids: string[]): WishlistItem[] {
+  const now = new Date().toISOString();
+  return gids.map((productId) => ({ productId, addedAt: now }));
+}
+
 export async function toggleWishlist(
   _prevState: { success: boolean; message: string; items?: WishlistItem[]; requiresAuth?: boolean },
   formData: FormData
 ): Promise<{ success: boolean; message: string; items?: WishlistItem[]; requiresAuth?: boolean }> {
-  const productId = formData.get('productId') as string;
+  const productRef = formData.get('productId') as string;
   const locale = (formData.get('locale') as string) || 'en';
 
-  const parsed = toggleWishlistSchema.safeParse({ productId, locale });
+  const parsed = toggleWishlistSchema.safeParse({ productId: productRef, locale });
 
   if (!parsed.success) {
     return {
@@ -93,40 +108,37 @@ export async function toggleWishlist(
   }
 
   try {
-    const redis = getRedisClient();
-    const wishlistKey = `wishlist:${customerId}`;
+    const productGid = await resolveProductRefToGid(parsed.data.productId, parsed.data.locale);
+    if (!productGid) {
+      return { success: false, message: 'Product not found' };
+    }
 
-    const lua = `
-      local key = KEYS[1]
-      local member = ARGV[1]
-      local ttl = tonumber(ARGV[2])
-      local exists = redis.call('SISMEMBER', key, member)
-      if exists == 1 then
-        redis.call('SREM', key, member)
-      else
-        redis.call('SADD', key, member)
-      end
-      redis.call('EXPIRE', key, ttl)
-      local items = redis.call('SMEMBERS', key)
-      return items
-    `;
+    const gids = await getWishlistProductGids(parsed.data.locale);
+    const wasMember = gids.includes(productGid);
+    const nextGids = wasMember
+      ? gids.filter((gid) => gid !== productGid)
+      : uniqueProductGids([...gids, productGid]);
 
-    const wasMember = await redis.sismember(wishlistKey, parsed.data.productId);
-    const items = await redis.eval(
-      lua, 1, wishlistKey, parsed.data.productId, String(60 * 60 * 24 * 90)
-    ) as string[];
+    const validated = await validateProductGids(nextGids, parsed.data.locale);
+    const ok = await setWishlistProductGids(validated, parsed.data.locale, customerId);
+    if (!ok) {
+      return { success: false, message: 'Failed to update wishlist' };
+    }
 
-    logger.info(wasMember ? 'Removed from wishlist' : 'Added to wishlist', { customerId, productId });
+    logger.info(wasMember ? 'Removed from wishlist' : 'Added to wishlist', {
+      customerId,
+      productGid,
+    });
 
     revalidateTag('wishlist');
 
     return {
       success: true,
       message: wasMember ? 'Removed from wishlist' : 'Added to wishlist',
-      items: items.map((id) => ({ productId: id, addedAt: new Date().toISOString() })),
+      items: gidsToWishlistItems(validated),
     };
   } catch (error) {
-    logger.error('Wishlist operation failed', { customerId, productId, error });
+    logger.error('Wishlist operation failed', { customerId, productRef, error });
     return { success: false, message: 'Failed to update wishlist' };
   }
 }
@@ -142,13 +154,10 @@ export async function getWishlist(
   }
 
   try {
-    const redis = getRedisClient();
-    const wishlistKey = `wishlist:${customerId}`;
-    const items = await redis.smembers(wishlistKey);
-
+    const gids = await getWishlistProductGids(resolvedLocale);
     return {
       success: true,
-      items: items.map((id) => ({ productId: id, addedAt: new Date().toISOString() })),
+      items: gidsToWishlistItems(gids),
     };
   } catch (error) {
     logger.error('Failed to fetch wishlist', { customerId, error });
@@ -156,15 +165,34 @@ export async function getWishlist(
   }
 }
 
-/** Product handles in Redis → live Shopify product cards for wishlist page / header. */
+/** Merge guest localStorage items into the customer's Shopify metafield wishlist. */
+export async function mergeGuestWishlist(
+  guestItems: WishlistStoredItem[],
+  locale: string,
+): Promise<{ success: boolean; requiresAuth?: boolean }> {
+  if (guestItems.length === 0) return { success: true };
+
+  const result = await mergeGuestWishlistItems(guestItems, locale);
+  if (result.requiresAuth) {
+    return { success: false, requiresAuth: true };
+  }
+  if (result.success) {
+    revalidateTag('wishlist');
+  }
+  return { success: result.success };
+}
+
+/** Product GIDs in customer metafield → live Shopify product cards. */
 export async function getWishlistItems(locale: string): Promise<WishlistStoredItem[]> {
   const { success, items, requiresAuth } = await getWishlist(locale);
   if (requiresAuth || !success || items.length === 0) return [];
 
-  const handles = items.map((item) => item.productId);
-  const products = await Promise.all(handles.map((handle) => getProductByHandle(handle, locale)));
+  const gids = items.map((item) => item.productId).filter(isShopifyProductGid);
+  const products = await getProductsByIds(gids, locale);
 
-  return products.filter(Boolean).map((product) => productToWishlistItem(product!, locale));
+  return products
+    .filter(Boolean)
+    .map((product) => productToWishlistItem(product!, locale));
 }
 
 /** Guest localStorage snapshots may omit images — refresh from Shopify when missing. */
@@ -177,7 +205,10 @@ export async function hydrateGuestWishlistItems(
   return Promise.all(
     items.map(async (item) => {
       if (item.image) return item;
-      const product = await getProductByHandle(item.handle, locale);
+      const product =
+        item.productId && isShopifyProductGid(item.productId)
+          ? (await getProductsByIds([item.productId], locale))[0]
+          : await getProductByHandle(item.handle, locale);
       if (product) return productToWishlistItem(product, locale);
       return item;
     })

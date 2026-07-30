@@ -177,11 +177,12 @@ function CartTableRow({
           onClick={() => {
             if (inWishlist) return;
             addItem({
-              id: line.variantId,
+              id: line.handle,
               handle: line.handle,
               title: line.productTitle,
               price: unitPrice,
               image: resolveWishlistImage(line.handle, line.imageUrl),
+              productId: line.productId,
             });
           }}
           disabled={inWishlist}

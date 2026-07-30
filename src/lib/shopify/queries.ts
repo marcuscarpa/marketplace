@@ -70,6 +70,46 @@ export const GET_PRODUCT_BY_HANDLE = `
   }
 `;
 
+export const GET_PRODUCT_BY_ID = `
+  query GetProductById($id: ID!) {
+    product(id: $id) {
+      id
+      title
+      description
+      handle
+      vendor
+      images(first: 8) { nodes { url altText } }
+      options { name values }
+      priceRange { minVariantPrice { amount currencyCode } }
+      variants(first: 100) {
+        nodes {
+          id
+          availableForSale
+          quantityAvailable
+          price { amount currencyCode }
+          selectedOptions { name value }
+          image { url altText }
+        }
+      }
+      metafields(identifiers: [
+        { namespace: "luxury", key: "certificate_hash" }
+        { namespace: "luxury", key: "materials" }
+        { namespace: "luxury", key: "made_in" }
+        { namespace: "luxury", key: "video_360_url" }
+        { namespace: "luxury", key: "limited_edition_number" }
+        { namespace: "luxury", key: "care_instructions" }
+        { namespace: "reviews", key: "average_rating" }
+        { namespace: "reviews", key: "total_reviews" }
+      ]) {
+        key
+        value
+        type
+        namespace
+      }
+    }
+  }
+`;
+
 export const PRODUCT_RECOMMENDATIONS = `
   query ProductRecommendations($productId: ID!) {
     productRecommendations(productId: $productId) {
@@ -318,6 +358,21 @@ export const GET_CART = `
   query GetCart($cartId: ID!) {
     cart(id: $cartId) {
       ...CartFields
+    }
+  }
+  ${CART_FRAGMENT}
+`;
+
+export const CART_BUYER_IDENTITY_UPDATE = `
+  mutation CartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+      cart {
+        ...CartFields
+      }
+      userErrors {
+        field
+        message
+      }
     }
   }
   ${CART_FRAGMENT}

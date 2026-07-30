@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { getRedisClient } from '@/lib/redis/client';
 import { logger } from '@/lib/logger';
 import { checkRateLimit } from '@/lib/security/bot-protection';
+import { buildCartBuyerIdentityInput, ensureCartBuyerIdentity } from '@/lib/cart/buyer-identity';
 import { getShopifyClient } from '@/lib/shopify/client';
 import { CART_CREATE, CART_LINES_ADD, CART_LINES_UPDATE, CART_LINES_REMOVE } from '@/lib/shopify/queries';
 import { ShopifyCart } from '@/lib/shopify/types';
@@ -134,6 +135,7 @@ export async function addToCartAction(
 
       const cart = result.cartLinesAdd.cart;
       if (cart) {
+        await ensureCartBuyerIdentity(parsed.data.locale);
         await invalidateCartCache(cart.id, parsed.data.locale);
         const mapped = await serializeCartWithImages(cart, locale);
         return {
@@ -144,12 +146,15 @@ export async function addToCartAction(
       }
     }
 
+    const buyerIdentity = await buildCartBuyerIdentityInput(locale);
+
     const result = await executeCartMutation<{ cartCreate: { cart: ShopifyCart | null; userErrors: Array<{ field: string; message: string }> } }>(
       locale,
       CART_CREATE,
       {
         input: {
           lines: [{ merchandiseId: parsed.data.variantId, quantity: parsed.data.quantity }],
+          ...(buyerIdentity ? { buyerIdentity } : {}),
         },
       }
     );

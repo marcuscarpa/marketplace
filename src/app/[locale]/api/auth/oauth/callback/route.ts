@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 import { fetchCustomerByAccessToken } from '@/lib/auth/customer';
 import { getOAuthCallbackUrl } from '@/lib/auth/customer-account-oauth';
 import { exchangeCustomerAccountAuthCode } from '@/lib/auth/customer-account-tokens';
+import { associateCartWithCustomer, CART_COOKIE } from '@/lib/cart/buyer-identity';
 
 function isSafeRedirectPath(path: string): boolean {
   if (!path.startsWith('/')) return false;
@@ -103,6 +104,16 @@ export async function GET(
       redirectResponse.cookies.set('shopify_customer_id', customer.id, {
         ...cookieOptions,
         maxAge: 60 * 60 * 24 * 30,
+      });
+    }
+
+    const cartId = cookieStore.get(CART_COOKIE)?.value;
+    if (cartId && customer) {
+      await associateCartWithCustomer({
+        locale,
+        cartId,
+        accessToken: tokens.access_token,
+        email: customer.email,
       });
     }
 

@@ -88,7 +88,7 @@ export async function getSessionCustomer(locale: string): Promise<SessionCustome
   return fetchCustomerByAccessToken(accessToken, locale);
 }
 
-/** Redis wishlist owner key — only for authenticated customers. */
+/** Customer metafield wishlist owner — only for authenticated customers. */
 export async function getWishlistOwnerId(locale: string): Promise<string | null> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('access_token')?.value;

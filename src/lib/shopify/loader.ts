@@ -3,7 +3,7 @@ import type { CatalogProduct } from '@/lib/catalog/data';
 
 import { getShopifyClient, isShopifyConfigured } from './client';
 import { parseLuxuryMetafields } from './metafields';
-import { GET_PRODUCT_BY_HANDLE } from './queries';
+import { GET_PRODUCT_BY_HANDLE, GET_PRODUCT_BY_ID } from './queries';
 import { ShopifyProduct, ShopifyProductOption, ShopifyProductVariant } from './types';
 
 type EnrichedShopifyProduct = ShopifyProduct & { luxury: ReturnType<typeof parseLuxuryMetafields> };
@@ -187,6 +187,38 @@ export async function getProductByHandle(
 
   const catalog = getCatalogProductByHandle(handle);
   return catalog ? catalogProductAsShopify(catalog) : null;
+}
+
+export async function getProductById(
+  id: string,
+  locale: string
+): Promise<EnrichedShopifyProduct | null> {
+  if (!isShopifyConfigured(locale)) return null;
+
+  try {
+    const client = getShopifyClient(locale);
+    const data = await client.execute<{ product: ShopifyProduct | null }>(GET_PRODUCT_BY_ID, { id });
+
+    if (data?.product) {
+      return {
+        ...data.product,
+        options: data.product.options ?? [],
+        luxury: parseLuxuryMetafields(data.product.metafields),
+      };
+    }
+  } catch {
+    // product archived or invalid gid
+  }
+
+  return null;
+}
+
+export async function getProductsByIds(
+  ids: string[],
+  locale: string
+): Promise<Array<EnrichedShopifyProduct | null>> {
+  if (ids.length === 0) return [];
+  return Promise.all(ids.map((id) => getProductById(id, locale)));
 }
 
 export async function getProductsByHandles(
