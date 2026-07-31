@@ -40,4 +40,17 @@ test.describe('Homepage', () => {
       page.getByRole('heading', { name: 'The Haute Couture of Beachwear' })
     ).toBeVisible();
   });
+
+  test('should display hero products widget on Our values banner', async ({ page }) => {
+    await page.goto('/');
+
+    const widget = page.locator('.hero__products');
+    await widget.scrollIntoViewIfNeeded();
+    await expect(widget).toBeVisible();
+    await expect(widget.locator('a[href*="/products/madison-one-piece"]')).toBeVisible();
+    await expect(widget.locator('.hero-products__open-more')).toBeVisible();
+    await widget.locator('.hero-products__open-more').click();
+    await expect(widget).toHaveClass(/active-2/);
+    await expect(widget.locator('a[href*="/products/adeline-one-piece"]')).toBeVisible();
+  });
 });

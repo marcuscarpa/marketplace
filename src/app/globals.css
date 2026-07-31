@@ -938,11 +938,9 @@ select {
 @keyframes mkt-page-enter {
   from {
     opacity: 0;
-    transform: translate3d(0, 14px, 0);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -1233,4 +1231,228 @@ select {
     grid-area: btns;
     justify-content: flex-end;
   }
+}
+
+/* Our Values banner — Kindred menswear scroll + sticky widget */
+.our-values__scroll-track {
+  position: relative;
+  height: calc(520px + 65vh);
+}
+
+@media (min-width: 1024px) {
+  .our-values__scroll-track {
+    height: calc(900px + 45vh);
+  }
+}
+
+.our-values__media-layer {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 520px;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .our-values__media-layer {
+    height: 900px;
+  }
+}
+
+.our-values__top-wrapper {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  bottom: 240px;
+  left: 0;
+  z-index: 4;
+  display: flex;
+  pointer-events: none;
+}
+
+@media (max-width: 991px) {
+  .our-values__top-wrapper {
+    top: 27px;
+    bottom: 100px;
+  }
+}
+
+.our-values__top-sticky {
+  width: 100%;
+  margin: 0 0 auto;
+  pointer-events: none;
+  position: sticky;
+  top: 132px;
+}
+
+.our-values__top-sticky > * {
+  pointer-events: auto;
+}
+
+.our-values__bottom-wrapper {
+  position: absolute;
+  top: 120px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  pointer-events: none;
+}
+
+.our-values__bottom-content {
+  width: 100%;
+  margin: auto 0 0;
+  padding: 3rem 1.25rem 2rem;
+  pointer-events: auto;
+  position: sticky;
+  bottom: 0;
+  transform: none !important;
+  animation: none !important;
+}
+
+@media (min-width: 1024px) {
+  .our-values__bottom-content {
+    padding: 8rem 2rem 4rem;
+  }
+}
+
+.our-values__scroll-track.mkt-entrance-stagger,
+.our-values__scroll-track.mkt-entrance {
+  transform: none !important;
+  animation: none !important;
+}
+
+.our-values .hero__products {
+  top: 0;
+  bottom: auto;
+}
+
+.hero__products {
+  position: absolute;
+  right: 35px;
+  top: 0;
+  bottom: auto;
+  z-index: 4;
+  display: flex;
+  border-radius: 4px;
+  background: #fff6;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition:
+    background 0.3s ease-in,
+    width 0.3s ease-in;
+  -webkit-transition:
+    background 0.3s ease-in,
+    width 0.3s ease-in;
+  width: 104px;
+  height: 98px;
+  overflow: hidden;
+  touch-action: pan-x;
+}
+
+@media (max-width: 991px) {
+  .hero__products:not(.active):not(.active-2) {
+    right: 11px;
+    width: 94px;
+  }
+}
+
+.hero__products:not(.hero__products--more-than-one):not(.active):not(.active-2) {
+  width: 68px;
+}
+
+@media (max-width: 991px) {
+  .hero__products:not(.hero__products--more-than-one):not(.active):not(.active-2) {
+    width: 63px;
+  }
+}
+
+.hero__products.active {
+  background: #ffffffb3;
+}
+
+.hero__products.active .hero-products__open-more::before {
+  content: '-';
+}
+
+.hero__products-absolute-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  padding: 4px;
+}
+
+.hero__products.active .hero__products-absolute-right {
+  overflow-x: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hero__products.active .hero__products-absolute-right::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-product {
+  width: 60px;
+  height: 90px;
+  min-width: 60px;
+}
+
+@media (max-width: 991px) {
+  .hero-product {
+    width: 55px;
+    min-width: 55px;
+  }
+}
+
+.hero-product a {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+.hero-product a img {
+  display: block;
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.hero-product + .hero-product {
+  margin-left: 4px;
+}
+
+.hero-products__open-more {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  line-height: 90px;
+  width: 36px;
+  min-width: 36px;
+  text-align: center;
+  color: var(--ink);
+}
+
+@media (max-width: 991px) {
+  .hero-products__open-more {
+    width: 31px;
+    min-width: 31px;
+  }
+}
+
+.hero-products__open-more::before {
+  content: '+';
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 90px;
 }
