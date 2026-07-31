@@ -1326,6 +1326,25 @@ select {
   }
 }
 
+@media (max-width: 991px) {
+  /* Pin copy to the 520px banner — not the viewport bottom (which sits below the image). */
+  .our-values__bottom-wrapper {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    height: 520px;
+    margin-top: -520px;
+    align-items: flex-end;
+  }
+
+  .our-values__bottom-content {
+    position: relative;
+    bottom: auto;
+    margin-top: auto;
+    padding: 0 1.25rem 2rem;
+  }
+}
+
 .our-values__scroll-track.mkt-entrance-stagger,
 .our-values__scroll-track.mkt-entrance {
   transform: none !important;
