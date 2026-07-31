@@ -1327,6 +1327,10 @@ select {
 }
 
 @media (max-width: 991px) {
+  .our-values__scroll-track {
+    height: 520px;
+  }
+
   /* Pin copy to the 520px banner — not the viewport bottom (which sits below the image). */
   .our-values__bottom-wrapper {
     position: sticky;
