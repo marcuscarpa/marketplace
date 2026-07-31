@@ -177,6 +177,12 @@ export const pt: Messages = {
     buyNow: 'Compre agora',
     clearFilters: 'Limpar filtros',
     productCount: (n: number) => (n === 1 ? '1 produto' : `${n} produtos`),
+    productCountProgress: (loaded: number, total: number) =>
+      loaded >= total
+        ? total === 1
+          ? '1 produto'
+          : `${total} produtos`
+        : `${loaded} de ${total} produtos`,
     sortBy: 'Ordenar por',
     filter: 'Filtrar',
     category: 'Categoria',

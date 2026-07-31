@@ -71,6 +71,7 @@ interface ShopifyCollection {
 
 type ShopifyCollectionWithMeta = ShopifyCollection & {
   pageInfo: CollectionProductsPage['pageInfo'];
+  totalCount: number;
   facets: ProductFacets;
 };
 
@@ -82,7 +83,7 @@ async function getCollection(handle: string, locale: string): Promise<Collection
   if (isShopifyConfigured(locale)) {
     try {
       const { page, facets: _facets } = await fetchCollectionInitialPayload(handle, locale);
-      const { products, collection, pageInfo } = page;
+      const { products, collection, pageInfo, totalCount: pageTotalCount } = page;
 
       if (
         collection ||
@@ -97,8 +98,10 @@ async function getCollection(handle: string, locale: string): Promise<Collection
           handle;
 
         let nodes = products;
+        let totalCount = pageTotalCount;
         if (handle === SHOPIFY_COLLECTION.sale && nodes.length === 0) {
           nodes = await getSaleProducts(locale);
+          totalCount = nodes.length;
         }
 
         const shopifyCollection: ShopifyCollectionWithMeta = {
@@ -110,6 +113,7 @@ async function getCollection(handle: string, locale: string): Promise<Collection
           image: collection?.image ?? null,
           products: { nodes },
           pageInfo,
+          totalCount,
           facets: _facets,
         };
 
@@ -200,7 +204,7 @@ export default async function CollectionPage({ params, searchParams }: Collectio
 
   const collection = result.collection;
   const products = collection.products?.nodes || [];
-  const { pageInfo, facets } = collection;
+  const { pageInfo, facets, totalCount } = collection;
   let bestsellerHandles = STATIC_BESTSELLER_HANDLES;
   try {
     bestsellerHandles = await getBestsellerHandles(locale);
@@ -228,6 +232,7 @@ export default async function CollectionPage({ params, searchParams }: Collectio
           collectionHandle={handle}
           products={products}
           pageInfo={pageInfo}
+          totalCount={totalCount}
           facets={facets}
           locale={locale}
           collectionTitle={collection.title}

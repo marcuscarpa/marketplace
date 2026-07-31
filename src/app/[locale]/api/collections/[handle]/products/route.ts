@@ -82,12 +82,14 @@ export async function GET(
           endCursor: null,
           offset: Math.min(saleProducts.length, first),
         },
+        totalCount: saleProducts.length,
       };
     }
 
     return Response.json({
       products: page.products,
       pageInfo: page.pageInfo,
+      totalCount: page.totalCount,
     });
   } catch {
     return Response.json({ error: 'Failed to load products' }, { status: 500 });

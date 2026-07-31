@@ -1,3 +1,5 @@
+import { unstable_cache } from 'next/cache';
+
 import {
   filterProductsForTagCollection,
   getTagFilteredCollectionConfig,
@@ -42,6 +44,7 @@ export interface CollectionProductsPage {
     endCursor: string | null;
     offset: number;
   };
+  totalCount: number;
 }
 
 async function fetchShopifyCollectionPage(
@@ -65,10 +68,11 @@ async function fetchShopifyCollectionPage(
       endCursor: data.collection?.products.pageInfo.endCursor ?? null,
       offset: 0,
     },
+    totalCount: data.collection?.products.nodes.length ?? 0,
   };
 }
 
-async function fetchProductsFromCollection(
+async function fetchProductsFromCollectionUncached(
   handle: string,
   locale: string,
   maxProducts = FACET_SCAN_MAX_PRODUCTS
@@ -98,6 +102,18 @@ async function fetchProductsFromCollection(
   return products;
 }
 
+async function fetchProductsFromCollection(
+  handle: string,
+  locale: string,
+  maxProducts = FACET_SCAN_MAX_PRODUCTS
+): Promise<ShopifyProduct[]> {
+  return unstable_cache(
+    async () => fetchProductsFromCollectionUncached(handle, locale, maxProducts),
+    ['shopify-collection-products', handle, locale, String(maxProducts)],
+    { revalidate: 3600, tags: [`collection-products-${handle}`] }
+  )();
+}
+
 /** Round-robin merge so combined PLPs mix bags, shoes, and hats on every page. */
 function interleaveProductLists(lists: ShopifyProduct[][]): ShopifyProduct[] {
   const seen = new Set<string>();
@@ -116,7 +132,7 @@ function interleaveProductLists(lists: ShopifyProduct[][]): ShopifyProduct[] {
   return merged;
 }
 
-async function fetchAllProductsForFacets(
+async function fetchAllProductsForFacetsUncached(
   handle: string,
   locale: string
 ): Promise<ShopifyProduct[]> {
@@ -136,6 +152,17 @@ async function fetchAllProductsForFacets(
     sourceHandles.map((sourceHandle) => fetchProductsFromCollection(sourceHandle, locale))
   );
   return interleaveProductLists(lists);
+}
+
+async function fetchAllProductsForFacets(
+  handle: string,
+  locale: string
+): Promise<ShopifyProduct[]> {
+  return unstable_cache(
+    async () => fetchAllProductsForFacetsUncached(handle, locale),
+    ['shopify-collection-all-products', handle, locale],
+    { revalidate: 3600, tags: [`collection-all-${handle}`] }
+  )();
 }
 
 export async function fetchCollectionFacets(
@@ -166,6 +193,7 @@ function sliceProductPage(
       endCursor: null,
       offset: nextOffset,
     },
+    totalCount: all.length,
   };
 }
 

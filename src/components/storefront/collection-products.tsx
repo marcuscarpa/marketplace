@@ -45,6 +45,7 @@ interface ShopifyCollectionProductsProps {
   collectionHandle: string;
   products: ShopifyCollectionProduct[];
   pageInfo: PageInfo;
+  totalCount: number;
   facets: ProductFacets;
   locale: string;
   collectionTitle: string;
@@ -62,7 +63,8 @@ interface CollectionProductsProps {
 const CATALOG_PAGE_SIZE = 20;
 
 function CollectionGridShell({
-  count,
+  loadedCount,
+  totalCount,
   activeCount,
   onOpenFilters,
   locale,
@@ -70,7 +72,8 @@ function CollectionGridShell({
   toolbarClassName = 'mb-8',
   footer,
 }: {
-  count: number;
+  loadedCount: number;
+  totalCount: number;
   activeCount: number;
   onOpenFilters: () => void;
   locale: string;
@@ -83,7 +86,7 @@ function CollectionGridShell({
     <>
       <div className={`flex items-center justify-between ${toolbarClassName}`}>
         <p className="font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799]">
-          {col.productCount(count)}
+          {col.productCountProgress(loadedCount, totalCount)}
         </p>
         <FilterTrigger onClick={onOpenFilters} count={activeCount} locale={locale} />
       </div>
@@ -118,13 +121,23 @@ function useProductGrid<T extends { handle: string; id?: string }>(
 function CatalogInfiniteGrid({
   products,
   locale,
+  onLoadedCountChange,
 }: {
   products: CatalogProduct[];
   locale: string;
+  onLoadedCountChange?: (count: number) => void;
 }) {
   const [visibleCount, setVisibleCount] = useState(CATALOG_PAGE_SIZE);
   const visible = products.slice(0, visibleCount);
   const hasMore = visibleCount < products.length;
+
+  useEffect(() => {
+    onLoadedCountChange?.(visible.length);
+  }, [onLoadedCountChange, visible.length]);
+
+  useEffect(() => {
+    setVisibleCount(CATALOG_PAGE_SIZE);
+  }, [products]);
 
   const loadMore = useCallback(() => {
     setVisibleCount((count) => Math.min(count + CATALOG_PAGE_SIZE, products.length));
@@ -157,6 +170,7 @@ export function ShopifyCollectionProducts({
   collectionHandle,
   products: initialProducts,
   pageInfo: initialPageInfo,
+  totalCount: initialTotalCount,
   facets,
   locale,
   collectionTitle,
@@ -168,6 +182,7 @@ export function ShopifyCollectionProducts({
   const [filters, setFilters] = useState<FilterState>(initialFilters ?? DEFAULT_FILTER_STATE);
   const [products, setProducts] = useState(initialProducts);
   const [pageInfo, setPageInfo] = useState(initialPageInfo);
+  const [totalCount, setTotalCount] = useState(initialTotalCount);
   const [loading, setLoading] = useState(false);
   const loadingRef = useRef(false);
   const isFirstFilterEffect = useRef(true);
@@ -232,15 +247,16 @@ export function ShopifyCollectionProducts({
         const data = (await res.json()) as {
           products: ShopifyCollectionProduct[];
           pageInfo: PageInfo;
+          totalCount: number;
         };
 
         if (mode === 'replace') {
           setProducts(data.products);
           setPageInfo(data.pageInfo);
+          setTotalCount(data.totalCount);
           return;
         }
 
-        let added = 0;
         setProducts((current) => {
           const seen = new Set(current.map((product) => product.id));
           const merged = [...current];
@@ -248,14 +264,14 @@ export function ShopifyCollectionProducts({
             if (seen.has(product.id)) continue;
             seen.add(product.id);
             merged.push(product);
-            added++;
           }
           return merged;
         });
 
-        const stopPagination = added === 0 || data.products.length === 0;
         setPageInfo(
-          stopPagination ? { ...data.pageInfo, hasNextPage: false } : data.pageInfo
+          data.products.length === 0
+            ? { ...data.pageInfo, hasNextPage: false }
+            : data.pageInfo
         );
       } finally {
         loadingRef.current = false;
@@ -284,7 +300,8 @@ export function ShopifyCollectionProducts({
   return (
     <>
       <CollectionGridShell
-        count={gridProducts.length}
+        loadedCount={gridProducts.length}
+        totalCount={totalCount}
         activeCount={activeCount}
         onOpenFilters={() => setDrawerOpen(true)}
         locale={locale}
@@ -362,6 +379,7 @@ export function CollectionProducts({
 }: CollectionProductsProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTER_STATE);
+  const [loadedCount, setLoadedCount] = useState(CATALOG_PAGE_SIZE);
   const filterable = useMemo(() => products.map(catalogToFilterable), [products]);
   const facets = useMemo(() => extractFacets(filterable), [filterable]);
   const { clean, activeCount, visibleProducts } = useProductGrid(
@@ -375,14 +393,19 @@ export function CollectionProducts({
   return (
     <>
       <CollectionGridShell
-        count={visibleProducts.length}
+        loadedCount={Math.min(loadedCount, visibleProducts.length)}
+        totalCount={visibleProducts.length}
         activeCount={activeCount}
         onOpenFilters={() => setDrawerOpen(true)}
         locale={locale}
         toolbarClassName="mb-10"
       >
         {visibleProducts.length > 0 ? (
-          <CatalogInfiniteGrid products={visibleProducts} locale={locale} />
+          <CatalogInfiniteGrid
+            products={visibleProducts}
+            locale={locale}
+            onLoadedCountChange={setLoadedCount}
+          />
         ) : (
           <p className="py-20 text-center font-sans-ui text-[12px] uppercase tracking-[0.02em] text-[#03060799]">
             {col.noMatch}{' '}

@@ -174,6 +174,12 @@ export const en = {
     buyNow: 'Buy now',
     clearFilters: 'Clear filters',
     productCount: (n: number) => (n === 1 ? '1 product' : `${n} products`),
+    productCountProgress: (loaded: number, total: number) =>
+      loaded >= total
+        ? total === 1
+          ? '1 product'
+          : `${total} products`
+        : `${loaded} of ${total} products`,
     sortBy: 'Sort by',
     filter: 'Filter',
     category: 'Category',
