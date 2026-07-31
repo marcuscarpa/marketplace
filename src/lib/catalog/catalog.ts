@@ -1,7 +1,6 @@
 import {
   BESTSELLERS,
   CATEGORIES,
-  CYCLER_PRODUCTS,
   SITE_IMAGES,
   NEW_ARRIVALS,
   POPULAR_PRODUCTS,
@@ -71,7 +70,6 @@ export function getAllCatalogProducts(): CatalogProduct[] {
     ...POPULAR_PRODUCTS,
     ...NEW_ARRIVALS,
     ...BESTSELLERS,
-    ...CYCLER_PRODUCTS,
     SPOTLIGHT_PRODUCT,
   ]);
 }

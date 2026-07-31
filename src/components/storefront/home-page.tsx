@@ -10,14 +10,14 @@ import { MostPopular } from '@/components/storefront/most-popular';
 import { NewArrivals } from '@/components/storefront/new-arrivals';
 import { OurValues } from '@/components/storefront/our-values';
 import { SocialFeed } from '@/components/storefront/social-feed';
-import type { CatalogProduct } from '@/lib/catalog/data';
+import type { CatalogProduct, CategoryCyclerItem } from '@/lib/catalog/data';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 
 interface HomePageProps {
   locale: string;
   popularProducts: CatalogProduct[];
   newArrivals: CatalogProduct[];
-  cyclerProducts: CatalogProduct[];
+  cyclerCategories: CategoryCyclerItem[];
   bestsellerProducts: CatalogProduct[];
   spotlightProduct: CatalogProduct;
 }
@@ -28,7 +28,7 @@ export function HomePage({
   locale,
   popularProducts,
   newArrivals,
-  cyclerProducts,
+  cyclerCategories,
   bestsellerProducts,
   spotlightProduct,
 }: HomePageProps) {
@@ -40,7 +40,7 @@ export function HomePage({
       <CollectionCta locale={locale} />
       <NewArrivals locale={locale} products={newArrivals} />
       <OurValues collectionHref={valuesCollectionHref} locale={locale} />
-      <ProductCycler locale={locale} products={cyclerProducts} />
+      <ProductCycler locale={locale} categories={cyclerCategories} />
       <Bestsellers locale={locale} products={bestsellerProducts} />
       <CollectionSpotlight locale={locale} product={spotlightProduct} />
       <AboutSection />

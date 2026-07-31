@@ -175,26 +175,27 @@ export const CATEGORIES = [
   },
 ] as const;
 
-export const CYCLER_PRODUCTS: CatalogProduct[] = [
+export interface CategoryCyclerItem {
+  title: string;
+  image: string;
+  hoverImage?: string;
+  collectionHandle: string;
+}
+
+export const CYCLER_CATEGORIES: CategoryCyclerItem[] = [
   {
     title: 'Bikinis',
-    category: 'Swimwear',
-    price: '€ 199',
-    handle: 'bikinis',
+    collectionHandle: 'bikini',
     image: SITE_IMAGES.cycler1,
   },
   {
     title: 'One Piece',
-    category: 'Swimwear',
-    price: '€ 199',
-    handle: 'one-piece',
+    collectionHandle: 'one-piece',
     image: SITE_IMAGES.cycler2,
   },
   {
     title: 'Pants + Shorts',
-    category: 'Swimwear',
-    price: '€ 199',
-    handle: 'pants-shorts',
+    collectionHandle: 'pants-shorts',
     image: SITE_IMAGES.cycler3,
   },
 ];

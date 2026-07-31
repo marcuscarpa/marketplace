@@ -1,7 +1,7 @@
 import { HomePage } from '@/components/storefront/home-page';
 import {
   BESTSELLERS,
-  CYCLER_PRODUCTS,
+  CYCLER_CATEGORIES,
   NEW_ARRIVALS,
   POPULAR_PRODUCTS,
   SPOTLIGHT_PRODUCT,
@@ -21,7 +21,7 @@ export default async function LocaleHomePage({ params }: HomePageProps) {
       locale={locale}
       popularProducts={POPULAR_PRODUCTS}
       newArrivals={NEW_ARRIVALS}
-      cyclerProducts={CYCLER_PRODUCTS}
+      cyclerCategories={CYCLER_CATEGORIES}
       bestsellerProducts={BESTSELLERS}
       spotlightProduct={SPOTLIGHT_PRODUCT}
     />
