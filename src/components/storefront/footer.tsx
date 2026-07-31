@@ -156,7 +156,7 @@ export function Footer({ locale }: FooterProps) {
                   links={links.others}
                   locale={locale}
                 />
-                <div className="site-footer__menu-block">
+                <div className="site-footer__menu-block site-footer__menu-block--always-open">
                   <h5 id="footer-social" className="site-footer__menu-heading">
                     {f.social}
                   </h5>

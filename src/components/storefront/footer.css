@@ -126,6 +126,18 @@
     flex: 0 0 100%;
     margin: 20px 0 0;
   }
+
+  .site-footer__menu-block--always-open .site-footer__menu-heading::before {
+    display: none;
+  }
+
+  .site-footer__menu-block--always-open .site-footer__menu-heading {
+    cursor: default;
+  }
+
+  .site-footer__menu-block--always-open .site-footer__menu {
+    display: block;
+  }
 }
 
 .site-footer__menu-heading {
