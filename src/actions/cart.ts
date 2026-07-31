@@ -7,13 +7,15 @@ import { z } from 'zod';
 import { getRedisClient } from '@/lib/redis/client';
 import { logger } from '@/lib/logger';
 import { checkRateLimit } from '@/lib/security/bot-protection';
-import { buildCartBuyerIdentityInput, ensureCartBuyerIdentity } from '@/lib/cart/buyer-identity';
+import { isCatalogMockVariantId } from '@/lib/shopify/catalog-mock';
 import { getShopifyClient } from '@/lib/shopify/client';
 import { CART_CREATE, CART_LINES_ADD, CART_LINES_UPDATE, CART_LINES_REMOVE } from '@/lib/shopify/queries';
 import { ShopifyCart } from '@/lib/shopify/types';
 import { serializeCartWithImages } from '@/lib/cart/enrich-images';
+import { serializeCart } from '@/lib/cart/serialize';
 import type { CartLineItem } from '@/lib/cart/display';
 import { m } from '@/lib/i18n';
+import { buildCartBuyerIdentityInput, ensureCartBuyerIdentity } from '@/lib/cart/buyer-identity';
 import {
   getCartPageRecommendations,
   type CartCarouselItem,
@@ -88,6 +90,68 @@ async function checkCartRateLimit(locale: string): Promise<string | null> {
   return null;
 }
 
+function formatActionError(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+function isStaleCartMessage(message: string): boolean {
+  return /cart.*(not found|does not exist|invalid|expired|no longer available)/i.test(message);
+}
+
+function clearCartCookie(
+  cookieStore: Awaited<ReturnType<typeof cookies>>,
+): void {
+  cookieStore.set(CART_COOKIE, '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+  });
+}
+
+async function safeSerializeCart(cart: ShopifyCart, locale: string) {
+  try {
+    return await serializeCartWithImages(cart, locale);
+  } catch (error) {
+    logger.warn('serializeCartWithImages failed, using basic cart', {
+      cartId: cart.id,
+      error: formatActionError(error),
+    });
+    return serializeCart(cart);
+  }
+}
+
+async function safeBuildCartBuyerIdentityInput(locale: string) {
+  try {
+    return await buildCartBuyerIdentityInput(locale);
+  } catch (error) {
+    logger.warn('buildCartBuyerIdentityInput failed', { error: formatActionError(error) });
+    return undefined;
+  }
+}
+
+async function finalizeCartSuccess(
+  cart: ShopifyCart,
+  locale: string,
+  message: string,
+): Promise<CartActionState> {
+  try {
+    await ensureCartBuyerIdentity(locale);
+  } catch (error) {
+    logger.warn('ensureCartBuyerIdentity failed', { cartId: cart.id, error: formatActionError(error) });
+  }
+
+  await invalidateCartCache(cart.id, locale);
+
+  return {
+    success: true,
+    message,
+    cart: await safeSerializeCart(cart, locale),
+  };
+}
+
 export async function addToCartAction(
   prevState: CartActionState,
   formData: FormData
@@ -112,41 +176,54 @@ export async function addToCartAction(
     };
   }
 
+  if (isCatalogMockVariantId(parsed.data.variantId)) {
+    return { success: false, message: cartMsg.addFailed };
+  }
+
   const cookieStore = await cookies();
   const existingCartId = cookieStore.get(CART_COOKIE)?.value;
 
   try {
     if (existingCartId) {
-      const result = await executeCartMutation<{ cartLinesAdd: { cart: ShopifyCart | null; userErrors: Array<{ field: string; message: string }> } }>(
-        locale,
-        CART_LINES_ADD,
-        {
-          cartId: existingCartId,
-          lines: [{ merchandiseId: parsed.data.variantId, quantity: parsed.data.quantity }],
+      try {
+        const result = await executeCartMutation<{ cartLinesAdd: { cart: ShopifyCart | null; userErrors: Array<{ field: string; message: string }> } }>(
+          locale,
+          CART_LINES_ADD,
+          {
+            cartId: existingCartId,
+            lines: [{ merchandiseId: parsed.data.variantId, quantity: parsed.data.quantity }],
+          }
+        );
+
+        if (result.cartLinesAdd.userErrors.length > 0) {
+          const message = result.cartLinesAdd.userErrors.map((e) => e.message).join(', ');
+          if (isStaleCartMessage(message)) {
+            logger.warn('addToCartAction: stale cart cookie, creating new cart', {
+              cartId: existingCartId,
+              message,
+            });
+            clearCartCookie(cookieStore);
+          } else {
+            return { success: false, message };
+          }
+        } else if (result.cartLinesAdd.cart) {
+          return finalizeCartSuccess(result.cartLinesAdd.cart, locale, cartMsg.added);
+        } else {
+          logger.warn('addToCartAction: cartLinesAdd returned null cart, creating new cart', {
+            cartId: existingCartId,
+          });
+          clearCartCookie(cookieStore);
         }
-      );
-
-      if (result.cartLinesAdd.userErrors.length > 0) {
-        return {
-          success: false,
-          message: result.cartLinesAdd.userErrors.map((e) => e.message).join(', '),
-        };
-      }
-
-      const cart = result.cartLinesAdd.cart;
-      if (cart) {
-        await ensureCartBuyerIdentity(parsed.data.locale);
-        await invalidateCartCache(cart.id, parsed.data.locale);
-        const mapped = await serializeCartWithImages(cart, locale);
-        return {
-          success: true,
-          message: cartMsg.added,
-          cart: mapped,
-        };
+      } catch (error) {
+        logger.warn('addToCartAction: cartLinesAdd failed, creating new cart', {
+          cartId: existingCartId,
+          error: formatActionError(error),
+        });
+        clearCartCookie(cookieStore);
       }
     }
 
-    const buyerIdentity = await buildCartBuyerIdentityInput(locale);
+    const buyerIdentity = await safeBuildCartBuyerIdentityInput(locale);
 
     const result = await executeCartMutation<{ cartCreate: { cart: ShopifyCart | null; userErrors: Array<{ field: string; message: string }> } }>(
       locale,
@@ -176,19 +253,17 @@ export async function addToCartAction(
         maxAge: 60 * 60 * 24 * 30,
       });
 
-      await invalidateCartCache(cart.id, parsed.data.locale);
-
-      return {
-        success: true,
-        message: cartMsg.createAndAdded,
-        cart: await serializeCartWithImages(cart, parsed.data.locale),
-      };
+      const success = await finalizeCartSuccess(cart, locale, cartMsg.createAndAdded);
+      return success;
     }
 
     logger.warn('addToCartAction: cart null after create', { result: result.cartCreate });
     return { success: false, message: cartMsg.createFailed };
   } catch (error) {
-    logger.error('addToCartAction failed', { variantId: parsed.data.variantId, error });
+    logger.error('addToCartAction failed', {
+      variantId: parsed.data.variantId,
+      error: formatActionError(error),
+    });
     return {
       success: false,
       message: cartMsg.addFailed,

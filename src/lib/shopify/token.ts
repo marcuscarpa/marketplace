@@ -5,9 +5,11 @@ import { logger } from '@/lib/logger';
 const TOKEN_TITLE = 'Sinesia Headless Frontend';
 const ADMIN_TOKEN_CACHE_MS = 23 * 60 * 60 * 1000;
 const STOREFRONT_TOKEN_REDIS_KEY = (region: string) => `shopify:storefront_token:${region}`;
+const REVOCABLE_STOREFRONT_TOKEN_TITLES = new Set([TOKEN_TITLE, 'stock-check']);
 
 type CachedAdminToken = { token: string; expiresAt: number };
 const adminTokenCache = new Map<string, CachedAdminToken>();
+const storefrontTokenMemoryCache = new Map<string, string>();
 
 function isPlaceholder(value: string | undefined): boolean {
   if (!value) return true;
@@ -117,28 +119,87 @@ async function createStorefrontAccessToken(storeDomain: string, adminToken: stri
   return token;
 }
 
-async function resolveStorefrontTokenFromCredentials(
+async function pruneStorefrontAccessTokens(storeDomain: string, adminToken: string): Promise<void> {
+  const data = await adminGraphql<{
+    shop: { storefrontAccessTokens: { nodes: Array<{ id: string; title: string; createdAt: string }> } };
+  }>(
+    storeDomain,
+    adminToken,
+    `{ shop { storefrontAccessTokens(first: 50) { nodes { id title createdAt } } } }`
+  );
+
+  const revocable = data.shop.storefrontAccessTokens.nodes
+    .filter((token) => REVOCABLE_STOREFRONT_TOKEN_TITLES.has(token.title))
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+  for (const token of revocable) {
+    await adminGraphql(
+      storeDomain,
+      adminToken,
+      `mutation DeleteStorefrontToken($input: StorefrontAccessTokenDeleteInput!) {
+        storefrontAccessTokenDelete(input: $input) {
+          deletedStorefrontAccessTokenId
+          userErrors { message }
+        }
+      }`,
+      { input: { id: token.id } }
+    );
+  }
+}
+
+async function createStorefrontAccessTokenWithRetry(
   storeDomain: string,
-  regionCode: string
+  adminToken: string
 ): Promise<string> {
+  try {
+    return await createStorefrontAccessToken(storeDomain, adminToken);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!message.includes('limit')) throw error;
+    logger.warn('[shopify/token] Storefront token limit reached — pruning dev tokens', { storeDomain });
+    await pruneStorefrontAccessTokens(storeDomain, adminToken);
+    return createStorefrontAccessToken(storeDomain, adminToken);
+  }
+}
+
+async function cacheStorefrontToken(regionCode: string, token: string): Promise<void> {
+  storefrontTokenMemoryCache.set(regionCode, token);
+  try {
+    const redis = getRedisClient();
+    await redis.set(STOREFRONT_TOKEN_REDIS_KEY(regionCode), token);
+  } catch (error) {
+    logger.warn('[shopify/token] Failed to cache storefront token in Redis', { regionCode, error });
+  }
+}
+
+async function readCachedStorefrontToken(regionCode: string): Promise<string | null> {
+  const memory = storefrontTokenMemoryCache.get(regionCode);
+  if (memory) return memory;
+
   try {
     const redis = getRedisClient();
     const cached = await redis.get(STOREFRONT_TOKEN_REDIS_KEY(regionCode));
-    if (cached) return cached;
+    if (cached) {
+      storefrontTokenMemoryCache.set(regionCode, cached);
+      return cached;
+    }
   } catch (error) {
     logger.warn('[shopify/token] Redis cache miss for storefront token', { regionCode, error });
   }
 
+  return null;
+}
+
+async function resolveStorefrontTokenFromCredentials(
+  storeDomain: string,
+  regionCode: string
+): Promise<string> {
+  const cached = await readCachedStorefrontToken(regionCode);
+  if (cached) return cached;
+
   const adminToken = await fetchAdminAccessToken(storeDomain);
-  const storefrontToken = await createStorefrontAccessToken(storeDomain, adminToken);
-
-  try {
-    const redis = getRedisClient();
-    await redis.set(STOREFRONT_TOKEN_REDIS_KEY(regionCode), storefrontToken);
-  } catch (error) {
-    logger.warn('[shopify/token] Failed to cache storefront token in Redis', { regionCode, error });
-  }
-
+  const storefrontToken = await createStorefrontAccessTokenWithRetry(storeDomain, adminToken);
+  await cacheStorefrontToken(regionCode, storefrontToken);
   return storefrontToken;
 }
 

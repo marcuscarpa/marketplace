@@ -11,6 +11,7 @@ import {
   isColorOption,
 } from '@/lib/shopify/variants';
 import { formatPriceForLocale } from '@/lib/locale-currency';
+import { isCatalogMockProduct } from '@/lib/shopify/catalog-mock';
 
 import { AddToCartButton } from './add-to-cart-button';
 import { ProductPriceExtras } from './product-price-extras';
@@ -124,6 +125,7 @@ export function ProductDetailsLuxury({
     selectedVariant?.price.currencyCode ?? product.priceRange.minVariantPrice.currencyCode;
 
   const isPt = locale === 'pt';
+  const catalogOnly = isCatalogMockProduct(product);
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate={mounted ? 'show' : 'hidden'}>
@@ -164,7 +166,7 @@ export function ProductDetailsLuxury({
           )}
 
           <motion.div variants={itemVariants} className="space-y-3">
-            {selectedVariant && (
+            {selectedVariant && !catalogOnly && (
               <AddToCartButton
                 variantId={selectedVariant.id}
                 productId={product.id}
@@ -174,6 +176,13 @@ export function ProductDetailsLuxury({
                 locale={locale}
                 disabled={selectedVariant.availableForSale === false}
               />
+            )}
+            {catalogOnly && (
+              <p className="text-sm text-neutral-600">
+                {isPt
+                  ? 'Este artigo não está disponível para compra online neste momento.'
+                  : 'This item is not available for online purchase at the moment.'}
+              </p>
             )}
             <ProductTrustBadges locale={locale} />
           </motion.div>

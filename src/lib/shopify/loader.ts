@@ -1,5 +1,6 @@
 import { getCatalogProductByHandle } from '@/lib/catalog/catalog';
 import type { CatalogProduct } from '@/lib/catalog/data';
+import { getRegion } from '@/lib/regions';
 
 import { getShopifyClient, isShopifyConfigured } from './client';
 import { parseLuxuryMetafields } from './metafields';
@@ -161,11 +162,110 @@ function parseBatchResponse<T>(data: Record<string, T | null>): Array<T | null> 
   return Object.values(data).map((p) => p as T | null);
 }
 
+interface JsonProductVariant {
+  id: number;
+  option1: string | null;
+  option2: string | null;
+  option3: string | null;
+  available: boolean;
+  price: string;
+  featured_image?: { src: string; alt: string | null } | null;
+}
+
+interface JsonProduct {
+  id: number;
+  title: string;
+  handle: string;
+  body_html: string;
+  vendor: string;
+  options: Array<{ name: string; values: string[] }>;
+  variants: JsonProductVariant[];
+  images: Array<{ src: string; alt: string | null }>;
+}
+
+function htmlToPlainText(html: string): string {
+  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** Public Shopify JSON endpoint — real variant IDs when Storefront GraphQL is unavailable. */
+async function fetchProductFromJsonEndpoint(
+  handle: string,
+  storeDomain: string,
+  currency: string
+): Promise<EnrichedShopifyProduct | null> {
+  try {
+    const response = await fetch(`https://${storeDomain}/products/${handle}.json`, {
+      next: { revalidate: 3600 },
+    });
+    if (!response.ok) return null;
+
+    const payload = (await response.json()) as { product?: JsonProduct };
+    const product = payload.product;
+    if (!product) return null;
+
+    const options: ShopifyProductOption[] = product.options.map((option) => ({
+      name: option.name,
+      values: option.values,
+    }));
+
+    const variants: ShopifyProductVariant[] = product.variants.map((variant) => {
+      const selectedOptions: Array<{ name: string; value: string }> = [];
+      const optionValues = [variant.option1, variant.option2, variant.option3];
+      options.forEach((option, index) => {
+        const value = optionValues[index];
+        if (value) selectedOptions.push({ name: option.name, value });
+      });
+
+      return {
+        id: `gid://shopify/ProductVariant/${variant.id}`,
+        availableForSale: variant.available,
+        quantityAvailable: variant.available ? null : 0,
+        price: { amount: variant.price, currencyCode: currency },
+        selectedOptions,
+        image: variant.featured_image
+          ? { url: variant.featured_image.src, altText: variant.featured_image.alt }
+          : null,
+      };
+    });
+
+    const minPrice =
+      variants.reduce((min, variant) => {
+        const amount = parseFloat(variant.price.amount);
+        return amount < min ? amount : min;
+      }, parseFloat(variants[0]?.price.amount ?? '0')) || 0;
+
+    return {
+      id: `gid://shopify/Product/${product.id}`,
+      title: product.title,
+      description: htmlToPlainText(product.body_html),
+      handle: product.handle,
+      vendor: product.vendor,
+      images: {
+        nodes: product.images.map((image) => ({
+          url: image.src,
+          altText: image.alt,
+        })),
+      },
+      options,
+      priceRange: {
+        minVariantPrice: { amount: String(minPrice), currencyCode: currency },
+      },
+      variants: { nodes: variants },
+      metafields: [],
+      luxury: parseLuxuryMetafields([]),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function getProductByHandle(
   handle: string,
   locale: string
 ): Promise<EnrichedShopifyProduct | null> {
   if (isShopifyConfigured(locale)) {
+    const region = getRegion(locale);
+
     try {
       const client = getShopifyClient(locale);
       const data = await client.execute<{ product: ShopifyProduct | null }>(
@@ -181,8 +281,15 @@ export async function getProductByHandle(
         };
       }
     } catch {
-      // ponytail: fall through to static catalog when Shopify is unreachable
+      // ponytail: try public JSON before static catalog when Storefront GraphQL fails
     }
+
+    const jsonProduct = await fetchProductFromJsonEndpoint(
+      handle,
+      region.shopifyDomain,
+      region.currency
+    );
+    if (jsonProduct) return jsonProduct;
   }
 
   const catalog = getCatalogProductByHandle(handle);

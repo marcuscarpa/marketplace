@@ -115,7 +115,7 @@ export const SPOTLIGHT_PRODUCT: CatalogProduct = {
   title: 'Lolo Skirt - Crochet',
   category: 'Skirts',
   price: '$165',
-  handle: 'lolo-skirt-crochet',
+  handle: 'saia-lolo-croche',
   image: SITE_IMAGES.collectionWomenProduct,
 };
 
