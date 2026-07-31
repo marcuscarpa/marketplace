@@ -51,6 +51,8 @@ test.describe('Homepage', () => {
     await expect(widget.locator('.hero-products__open-more')).toBeVisible();
     await widget.locator('.hero-products__open-more').click();
     await expect(widget).toHaveClass(/active-2/);
-    await expect(widget.locator('a[href*="/products/adeline-one-piece"]')).toBeVisible();
+    await expect(widget.locator('a[href*="/products/madison-one-piece"]')).toHaveCount(4);
+    await widget.locator('a[href*="/products/madison-one-piece"]').first().click();
+    await expect(page).toHaveURL(/\/products\/madison-one-piece/);
   });
 });

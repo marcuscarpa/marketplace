@@ -1423,6 +1423,9 @@ select {
   display: block;
   padding: 0;
   margin: 0;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
 }
 
 .hero-product a img {

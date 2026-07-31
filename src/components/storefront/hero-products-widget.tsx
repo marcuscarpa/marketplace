@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 import type { CatalogProduct } from '@/lib/catalog/data';
@@ -13,6 +13,7 @@ interface HeroProductsWidgetProps {
 
 export function HeroProductsWidget({ locale, products }: HeroProductsWidgetProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const maybeRoot = rootRef.current;
@@ -64,6 +65,8 @@ export function HeroProductsWidget({ locale, products }: HeroProductsWidgetProps
     };
 
     const onToggleClick = (event: Event) => {
+      if ((event.target as Element | null)?.closest('.js-hero-product-link')) return;
+
       event.preventDefault();
       event.stopPropagation();
 
@@ -90,14 +93,26 @@ export function HeroProductsWidget({ locale, products }: HeroProductsWidgetProps
     openMore?.addEventListener('click', onToggleClick);
     content.addEventListener('wheel', onWheel, { passive: false });
 
+    const onProductLinkClick = (event: Event) => {
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('.js-hero-product-link');
+      if (!link) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      router.push(link.getAttribute('href') ?? link.pathname);
+    };
+
+    content.addEventListener('click', onProductLinkClick);
+
     return () => {
       root.removeEventListener('mouseenter', onMouseEnter);
       root.removeEventListener('mouseleave', onMouseLeave);
       openMore?.removeEventListener('click', onToggleClick);
       content.removeEventListener('wheel', onWheel);
+      content.removeEventListener('click', onProductLinkClick);
       if (timer) clearTimeout(timer);
     };
-  }, [products.length]);
+  }, [products.length, router]);
 
   if (products.length === 0) return null;
 
@@ -110,21 +125,25 @@ export function HeroProductsWidget({ locale, products }: HeroProductsWidgetProps
       data-lenis-prevent
     >
       <div className="hero__products-absolute-right js-hero-products-content">
-        {products.map((product) => (
-          <div key={product.handle} className="hero-product">
-            <Link href={`/${locale}/products/${product.handle}`}>
-              <Image
-                src={product.image}
-                alt={product.title}
-                width={120}
-                height={180}
-                sizes="60px"
-                loading="lazy"
-                className="fade-in show"
-              />
-            </Link>
-          </div>
-        ))}
+        {products.map((product) => {
+          const href = `/${locale}/products/${product.handle}`;
+
+          return (
+            <div key={`${product.handle}-${product.image}`} className="hero-product">
+              <a href={href} className="js-hero-product-link" aria-label={product.title}>
+                <Image
+                  src={product.image}
+                  alt={product.title}
+                  width={120}
+                  height={180}
+                  sizes="60px"
+                  loading="lazy"
+                  className="fade-in show"
+                />
+              </a>
+            </div>
+          );
+        })}
 
         {hasMultiple ? <div className="hero-products__open-more" aria-hidden /> : null}
       </div>
