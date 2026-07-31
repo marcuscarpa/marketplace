@@ -104,7 +104,8 @@ async function getCollection(handle: string, locale: string): Promise<Collection
         const shopifyCollection: ShopifyCollectionWithMeta = {
           id: collection?.id ?? `virtual-${handle}`,
           title,
-          description: collection?.description ?? '',
+          description:
+            handle === SHOPIFY_COLLECTION.men ? '' : (collection?.description ?? ''),
           handle,
           image: collection?.image ?? null,
           products: { nodes },

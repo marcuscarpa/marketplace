@@ -2,8 +2,8 @@ import { getMenuSections } from '@/lib/catalog/menu';
 import { m } from '@/lib/i18n';
 
 export const POPULAR_SEARCHES = {
-  en: ['bikini', 'swimwear', 'bags', 'bracelets', 'women', 'accessories', 'new', 'sale'],
-  pt: ['bikini', 'swimwear', 'bolsas', 'pulseiras', 'feminino', 'acessórios', 'novidades', 'sale'],
+  en: ['bikini', 'swimwear', 'bags', 'women', 'accessories', 'new', 'sale'],
+  pt: ['bikini', 'swimwear', 'bolsas', 'feminino', 'acessórios', 'novidades', 'sale'],
 } as const;
 
 export function getSearchCategories(locale: string) {
