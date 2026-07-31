@@ -190,6 +190,16 @@ async function readCachedStorefrontToken(regionCode: string): Promise<string | n
   return null;
 }
 
+export async function clearStorefrontTokenCache(regionCode: string): Promise<void> {
+  storefrontTokenMemoryCache.delete(regionCode);
+  try {
+    const redis = getRedisClient();
+    await redis.del(STOREFRONT_TOKEN_REDIS_KEY(regionCode));
+  } catch (error) {
+    logger.warn('[shopify/token] Failed to clear storefront token cache', { regionCode, error });
+  }
+}
+
 async function resolveStorefrontTokenFromCredentials(
   storeDomain: string,
   regionCode: string

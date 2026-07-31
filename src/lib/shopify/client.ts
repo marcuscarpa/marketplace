@@ -6,6 +6,7 @@ import { logger } from '@/lib/logger';
 import { getRegion } from '@/lib/regions';
 import { getEnv } from '@/lib/env';
 import {
+  clearStorefrontTokenCache,
   hasClientCredentials,
   hasStaticStorefrontToken,
   resolveStorefrontAccessToken,
@@ -85,6 +86,15 @@ async function getOrCreateClient(regionCode: string, storeDomain: string): Promi
   }
 }
 
+function invalidateShopifyClient(regionCode: string, storeDomain: string): void {
+  clientCache.delete(`${regionCode}:${storeDomain}`);
+}
+
+function isStorefrontAuthError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /(401|403|unauthorized|invalid.*token|access denied|api key)/i.test(message);
+}
+
 export function getShopifyClient(locale: string) {
   const region = getRegion(locale);
 
@@ -102,41 +112,58 @@ export function getShopifyClient(locale: string) {
           throw new Error(`Credenciais Shopify não encontradas para a região: ${region.code}`);
         }
 
-        try {
-          const client = await getOrCreateClient(region.code, storeDomain);
-          const response = await requestWithTimeout(
-            client.request(query, { variables }),
-            region.code,
-          );
+        for (let attempt = 0; attempt < 2; attempt++) {
+          try {
+            const client = await getOrCreateClient(region.code, storeDomain);
+            const response = await requestWithTimeout(
+              client.request(query, { variables }),
+              region.code,
+            );
 
-          if (response.errors) {
-            throw new Error(`Shopify GraphQL Error: ${JSON.stringify(response.errors)}`);
-          }
+            if (response.errors) {
+              throw new Error(`Shopify GraphQL Error: ${JSON.stringify(response.errors)}`);
+            }
 
-          if (cacheKey && response.data) {
-            const redis = getRedisClient();
-            redis.set(cacheKey, JSON.stringify(response.data), 'EX', 3600).catch(console.error);
-          }
+            if (cacheKey && response.data) {
+              const redis = getRedisClient();
+              redis.set(cacheKey, JSON.stringify(response.data), 'EX', 3600).catch(console.error);
+            }
 
-          return response.data as T;
-        } catch (error) {
-          if (cacheKey) {
-            const redis = getRedisClient();
-            const cachedData = await redis.get(cacheKey);
-            if (cachedData) {
-              try {
-                const parsed = JSON.parse(cachedData);
-                if (parsed && typeof parsed === 'object') {
-                  logger.warn('[Graceful Degradation] Servindo dados de fallback do Redis', { cacheKey });
-                  return parsed as T;
+            return response.data as T;
+          } catch (error) {
+            if (
+              attempt === 0 &&
+              isStorefrontAuthError(error) &&
+              !hasStaticStorefrontToken(staticToken)
+            ) {
+              logger.warn('[shopify/client] Storefront auth failed — refreshing token cache', {
+                region: region.code,
+              });
+              await clearStorefrontTokenCache(region.code);
+              invalidateShopifyClient(region.code, storeDomain);
+              continue;
+            }
+
+            if (cacheKey) {
+              const redis = getRedisClient();
+              const cachedData = await redis.get(cacheKey);
+              if (cachedData) {
+                try {
+                  const parsed = JSON.parse(cachedData);
+                  if (parsed && typeof parsed === 'object') {
+                    logger.warn('[Graceful Degradation] Servindo dados de fallback do Redis', { cacheKey });
+                    return parsed as T;
+                  }
+                } catch (parseError) {
+                  logger.error('Falha ao parsear cache do Redis', { cacheKey, error: parseError });
                 }
-              } catch (parseError) {
-                logger.error('Falha ao parsear cache do Redis', { cacheKey, error: parseError });
               }
             }
+            throw error;
           }
-          throw error;
         }
+
+        throw new Error(`Shopify request failed for region: ${region.code}`);
       });
     },
   };

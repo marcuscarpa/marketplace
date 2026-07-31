@@ -57,10 +57,15 @@ export interface CartActionState {
 }
 
 async function invalidateCartCache(cartId: string, locale?: string): Promise<void> {
-  revalidateTag('cart');
-  if (locale) {
-    revalidatePath(`/${locale}/cart`);
+  try {
+    revalidateTag('cart');
+    if (locale) {
+      revalidatePath(`/${locale}/cart`);
+    }
+  } catch (error) {
+    logger.warn('invalidateCartCache revalidation failed', { cartId, error: formatActionError(error) });
   }
+
   try {
     const redis = getRedisClient();
     await redis.del(`cart:${cartId}`);
@@ -245,13 +250,20 @@ export async function addToCartAction(
 
     const cart = result.cartCreate.cart;
     if (cart) {
-      cookieStore.set(CART_COOKIE, cart.id, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24 * 30,
-      });
+      try {
+        cookieStore.set(CART_COOKIE, cart.id, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 60 * 60 * 24 * 30,
+        });
+      } catch (error) {
+        logger.warn('addToCartAction: failed to persist cart cookie', {
+          cartId: cart.id,
+          error: formatActionError(error),
+        });
+      }
 
       const success = await finalizeCartSuccess(cart, locale, cartMsg.createAndAdded);
       return success;
