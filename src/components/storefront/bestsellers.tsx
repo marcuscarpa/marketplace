@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { CatalogProduct } from '@/lib/catalog/data';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
 import { PopularCard } from '@/components/storefront/product-card';
-import { PRODUCT_GAP, SECTION_PADDING, SectionHeading } from '@/components/storefront/ui';
+import { PRODUCT_GAP, SECTION_PADDING_FLUSH, SectionHeading } from '@/components/storefront/ui';
 import { EntranceView } from '@/components/storefront/entrance-view';
 import { m } from '@/lib/i18n';
 
@@ -17,7 +17,7 @@ export function Bestsellers({ locale, products }: BestsellersProps) {
   const c = m(locale).common;
 
   return (
-    <EntranceView className={`mx-auto max-w-[1440px] bg-cream ${SECTION_PADDING}`}>
+    <EntranceView className={`mx-auto max-w-[1440px] bg-cream ${SECTION_PADDING_FLUSH} pt-10 lg:pt-16`}>
       <div className="mx-auto mb-6 flex max-w-[1440px] items-end justify-between lg:mb-8">
         <SectionHeading>{h.bestsellers}</SectionHeading>
         <Link

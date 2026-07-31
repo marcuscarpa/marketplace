@@ -22,7 +22,7 @@ export function CollectionSpotlight({ locale, product }: CollectionSpotlightProp
   return (
     <EntranceView
       stagger
-      className={`flex w-full flex-col gap-7 ${SECTION_PADDING_FLUSH} pb-10 lg:pb-16 min-[1440px]:flex-row min-[1440px]:items-center min-[1440px]:gap-8`}
+      className={`flex w-full flex-col gap-7 ${SECTION_PADDING_FLUSH} pt-10 pb-10 lg:pt-16 lg:pb-16 min-[1440px]:flex-row min-[1440px]:items-center min-[1440px]:gap-8`}
     >
       <div data-entrance-step="1" className="relative w-full min-[1440px]:flex-[3]">
         <article className="relative aspect-[682/1024] w-full overflow-hidden">
