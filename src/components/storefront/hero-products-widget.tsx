@@ -15,38 +15,41 @@ export function HeroProductsWidget({ locale, products }: HeroProductsWidgetProps
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const item = rootRef.current;
-    if (!item || item.dataset.heroInited === 'true') return;
+    const maybeRoot = rootRef.current;
+    if (!maybeRoot || maybeRoot.dataset.heroInited === 'true') return;
 
-    item.dataset.heroInited = 'true';
+    const root: HTMLDivElement = maybeRoot;
+    root.dataset.heroInited = 'true';
 
-    const content = item.querySelector<HTMLElement>('.js-hero-products-content');
-    const openMore = item.querySelector<HTMLElement>('.hero-products__open-more');
-    if (!content) return;
+    const maybeContent = root.querySelector<HTMLElement>('.js-hero-products-content');
+    const openMore = root.querySelector<HTMLElement>('.hero-products__open-more');
+    if (!maybeContent) return;
+
+    const content: HTMLElement = maybeContent;
 
     let initWidth: string | null = null;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let pinned = false;
 
     function open() {
-      item.classList.add('active');
+      root.classList.add('active');
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
-        item.classList.add('active-2');
+        root.classList.add('active-2');
       }, 50);
 
       if (initWidth === null) {
-        initWidth = `${item.offsetWidth}px`;
+        initWidth = `${root.offsetWidth}px`;
       }
 
-      item.style.setProperty('width', `${content.scrollWidth}px`, 'important');
+      root.style.setProperty('width', `${content.scrollWidth}px`, 'important');
     }
 
     function close() {
-      item.classList.remove('active', 'active-2');
+      root.classList.remove('active', 'active-2');
       if (timer) clearTimeout(timer);
       if (initWidth !== null) {
-        item.style.setProperty('width', initWidth, 'important');
+        root.style.setProperty('width', initWidth, 'important');
       }
       content.scrollLeft = 0;
       pinned = false;
@@ -64,7 +67,7 @@ export function HeroProductsWidget({ locale, products }: HeroProductsWidgetProps
       event.preventDefault();
       event.stopPropagation();
 
-      if (item.classList.contains('active-2')) {
+      if (root.classList.contains('active-2')) {
         close();
         return;
       }
@@ -74,7 +77,7 @@ export function HeroProductsWidget({ locale, products }: HeroProductsWidgetProps
     };
 
     const onWheel = (event: WheelEvent) => {
-      if (!item.classList.contains('active-2')) return;
+      if (!root.classList.contains('active-2')) return;
       if (content.scrollWidth <= content.clientWidth) return;
 
       event.preventDefault();
@@ -82,14 +85,14 @@ export function HeroProductsWidget({ locale, products }: HeroProductsWidgetProps
       content.scrollLeft += event.deltaY;
     };
 
-    item.addEventListener('mouseenter', onMouseEnter);
-    item.addEventListener('mouseleave', onMouseLeave);
+    root.addEventListener('mouseenter', onMouseEnter);
+    root.addEventListener('mouseleave', onMouseLeave);
     openMore?.addEventListener('click', onToggleClick);
     content.addEventListener('wheel', onWheel, { passive: false });
 
     return () => {
-      item.removeEventListener('mouseenter', onMouseEnter);
-      item.removeEventListener('mouseleave', onMouseLeave);
+      root.removeEventListener('mouseenter', onMouseEnter);
+      root.removeEventListener('mouseleave', onMouseLeave);
       openMore?.removeEventListener('click', onToggleClick);
       content.removeEventListener('wheel', onWheel);
       if (timer) clearTimeout(timer);
