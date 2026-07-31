@@ -1236,12 +1236,13 @@ select {
 /* Our Values banner — Kindred menswear scroll + sticky widget */
 .our-values__scroll-track {
   position: relative;
-  height: calc(520px + 65vh);
+  /* banner + scroll runway, stopping 20px before banner bottom */
+  height: calc(520px + 65vh - 20px);
 }
 
 @media (min-width: 1024px) {
   .our-values__scroll-track {
-    height: calc(900px + 45vh);
+    height: calc(900px + 45vh - 20px);
   }
 }
 
@@ -1263,7 +1264,7 @@ select {
   position: absolute;
   top: 35px;
   right: 0;
-  bottom: 240px;
+  bottom: 260px;
   left: 0;
   z-index: 4;
   display: flex;
@@ -1273,7 +1274,7 @@ select {
 @media (max-width: 991px) {
   .our-values__top-wrapper {
     top: 27px;
-    bottom: 100px;
+    bottom: 120px;
   }
 }
 
@@ -1293,7 +1294,7 @@ select {
   position: absolute;
   top: 120px;
   right: 0;
-  bottom: 0;
+  bottom: 20px;
   left: 0;
   z-index: 3;
   display: flex;
@@ -1306,7 +1307,7 @@ select {
   padding: 3rem 1.25rem 2rem;
   pointer-events: auto;
   position: sticky;
-  bottom: 0;
+  bottom: 20px;
   transform: none !important;
   animation: none !important;
 }
