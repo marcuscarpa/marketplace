@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 
 import { EntranceView } from '@/components/storefront/entrance-view';
+import { SECTION_PADDING } from '@/components/storefront/ui';
 import { m } from '@/lib/i18n';
 
 const WhyShopLordIcon = dynamic(
@@ -44,7 +45,7 @@ export function WhyShopSection({ locale }: WhyShopSectionProps) {
   ];
 
   return (
-    <EntranceView stagger className="w-full overflow-hidden bg-cream py-10 lg:py-12">
+    <EntranceView stagger className={`w-full overflow-hidden bg-cream ${SECTION_PADDING}`}>
       <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-8 px-5">
         <header data-entrance-step="1" className="flex w-full flex-col items-center gap-4 text-center">
           <h2 className="m-0 max-w-[720px] font-serif text-[clamp(1.75rem,5vw,2.5rem)] font-normal leading-tight tracking-[-0.04em] text-ink lg:text-[40px] lg:leading-[44px]">

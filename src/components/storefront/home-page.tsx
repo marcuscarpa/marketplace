@@ -1,4 +1,3 @@
-import { AboutSection } from '@/components/storefront/about-section';
 import { WhyShopSection } from '@/components/storefront/why-shop-section';
 import { Bestsellers } from '@/components/storefront/bestsellers';
 import { CollectionSpotlight } from '@/components/storefront/collection-spotlight';
@@ -43,7 +42,6 @@ export function HomePage({
       <ProductCycler locale={locale} categories={cyclerCategories} />
       <Bestsellers locale={locale} products={bestsellerProducts} />
       <CollectionSpotlight locale={locale} product={spotlightProduct} />
-      <AboutSection />
       <WhyShopSection locale={locale} />
       <SocialFeed locale={locale} />
     </HeroCurtainStage>
