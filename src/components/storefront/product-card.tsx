@@ -27,6 +27,8 @@ interface PopularCardProps {
   locale: string;
   badges?: ProductTagKey[];
   index?: number;
+  /** Extra space below price (e.g. Our bestsellers section). */
+  priceBottomPadding?: boolean;
 }
 
 const ADD_TO_CART_BAR =
@@ -79,7 +81,13 @@ function FavoriteButton({ product, locale }: { product: CatalogProduct; locale: 
 }
 
 /** Most-popular product card (mobile + desktop variants). */
-export function PopularCard({ product, locale, badges, index = 0 }: PopularCardProps) {
+export function PopularCard({
+  product,
+  locale,
+  badges,
+  index = 0,
+  priceBottomPadding = false,
+}: PopularCardProps) {
   const href = `/${locale}/products/${product.handle}`;
   const price = formatCatalogPrice(product.price, locale);
   const tags = badges ?? resolveCatalogProductTags(product);
@@ -160,7 +168,11 @@ export function PopularCard({ product, locale, badges, index = 0 }: PopularCardP
             {product.category}
           </p>
         </div>
-        <p className="whitespace-nowrap text-[14px] font-medium leading-[100%] tracking-[0.02em] text-ink">
+        <p
+          className={`whitespace-nowrap text-[14px] font-medium leading-[100%] tracking-[0.02em] text-ink${
+            priceBottomPadding ? ' pb-8' : ''
+          }`}
+        >
           {price}
         </p>
       </Link>
