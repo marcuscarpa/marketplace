@@ -31,6 +31,15 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
   --color-gray-950: #030712;
+  /* Fixed announcement bar + header (+ desktop nav): matches HEADER_OFFSET_TOP in ui.tsx */
+  --site-header-stack: 84px;
+  --hero-widget-top: calc(var(--site-header-stack) + 20px);
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --site-header-stack: 154px;
+  }
 }
 
 *,
@@ -1262,7 +1271,7 @@ select {
 
 .our-values__top-wrapper {
   position: absolute;
-  top: 35px;
+  top: var(--hero-widget-top);
   right: 0;
   bottom: 260px;
   left: 0;
@@ -1273,7 +1282,6 @@ select {
 
 @media (max-width: 991px) {
   .our-values__top-wrapper {
-    top: 27px;
     bottom: 120px;
   }
 }
@@ -1283,7 +1291,7 @@ select {
   margin: 0 0 auto;
   pointer-events: none;
   position: sticky;
-  top: 132px;
+  top: var(--hero-widget-top);
 }
 
 .our-values__top-sticky > * {
