@@ -6,6 +6,7 @@ import {
   NEW_ARRIVALS,
   POPULAR_PRODUCTS,
   SEARCH_MODAL_PRODUCTS,
+  SPOTLIGHT_PRODUCT,
   type CatalogProduct,
 } from '@/lib/catalog/data';
 
@@ -71,6 +72,7 @@ export function getAllCatalogProducts(): CatalogProduct[] {
     ...NEW_ARRIVALS,
     ...BESTSELLERS,
     ...CYCLER_PRODUCTS,
+    SPOTLIGHT_PRODUCT,
   ]);
 }
 

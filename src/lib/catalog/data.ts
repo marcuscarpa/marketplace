@@ -114,7 +114,7 @@ export const SEARCH_MODAL_PRODUCTS: CatalogProduct[] = [
 export const SPOTLIGHT_PRODUCT: CatalogProduct = {
   title: 'Lolo Skirt - Crochet',
   category: 'Skirts',
-  price: '$165.00',
+  price: '$165',
   handle: 'lolo-skirt-crochet',
   image: SITE_IMAGES.collectionWomenProduct,
 };
