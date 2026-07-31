@@ -38,6 +38,23 @@ export function findMatchingVariant(
   );
 }
 
+/** First purchasable variant — default option selection, then any available. */
+export function pickDefaultVariant(product: {
+  options?: ShopifyProductOption[];
+  variants: { nodes: ShopifyProductVariant[] };
+}): ShopifyProductVariant | undefined {
+  const variants = product.variants.nodes;
+  if (variants.length === 0) return undefined;
+
+  const options = product.options ?? [];
+  if (options.length > 0) {
+    const fromDefaults = findMatchingVariant(variants, defaultSelectedOptions(options));
+    if (fromDefaults && fromDefaults.availableForSale !== false) return fromDefaults;
+  }
+
+  return variants.find((variant) => variant.availableForSale !== false) ?? variants[0];
+}
+
 const CART_QTY_MAX = 99;
 
 /** Max units addable for a variant, capped by Shopify inventory when tracked. */

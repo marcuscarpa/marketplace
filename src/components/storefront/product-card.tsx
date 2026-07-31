@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, useInView } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 
+import { QuickAddToCartBar } from '@/components/storefront/quick-add-to-cart-bar';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { ProductTags, PRODUCT_TAGS_OVERLAY_CLASS } from '@/components/ui/product-tags';
 import { PRODUCT_IMAGE_HOVER_NESTED } from '@/components/storefront/ui';
@@ -29,7 +30,7 @@ interface PopularCardProps {
 }
 
 const ADD_TO_CART_BAR =
-  'absolute inset-x-0 bottom-0 z-[5] flex h-12 translate-y-full items-center justify-center bg-cream px-6 pt-0.5 pb-0 font-sans-ui text-[12px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink no-underline opacity-0 transition duration-700 ease-in-out group-hover/image:translate-y-0 group-hover/image:opacity-100';
+  'flex h-12 w-full shrink-0 items-center justify-center bg-cream px-6 pt-0.5 pb-0 font-sans-ui text-[12px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink no-underline';
 
 function HeartIcon({ filled = false, className = 'h-4 w-4' }: { filled?: boolean; className?: string }) {
   return (
@@ -95,7 +96,7 @@ export function PopularCard({ product, locale, badges, index = 0 }: PopularCardP
       initial={{ opacity: 0, y: 24 }}
       animate={mounted && inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="relative flex w-full flex-col gap-4"
+      className="relative flex w-full flex-col"
     >
       <div className="absolute inset-x-0 top-0 z-10 flex h-12 justify-end p-2">
         <FavoriteButton product={product} locale={locale} />
@@ -138,12 +139,19 @@ export function PopularCard({ product, locale, badges, index = 0 }: PopularCardP
             )}
           </div>
         </Link>
-        <Link href={href} className={ADD_TO_CART_BAR} aria-label={addToCartLabel}>
-          {addToCartLabel}
-        </Link>
       </div>
 
-      <Link href={href} className="flex shrink-0 flex-col gap-2 text-center font-sans-ui no-underline lg:text-left">
+      <QuickAddToCartBar
+        handle={product.handle}
+        productTitle={product.title}
+        locale={locale}
+        label={addToCartLabel}
+        className={ADD_TO_CART_BAR}
+        disabled={product.soldOut}
+        href={href}
+      />
+
+      <Link href={href} className="mt-4 flex shrink-0 flex-col gap-2 text-center font-sans-ui no-underline lg:text-left">
         <div className="flex flex-col gap-1">
           <p className="text-[14px] font-normal uppercase leading-[100%] tracking-[0.02em] text-ink">
             {product.title}
@@ -246,10 +254,16 @@ export function StoreProductCard({
                 )}
               </div>
             </Link>
-            <Link href={href} className={ADD_TO_CART_BAR} aria-label={addToCartLabel}>
-              {addToCartLabel}
-            </Link>
           </div>
+          <QuickAddToCartBar
+            handle={product.handle}
+            productTitle={product.title}
+            locale={locale}
+            label={addToCartLabel}
+            className={ADD_TO_CART_BAR}
+            disabled={product.soldOut}
+            href={href}
+          />
           {textBlock}
         </>
       ) : (

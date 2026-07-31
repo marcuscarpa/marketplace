@@ -7,8 +7,10 @@ import { z } from 'zod';
 import { getRedisClient } from '@/lib/redis/client';
 import { logger } from '@/lib/logger';
 import { checkRateLimit } from '@/lib/security/bot-protection';
-import { isCatalogMockVariantId } from '@/lib/shopify/catalog-mock';
+import { isCatalogMockProduct, isCatalogMockVariantId } from '@/lib/shopify/catalog-mock';
 import { getShopifyClient } from '@/lib/shopify/client';
+import { getProductByHandle } from '@/lib/shopify/loader';
+import { pickDefaultVariant } from '@/lib/shopify/variants';
 import { CART_CREATE, CART_LINES_ADD, CART_LINES_UPDATE, CART_LINES_REMOVE } from '@/lib/shopify/queries';
 import { ShopifyCart } from '@/lib/shopify/types';
 import { serializeCartWithImages } from '@/lib/cart/enrich-images';
@@ -25,6 +27,12 @@ const CART_COOKIE = 'shopify_cart_id';
 
 const addToCartSchema = z.object({
   variantId: z.string().startsWith('gid://shopify/ProductVariant/'),
+  quantity: z.coerce.number().int().min(1).max(99),
+  locale: z.string().default('en'),
+});
+
+const addToCartByHandleSchema = z.object({
+  handle: z.string().min(1),
   quantity: z.coerce.number().int().min(1).max(99),
   locale: z.string().default('en'),
 });
@@ -157,31 +165,14 @@ async function finalizeCartSuccess(
   };
 }
 
-export async function addToCartAction(
-  prevState: CartActionState,
-  formData: FormData
+async function addVariantToCart(
+  variantId: string,
+  quantity: number,
+  locale: string,
 ): Promise<CartActionState> {
-  const locale = (formData.get('locale') as string) || 'en';
   const cartMsg = m(locale).cart;
 
-  const rateLimitMessage = await checkCartRateLimit(locale);
-  if (rateLimitMessage) {
-    return { success: false, message: rateLimitMessage };
-  }
-
-  const variantId = formData.get('variantId') as string;
-  const quantity = formData.get('quantity') as string;
-
-  const parsed = addToCartSchema.safeParse({ variantId, quantity, locale });
-
-  if (!parsed.success) {
-    return {
-      success: false,
-      message: parsed.error.issues.map((i) => i.message).join(', '),
-    };
-  }
-
-  if (isCatalogMockVariantId(parsed.data.variantId)) {
+  if (isCatalogMockVariantId(variantId)) {
     return { success: false, message: cartMsg.addFailed };
   }
 
@@ -196,7 +187,7 @@ export async function addToCartAction(
           CART_LINES_ADD,
           {
             cartId: existingCartId,
-            lines: [{ merchandiseId: parsed.data.variantId, quantity: parsed.data.quantity }],
+            lines: [{ merchandiseId: variantId, quantity }],
           }
         );
 
@@ -235,7 +226,7 @@ export async function addToCartAction(
       CART_CREATE,
       {
         input: {
-          lines: [{ merchandiseId: parsed.data.variantId, quantity: parsed.data.quantity }],
+          lines: [{ merchandiseId: variantId, quantity }],
           ...(buyerIdentity ? { buyerIdentity } : {}),
         },
       }
@@ -265,15 +256,14 @@ export async function addToCartAction(
         });
       }
 
-      const success = await finalizeCartSuccess(cart, locale, cartMsg.createAndAdded);
-      return success;
+      return finalizeCartSuccess(cart, locale, cartMsg.createAndAdded);
     }
 
     logger.warn('addToCartAction: cart null after create', { result: result.cartCreate });
     return { success: false, message: cartMsg.createFailed };
   } catch (error) {
     logger.error('addToCartAction failed', {
-      variantId: parsed.data.variantId,
+      variantId,
       error: formatActionError(error),
     });
     return {
@@ -281,6 +271,68 @@ export async function addToCartAction(
       message: cartMsg.addFailed,
     };
   }
+}
+
+export async function addToCartAction(
+  prevState: CartActionState,
+  formData: FormData
+): Promise<CartActionState> {
+  const locale = (formData.get('locale') as string) || 'en';
+
+  const rateLimitMessage = await checkCartRateLimit(locale);
+  if (rateLimitMessage) {
+    return { success: false, message: rateLimitMessage };
+  }
+
+  const variantId = formData.get('variantId') as string;
+  const quantity = formData.get('quantity') as string;
+
+  const parsed = addToCartSchema.safeParse({ variantId, quantity, locale });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues.map((i) => i.message).join(', '),
+    };
+  }
+
+  return addVariantToCart(parsed.data.variantId, parsed.data.quantity, locale);
+}
+
+export async function addToCartByHandleAction(
+  prevState: CartActionState,
+  formData: FormData
+): Promise<CartActionState> {
+  const locale = (formData.get('locale') as string) || 'en';
+  const cartMsg = m(locale).cart;
+
+  const rateLimitMessage = await checkCartRateLimit(locale);
+  if (rateLimitMessage) {
+    return { success: false, message: rateLimitMessage };
+  }
+
+  const handle = formData.get('handle') as string;
+  const quantity = formData.get('quantity') as string;
+
+  const parsed = addToCartByHandleSchema.safeParse({ handle, quantity, locale });
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: parsed.error.issues.map((i) => i.message).join(', '),
+    };
+  }
+
+  const product = await getProductByHandle(parsed.data.handle, locale);
+  if (!product || isCatalogMockProduct(product)) {
+    return { success: false, message: cartMsg.addFailed };
+  }
+
+  const variant = pickDefaultVariant(product);
+  if (!variant || isCatalogMockVariantId(variant.id) || variant.availableForSale === false) {
+    return { success: false, message: cartMsg.addFailed };
+  }
+
+  return addVariantToCart(variant.id, parsed.data.quantity, locale);
 }
 
 export async function updateCartLinesAction(
