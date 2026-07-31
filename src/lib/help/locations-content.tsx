@@ -6,18 +6,27 @@ export interface BoutiqueLocation {
   phone?: { display: string; href: string };
 }
 
+/** Phone numbers per boutique — independent from general contact list. */
+const BOUTIQUE_PHONES = {
+  newport: { display: '+1 (401) 847-1087', href: 'tel:+14018471087' },
+  vilaVelha: { display: '(27) 99929-8844', href: 'tel:+5527999298844' },
+  angraDosReis: { display: '(24) 99819-6050', href: 'tel:+5524998196050' },
+  trancoso: { display: '(73) 99950-4425', href: 'tel:+5573999504425' },
+} as const;
+
 export const BOUTIQUE_LOCATIONS: BoutiqueLocation[] = [
   {
     id: 'newport',
     city: 'Newport',
     lines: ['135 Spring Street', 'Newport - RI', '02840'],
+    phone: BOUTIQUE_PHONES.newport,
   },
   {
     id: 'vila-velha',
     city: 'Vila Velha',
     country: 'Brazil',
     lines: ['Rua Antônio Ataíde, 462', 'Centro, Vila Velha - ES', '29.100-290'],
-    phone: { display: '(27) 99929-8844', href: 'tel:+5527999298844' },
+    phone: BOUTIQUE_PHONES.vilaVelha,
   },
   {
     id: 'angra-dos-reis',
@@ -29,14 +38,14 @@ export const BOUTIQUE_LOCATIONS: BoutiqueLocation[] = [
       'Frade (cunhambebe), Angra dos Reis - RJ',
       '23.946-017',
     ],
-    phone: { display: '(24) 99819-6050', href: 'tel:+5524998196050' },
+    phone: BOUTIQUE_PHONES.angraDosReis,
   },
   {
     id: 'trancoso',
     city: 'Trancoso',
     country: 'Brazil',
     lines: ['Rua Carlos Alberto Parracho, 515', 'Trancoso, Porto Seguro - BA', '45818-000'],
-    phone: { display: '(73) 99950-4425', href: 'tel:+5573999504425' },
+    phone: BOUTIQUE_PHONES.trancoso,
   },
 ];
 

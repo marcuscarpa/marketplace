@@ -1,4 +1,5 @@
 import { LEGAL_PROSE } from '@/lib/help/legal-prose';
+import { ALL_CONTACT_PHONES } from '@/lib/help/contact-info';
 
 const SITE = 'sinesiakarol.us';
 const EMAIL = 'orders@sinesiakarol.us';
@@ -120,6 +121,14 @@ export function PrivacyContentPt({ locale }: { locale: string }) {
           <a href={`mailto:${EMAIL}`}>{EMAIL}</a> ou por correio usando os dados abaixo:
         </p>
         <p>135 Spring Street, Newport, RI 02840, USA</p>
+        <p>
+          {ALL_CONTACT_PHONES.map((phone, index) => (
+            <span key={phone.href}>
+              {index > 0 ? ' · ' : null}
+              <a href={phone.href}>{phone.display}</a>
+            </span>
+          ))}
+        </p>
       </section>
 
       <section>

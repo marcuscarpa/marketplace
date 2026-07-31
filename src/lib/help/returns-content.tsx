@@ -1,8 +1,6 @@
 import { LEGAL_PROSE } from '@/lib/help/legal-prose';
 import { ReturnsContentPt } from '@/lib/help/returns-content.pt';
-
-const EMAIL = 'business@sinesiakarol.com';
-const PHONE = '401-847-1087';
+import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/help/contact-info';
 
 export function ReturnsContent({ locale }: { locale: string }) {
   if (locale === 'pt') return <ReturnsContentPt locale={locale} />;
@@ -38,7 +36,7 @@ export function ReturnsContent({ locale }: { locale: string }) {
       <section>
         <h2>Shipping</h2>
         <p>
-          To initiate a return, please email us at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>. We require a receipt or
+          To initiate a return, please email us at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We require a receipt or
           proof of purchase to accompany your return.
         </p>
         <p>All returned merchandise should be sent to us at:</p>
@@ -48,7 +46,7 @@ export function ReturnsContent({ locale }: { locale: string }) {
           <p>135 Spring Street</p>
           <p>Newport, Rhode Island 02840</p>
           <p>
-            <a href={`tel:${PHONE.replace(/-/g, '')}`}>{PHONE}</a>
+            <a href={CONTACT_PHONES.us.href}>{CONTACT_PHONES.us.display}</a>
           </p>
         </address>
         <p>
@@ -77,7 +75,7 @@ export function ReturnsContent({ locale }: { locale: string }) {
         </p>
         <p>
           We only replace items if they are defective or damaged upon arrival. If you need to make an exchange for such
-          items, please send an email to <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and we will reply with instructions on
+          items, please send an email to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we will reply with instructions on
           how to proceed.
         </p>
       </section>
@@ -89,7 +87,7 @@ export function ReturnsContent({ locale }: { locale: string }) {
         <p>Next contact your bank. There is often some processing time before a refund is posted.</p>
         <p>
           If you&apos;ve done all of this and you still have not received your refund yet, please contact us at{' '}
-          <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
         </p>
       </section>
 

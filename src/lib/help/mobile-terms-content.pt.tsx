@@ -1,8 +1,9 @@
 import { LEGAL_PROSE_SIMPLE } from '@/lib/help/legal-prose';
+import { CONTACT_PHONES } from '@/lib/help/contact-info';
 
 const BRAND = 'SINESIA KAROL';
 const SUPPORT_EMAIL = 'admin@sinesiakarol.com';
-const SENDING_NUMBER = '401-847-1087';
+const SENDING_NUMBER = CONTACT_PHONES.us.display;
 
 export function MobileTermsContentPt({ locale }: { locale: string }) {
   const privacyHref = `/${locale}/privacy`;

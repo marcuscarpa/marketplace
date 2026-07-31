@@ -1,5 +1,4 @@
-const EMAIL = 'business@sinesiakarol.com';
-const PHONE = '401.847.1087';
+import { ALL_CONTACT_PHONES, CONTACT_EMAIL } from '@/lib/help/contact-info';
 
 const TOPICS_EN = [
   'Orders & Payment',
@@ -23,7 +22,7 @@ export function ContactPageContent({ locale }: { locale: string }) {
 
   return (
     <div className="max-w-xl font-sans-ui text-sm text-neutral-700">
-      <form className="space-y-5" action={`mailto:${EMAIL}`} method="post" encType="text/plain">
+      <form className="space-y-5" action={`mailto:${CONTACT_EMAIL}`} method="post" encType="text/plain">
         <div>
           <label htmlFor="contact-name" className="mb-1.5 block text-[11px] uppercase tracking-[0.12em] text-neutral-900">
             {isPt ? 'Nome completo' : 'Full Name'} *
@@ -109,13 +108,18 @@ export function ContactPageContent({ locale }: { locale: string }) {
         </button>
       </form>
 
-      <p className="mt-10 text-center text-base text-neutral-900">
-        <a href={`tel:${PHONE.replace(/\./g, '')}`} className="hover:opacity-60">
-          {PHONE}
-        </a>
-        <span className="mx-2">/</span>
-        <a href={`mailto:${EMAIL}`} className="hover:opacity-60">
-          {EMAIL}
+      <p className="mt-10 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-base text-neutral-900">
+        {ALL_CONTACT_PHONES.map((phone, index) => (
+          <span key={phone.href} className="inline-flex items-center gap-x-2">
+            {index > 0 ? <span>/</span> : null}
+            <a href={phone.href} className="hover:opacity-60">
+              {phone.display}
+            </a>
+          </span>
+        ))}
+        <span>/</span>
+        <a href={`mailto:${CONTACT_EMAIL}`} className="hover:opacity-60">
+          {CONTACT_EMAIL}
         </a>
       </p>
     </div>

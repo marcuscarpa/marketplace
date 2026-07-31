@@ -1,7 +1,5 @@
 import { LEGAL_PROSE } from '@/lib/help/legal-prose';
-
-const EMAIL = 'business@sinesiakarol.com';
-const PHONE = '401-847-1087';
+import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/help/contact-info';
 
 export function ReturnsContentPt({ locale }: { locale: string }) {
   const termsHref = `/${locale}/terms`;
@@ -35,7 +33,7 @@ export function ReturnsContentPt({ locale }: { locale: string }) {
       <section>
         <h2>Envio</h2>
         <p>
-          Para iniciar uma devolução, envie um e-mail para <a href={`mailto:${EMAIL}`}>{EMAIL}</a>. Exigimos recibo ou
+          Para iniciar uma devolução, envie um e-mail para <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Exigimos recibo ou
           comprovante de compra junto com sua devolução.
         </p>
         <p>Toda mercadoria devolvida deve ser enviada para:</p>
@@ -45,7 +43,7 @@ export function ReturnsContentPt({ locale }: { locale: string }) {
           <p>135 Spring Street</p>
           <p>Newport, Rhode Island 02840</p>
           <p>
-            <a href={`tel:${PHONE.replace(/-/g, '')}`}>{PHONE}</a>
+            <a href={CONTACT_PHONES.us.href}>{CONTACT_PHONES.us.display}</a>
           </p>
         </address>
         <p>
@@ -75,7 +73,7 @@ export function ReturnsContentPt({ locale }: { locale: string }) {
         </p>
         <p>
           Só substituímos itens se estiverem defeituosos ou danificados na chegada. Se precisar fazer uma troca por
-          tais itens, envie um e-mail para <a href={`mailto:${EMAIL}`}>{EMAIL}</a> e responderemos com instruções sobre
+          tais itens, envie um e-mail para <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> e responderemos com instruções sobre
           como proceder.
         </p>
       </section>
@@ -90,7 +88,7 @@ export function ReturnsContentPt({ locale }: { locale: string }) {
         <p>Depois contate seu banco. Frequentemente há um tempo de processamento antes que um reembolso seja lançado.</p>
         <p>
           Se você fez tudo isso e ainda não recebeu seu reembolso, entre em contato conosco em{' '}
-          <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
         </p>
       </section>
 
