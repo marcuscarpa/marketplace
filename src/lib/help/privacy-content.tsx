@@ -1,6 +1,5 @@
 import { LEGAL_PROSE } from '@/lib/help/legal-prose';
 import { PrivacyContentPt } from '@/lib/help/privacy-content.pt';
-import { ALL_CONTACT_PHONES } from '@/lib/help/contact-info';
 
 const SITE = 'sinesiakarol.us';
 const EMAIL = 'orders@sinesiakarol.us';
@@ -105,8 +104,6 @@ function InfoBlock({
 export function PrivacyContent({ locale }: { locale: string }) {
   if (locale === 'pt') return <PrivacyContentPt locale={locale} />;
 
-  const cookiesHref = `/${locale}/cookies`;
-
   return (
     <article className={LEGAL_PROSE}>
       <p className="text-neutral-500">Last Updated: May 27, 2026</p>
@@ -117,25 +114,17 @@ export function PrivacyContent({ locale }: { locale: string }) {
       </p>
 
       <section>
-        <h2>Contact</h2>
+        <h2>CONTACT</h2>
         <p>
           After reviewing this policy, if you have additional questions, want more information about our privacy
           practices, or would like to make a complaint, please contact us by e-mail at{' '}
           <a href={`mailto:${EMAIL}`}>{EMAIL}</a> or by mail using the details provided below:
         </p>
         <p>135 Spring Street, Newport, RI 02840, USA</p>
-        <p>
-          {ALL_CONTACT_PHONES.map((phone, index) => (
-            <span key={phone.href}>
-              {index > 0 ? ' · ' : null}
-              <a href={phone.href}>{phone.display}</a>
-            </span>
-          ))}
-        </p>
       </section>
 
       <section>
-        <h2>Collecting Personal Information</h2>
+        <h2>COLLECTING PERSONAL INFORMATION</h2>
         <p>
           When you visit the Site, we collect certain information about your device, your interaction with the Site,
           and information necessary to process your purchases. We may also collect additional information if you contact
@@ -170,7 +159,7 @@ export function PrivacyContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Minors</h2>
+        <h2>MINORS</h2>
         <p>
           The Site is not intended for individuals under the age of 13. We do not intentionally collect Personal
           Information from children. If you are the parent or guardian and believe your child has provided us with
@@ -179,7 +168,7 @@ export function PrivacyContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Sharing Personal Information</h2>
+        <h2>SHARING PERSONAL INFORMATION</h2>
         <p>
           We share your Personal Information with service providers to help us provide our services and fulfill our
           contracts with you, as described above. For example:
@@ -202,7 +191,7 @@ export function PrivacyContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Behavioural Advertising</h2>
+        <h2>BEHAVIOURAL ADVERTISING</h2>
         <p>
           As described above, we use your Personal Information to provide you with targeted advertisements or marketing
           communications we believe may be of interest to you. For example:
@@ -269,7 +258,7 @@ export function PrivacyContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Using Personal Information</h2>
+        <h2>USING PERSONAL INFORMATION</h2>
         <p>
           We use your personal Information to provide our services to you, which includes: offering products for sale,
           processing payments, shipping and fulfillment of your order, and keeping you up to date on new products,
@@ -278,7 +267,7 @@ export function PrivacyContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Lawful Basis</h2>
+        <h2>LAWFUL BASIS</h2>
         <p>
           Pursuant to the General Data Protection Regulation (&quot;GDPR&quot;), if you are a resident of the European
           Economic Area (&quot;EEA&quot;), we process your personal information under the following lawful bases:
@@ -303,7 +292,7 @@ export function PrivacyContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Automatic Decision-Making</h2>
+        <h2>Automatic decision-making</h2>
         <p>
           If you are a resident of the EEA, you have the right to object to processing based solely on automated
           decision-making (which includes profiling), when that decision-making has a legal effect on you or otherwise
@@ -331,7 +320,7 @@ export function PrivacyContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Your Rights</h2>
+        <h2>Your rights</h2>
         <h3>GDPR</h3>
         <p>
           If you are a resident of the EEA, you have the right to access the Personal Information we hold about you, to
@@ -407,7 +396,7 @@ export function PrivacyContent({ locale }: { locale: string }) {
           <a href="https://www.allaboutcookies.org" target="_blank" rel="noopener noreferrer">
             www.allaboutcookies.org
           </a>
-          . See also our <a href={cookiesHref}>Cookie Policy</a>.
+          .
         </p>
         <p>
           Additionally, please note that blocking cookies may not completely prevent how we share information with third
