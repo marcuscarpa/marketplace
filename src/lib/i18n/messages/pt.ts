@@ -274,7 +274,7 @@ export const pt: Messages = {
     quickLinks: 'Links rápidos',
     contactCta: 'Fale conosco',
     shipping: 'Pedidos e envio',
-    shippingPageTitle: 'Política de envio',
+    shippingPageTitle: 'ENVIO',
     contactPageTitle: 'Entre em contato',
     returns: 'Devoluções e Trocas',
     faq: 'Perguntas frequentes',

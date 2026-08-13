@@ -1,36 +1,70 @@
-const PRODUCT_SHIPPING_POLICY_EN = {
-  title: 'Shipping policy',
-  email: 'contact@sinesiakarol.com',
-  paragraphs: [
-    'All in-stock orders will ship within one week of purchase, barring bank holidays and Sundays.',
-    'We ship with the United States Postal Service, both Domestic and International.',
-    'Priority shipping within the United States is not less than $10.',
-    'Priority shipping to Canada is not less than $30.',
-    'Priority shipping to anywhere else in the world is not less than $50.',
-    'All shipping prices are subject to change and are determined by weight.',
-    'Prices throughout the site are in USD.',
-    'Sinesia Karol LLC is unable to combine shipping on orders.',
-    'Sinesia Karol LLC will only ship to the shipping address in the Shipping Information field on the order.',
-    'Sinesia Karol LLC is not responsible for customs fees or import duties in the User\'s destination country. If you have any questions or concerns about customs, please email customer service at contact@sinesiakarol.com. We are unable to lower the value of merchandise on customs forms.',
-  ],
-} as const;
+type PolicyBlock = { type: 'paragraph'; content: string } | { type: 'address'; content: string };
 
-const PRODUCT_SHIPPING_POLICY_PT = {
-  title: 'Política de envio',
-  email: 'contact@sinesiakarol.com',
-  paragraphs: [
-    'Todos os pedidos em estoque serão enviados em até uma semana após a compra, exceto feriados bancários e domingos.',
-    'Enviamos pelo United States Postal Service, tanto doméstico quanto internacional.',
-    'O envio prioritário dentro dos Estados Unidos não é inferior a US$ 10.',
-    'O envio prioritário para o Canadá não é inferior a US$ 30.',
-    'O envio prioritário para qualquer outro lugar do mundo não é inferior a US$ 50.',
-    'Todos os preços de envio estão sujeitos a alterações e são determinados pelo peso.',
-    'Os preços em todo o site estão em USD.',
-    'A Sinesia Karol LLC não pode combinar envios em pedidos.',
-    'A Sinesia Karol LLC enviará apenas para o endereço de entrega informado no campo Informações de Envio do pedido.',
-    'A Sinesia Karol LLC não se responsabiliza por taxas alfandegárias ou impostos de importação no país de destino do usuário. Se tiver dúvidas ou preocupações sobre alfândega, envie um e-mail ao atendimento ao cliente em contact@sinesiakarol.com. Não podemos reduzir o valor da mercadoria em formulários alfandegários.',
+const PRODUCT_SHIPPING_POLICY_EN: { title: string; email: string; blocks: PolicyBlock[] } = {
+  title: 'SHIPPING',
+  email: 'business@sinesiakarol.com',
+  blocks: [
+    {
+      type: 'paragraph',
+      content:
+        'To initiate a return, please email business@sinesiakarol.com. We require a receipt or proof of purchase with the return.',
+    },
+    { type: 'paragraph', content: 'All returned merchandise must be sent to:' },
+    {
+      type: 'address',
+      content:
+        'Sinesia Karol\nAttn: RETURNS (Order No. ___)\n135 Spring Street\n\nNewport, Rhode Island 02840\n\n401-847-1087',
+    },
+    {
+      type: 'paragraph',
+      content:
+        'For items manufactured by third parties and resold by us, please do not send the item back to the manufacturer.',
+    },
+    {
+      type: 'paragraph',
+      content:
+        'You are responsible for paying all shipping costs for the returned item. Shipping costs are non-refundable. If you receive a refund, the cost of return shipping will be deducted from the refund amount. We recommend using a trackable shipping service or purchasing shipping insurance for valuable items.',
+    },
+    {
+      type: 'paragraph',
+      content:
+        'Depending on where you live, the time it takes for an exchanged product to reach you may vary.',
+    },
   ],
-} as const;
+};
+
+const PRODUCT_SHIPPING_POLICY_PT: { title: string; email: string; blocks: PolicyBlock[] } = {
+  title: 'ENVIO',
+  email: 'business@sinesiakarol.com',
+  blocks: [
+    {
+      type: 'paragraph',
+      content:
+        'Para iniciar uma devolução, envie um e-mail para business@sinesiakarol.com. Exigimos um recibo ou comprovante de compra junto com a devolução.',
+    },
+    { type: 'paragraph', content: 'Toda a mercadoria devolvida deve ser enviada para:' },
+    {
+      type: 'address',
+      content:
+        'Sinesia Karol\nAttn: DEVOLUÇÕES (Nº do Pedido ___)\n135 Spring Street\n\nNewport, Rhode Island 02840\n\n401-847-1087',
+    },
+    {
+      type: 'paragraph',
+      content:
+        'Para itens fabricados por terceiros e revendidos por nós, não envie o item de volta ao fabricante.',
+    },
+    {
+      type: 'paragraph',
+      content:
+        'Você é responsável por pagar todos os custos de envio do item devolvido. Os custos de envio não são reembolsáveis. Se você receber um reembolso, o custo do envio da devolução será deduzido do valor do reembolso. Recomendamos usar um serviço de envio com rastreamento ou contratar seguro de envio para itens valiosos.',
+    },
+    {
+      type: 'paragraph',
+      content:
+        'Dependendo de onde você mora, o tempo para um produto trocado chegar até você pode variar.',
+    },
+  ],
+};
 
 /** @deprecated Use getProductShippingPolicy(locale) */
 export const PRODUCT_SHIPPING_POLICY = PRODUCT_SHIPPING_POLICY_EN;

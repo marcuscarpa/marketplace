@@ -10,39 +10,38 @@ export function ReturnsContent({ locale }: { locale: string }) {
   return (
     <article className={LEGAL_PROSE}>
       <p>
-        All defined terms used below shall have the meanings set forth in our{' '}
-        <a href={termsHref}>Terms and Conditions</a>.
+        All terms defined below shall have the meanings set forth in our <a href={termsHref}>Terms and Conditions</a>.
       </p>
 
       <section>
-        <h2>Order Cancellations</h2>
+        <h2>Order Cancellation</h2>
         <p>
-          Orders that you submit online are processed immediately and may not be cancelled. You need to wait until you
-          receive the merchandise in order to return it.
+          Orders placed online are processed immediately and cannot be cancelled. You must wait until you receive the
+          merchandise before you can return it.
         </p>
       </section>
 
       <section>
         <h2>Returns</h2>
         <p>
-          Once an item of merchandise is delivered to you, you can return that item within 7 days of delivery for a full
-          refund. All returns made after 7 days will be issued a store credit. To be eligible for a return, your
-          merchandise must be unused and in the same condition that you received it and must be in the original
-          packaging. Our return policy does not apply to the following goods: discounted or final sale items, gift
-          cards, and worn or damaged goods. These items are not eligible for return, refund or exchange.
+          Once the merchandise is delivered to you, you may return it within 7 days of delivery for a full refund. All
+          returns made after 7 days will result in the issuance of store credit. To be eligible for a return, the
+          merchandise must be unused, in the same condition as received, and in its original packaging. Our return
+          policy does not apply to the following products: discounted or final sale items, gift cards, and used or
+          damaged products. These items are not eligible for return, refund, or exchange.
         </p>
       </section>
 
       <section>
         <h2>Shipping</h2>
         <p>
-          To initiate a return, please email us at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We require a receipt or
-          proof of purchase to accompany your return.
+          To initiate a return, please email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We require a
+          receipt or proof of purchase with the return.
         </p>
-        <p>All returned merchandise should be sent to us at:</p>
+        <p>All returned merchandise must be sent to:</p>
         <address className="space-y-1">
           <p>Sinesia Karol</p>
-          <p>Attn: RETURNS (Order #_____)</p>
+          <p>Attn: RETURNS (Order No. ___)</p>
           <p>135 Spring Street</p>
           <p>Newport, Rhode Island 02840</p>
           <p>
@@ -50,51 +49,48 @@ export function ReturnsContent({ locale }: { locale: string }) {
           </p>
         </address>
         <p>
-          For items that are manufactured by another party and resold by Us, please do not send such item back to the
+          For items manufactured by third parties and resold by us, please do not send the item back to the
           manufacturer.
         </p>
         <p>
-          You are responsible for paying for all shipping costs for your returned item. Shipping costs are
-          non-refundable. If you receive a refund, the cost of any returned shipping will be deducted from your refund.
-          You should consider using a trackable shipping service or purchasing shipping insurance for items of value.
+          You are responsible for paying all shipping costs for the returned item. Shipping costs are non-refundable. If
+          you receive a refund, the cost of return shipping will be deducted from the refund amount. We recommend using
+          a trackable shipping service or purchasing shipping insurance for valuable items.
         </p>
-        <p>Depending on where you live, the time it may take for your exchanged product to reach you, may vary.</p>
+        <p>Depending on where you live, the time it takes for an exchanged product to reach you may vary.</p>
       </section>
 
       <section>
         <h2>Refunds and Exchanges</h2>
         <p>
-          After We have received your valid return, We will send you an email to notify you that We have received your
-          returned item and notify you of the acceptance or rejection of your return.
+          Upon receipt of your valid return, we will send you an email notifying you that we have received the returned
+          item and informing you of the acceptance or rejection of the return. If your return is accepted, we will
+          arrange for one of the following options within a reasonable timeframe: an exchange for the returned item,
+          non-transferable store credit, a credit to your card or the original payment method used for the purchase, a
+          check, or another solution we determine, in good faith, to be appropriate for the circumstances.
         </p>
         <p>
-          If your return is accepted by Us, We will provide one of the following within a reasonable time: an exchange of
-          merchandise for the item returned, a non-transferable merchandise credit, a credit to the payment card or
-          original method of payment used to pay for the item, a check, or another remedy that we determine in good
-          faith is appropriate in the circumstances.
-        </p>
-        <p>
-          We only replace items if they are defective or damaged upon arrival. If you need to make an exchange for such
-          items, please send an email to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we will reply with instructions on
-          how to proceed.
+          We replace items only if they are defective or damaged upon receipt. If you need to exchange items in this
+          condition, please email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>, and we will reply with
+          instructions on how to proceed.
         </p>
       </section>
 
       <section>
         <h2>Late or Missing Refunds (if applicable)</h2>
-        <p>If you haven&apos;t received a refund yet, first check your bank account again.</p>
-        <p>Then contact your credit card company, it may take some time before your refund is officially posted.</p>
-        <p>Next contact your bank. There is often some processing time before a refund is posted.</p>
+        <p>If you have not yet received your refund, please check your bank account again.</p>
+        <p>Next, contact your credit card company; it may take some time before the refund is officially posted.</p>
+        <p>Then, contact your bank. There is often a processing time before a refund is actually posted to your account.</p>
         <p>
-          If you&apos;ve done all of this and you still have not received your refund yet, please contact us at{' '}
+          If you have completed all these steps and still have not received your refund, please contact us at{' '}
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
         </p>
       </section>
 
       <section>
-        <h2>General</h2>
+        <h2>General Provisions</h2>
         <p>
-          If you do not comply with any of the above conditions, We reserve the right to refuse the return or exchange,
+          If you fail to comply with any of the conditions above, we reserve the right to refuse the return or exchange,
           or to impose different or additional conditions.
         </p>
       </section>

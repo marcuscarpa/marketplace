@@ -270,7 +270,7 @@ export const en = {
     quickLinks: 'Quick Links',
     contactCta: 'Contact us',
     shipping: 'Orders & Shipping',
-    shippingPageTitle: 'Shipping Policy',
+    shippingPageTitle: 'SHIPPING',
     contactPageTitle: 'Make Contact',
     returns: 'Returns and Exchanges',
     faq: 'FAQs',

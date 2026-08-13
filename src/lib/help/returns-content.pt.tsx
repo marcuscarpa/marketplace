@@ -7,39 +7,40 @@ export function ReturnsContentPt({ locale }: { locale: string }) {
   return (
     <article className={LEGAL_PROSE}>
       <p>
-        Todos os termos definidos utilizados abaixo terão os significados estabelecidos em nossos{' '}
+        Todos os termos definidos abaixo terão os significados estabelecidos em nossos{' '}
         <a href={termsHref}>Termos e Condições</a>.
       </p>
 
       <section>
         <h2>Cancelamento de Pedidos</h2>
         <p>
-          Pedidos enviados online são processados imediatamente e não podem ser cancelados. Você precisa aguardar
-          receber a mercadoria para poder devolvê-la.
+          Pedidos feitos online são processados imediatamente e não podem ser cancelados. Você deve aguardar receber a
+          mercadoria antes de poder devolvê-la.
         </p>
       </section>
 
       <section>
         <h2>Devoluções</h2>
         <p>
-          Uma vez entregue um item, você pode devolvê-lo em até 7 dias após a entrega para reembolso integral. Todas
-          as devoluções feitas após 7 dias receberão crédito na loja. Para ser elegível à devolução, sua mercadoria
-          deve estar sem uso, nas mesmas condições em que foi recebida e na embalagem original. Nossa política de
-          devolução não se aplica aos seguintes produtos: itens com desconto ou em liquidação final, cartões-presente e
-          produtos usados ou danificados. Esses itens não são elegíveis para devolução, reembolso ou troca.
+          Uma vez que a mercadoria é entregue a você, você pode devolvê-la em até 7 dias após a entrega para reembolso
+          integral. Todas as devoluções feitas após 7 dias resultarão na emissão de crédito na loja. Para ser elegível à
+          devolução, a mercadoria deve estar sem uso, nas mesmas condições em que foi recebida e na embalagem original.
+          Nossa política de devolução não se aplica aos seguintes produtos: itens com desconto ou em liquidação final,
+          cartões-presente e produtos usados ou danificados. Esses itens não são elegíveis para devolução, reembolso ou
+          troca.
         </p>
       </section>
 
       <section>
         <h2>Envio</h2>
         <p>
-          Para iniciar uma devolução, envie um e-mail para <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Exigimos recibo ou
-          comprovante de compra junto com sua devolução.
+          Para iniciar uma devolução, envie um e-mail para <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+          Exigimos recibo ou comprovante de compra junto com a devolução.
         </p>
-        <p>Toda mercadoria devolvida deve ser enviada para:</p>
+        <p>Toda a mercadoria devolvida deve ser enviada para:</p>
         <address className="space-y-1">
           <p>Sinesia Karol</p>
-          <p>Attn: RETURNS (Order #_____)</p>
+          <p>Attn: DEVOLUÇÕES (Nº do Pedido ___)</p>
           <p>135 Spring Street</p>
           <p>Newport, Rhode Island 02840</p>
           <p>
@@ -47,34 +48,30 @@ export function ReturnsContentPt({ locale }: { locale: string }) {
           </p>
         </address>
         <p>
-          Para itens fabricados por terceiros e revendidos por Nós, por favor não envie tais itens de volta ao
-          fabricante.
+          Para itens fabricados por terceiros e revendidos por nós, não envie o item de volta ao fabricante.
         </p>
         <p>
-          Você é responsável pelo pagamento de todos os custos de envio do item devolvido. Os custos de envio não são
-          reembolsáveis. Se você receber um reembolso, o custo de qualquer envio de devolução será deduzido do seu
-          reembolso. Recomendamos considerar o uso de serviço de envio rastreável ou contratar seguro de envio para
-          itens de valor.
+          Você é responsável por pagar todos os custos de envio do item devolvido. Os custos de envio não são
+          reembolsáveis. Se você receber um reembolso, o custo do envio da devolução será deduzido do valor do
+          reembolso. Recomendamos usar um serviço de envio com rastreamento ou contratar seguro de envio para itens
+          valiosos.
         </p>
-        <p>Dependendo de onde você mora, o tempo para que o produto trocado chegue até você pode variar.</p>
+        <p>Dependendo de onde você mora, o tempo para um produto trocado chegar até você pode variar.</p>
       </section>
 
       <section>
         <h2>Reembolsos e Trocas</h2>
         <p>
-          Após recebermos sua devolução válida, enviaremos um e-mail para informar que recebemos seu item devolvido e
-          notificá-lo sobre a aceitação ou rejeição da devolução.
+          Após o recebimento da sua devolução válida, enviaremos um e-mail notificando que recebemos o item devolvido e
+          informando sobre a aceitação ou rejeição da devolução. Se a devolução for aceita, providenciaremos uma das
+          seguintes opções em um prazo razoável: troca pelo item devolvido, crédito na loja intransferível, crédito no
+          cartão ou no método de pagamento original usado na compra, cheque ou outra solução que determinarmos, de boa-fé,
+          como apropriada para as circunstâncias.
         </p>
         <p>
-          Se sua devolução for aceita por Nós, forneceremos, em prazo razoável, uma das seguintes opções: troca de
-          mercadoria pelo item devolvido, crédito de mercadoria intransferível, crédito no cartão de pagamento ou
-          método de pagamento original usado para pagar o item, cheque, ou outra solução que determinemos de boa-fé como
-          apropriada nas circunstâncias.
-        </p>
-        <p>
-          Só substituímos itens se estiverem defeituosos ou danificados na chegada. Se precisar fazer uma troca por
-          tais itens, envie um e-mail para <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> e responderemos com instruções sobre
-          como proceder.
+          Só substituímos itens se estiverem defeituosos ou danificados no recebimento. Se precisar trocar itens nessa
+          condição, envie um e-mail para <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> e responderemos com
+          instruções sobre como proceder.
         </p>
       </section>
 
@@ -85,9 +82,12 @@ export function ReturnsContentPt({ locale }: { locale: string }) {
           Em seguida, contate a operadora do seu cartão de crédito; pode levar algum tempo até que o reembolso seja
           oficialmente lançado.
         </p>
-        <p>Depois contate seu banco. Frequentemente há um tempo de processamento antes que um reembolso seja lançado.</p>
         <p>
-          Se você fez tudo isso e ainda não recebeu seu reembolso, entre em contato conosco em{' '}
+          Depois, contate seu banco. Frequentemente há um tempo de processamento antes que um reembolso seja de fato
+          lançado em sua conta.
+        </p>
+        <p>
+          Se você concluiu todas essas etapas e ainda não recebeu seu reembolso, entre em contato conosco em{' '}
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
         </p>
       </section>
