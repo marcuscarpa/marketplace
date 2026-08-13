@@ -70,7 +70,7 @@ export function WhyShopSection({ locale }: WhyShopSectionProps) {
                 <h3 className="m-0 text-center font-serif text-[clamp(1.0625rem,2.4vw,1.375rem)] font-normal leading-tight tracking-[-0.02em] text-ink lg:text-[22px] lg:leading-[26px]">
                   {card.title}
                 </h3>
-                <p className="m-0 max-w-[240px] text-pretty text-center font-sans-ui text-base font-normal leading-[22px] text-ink/70">
+                <p className="m-0 max-w-[240px] whitespace-pre-line text-pretty text-center font-sans-ui text-base font-normal leading-[22px] text-ink/70">
                   {card.description}
                 </p>
               </div>
