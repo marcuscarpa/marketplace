@@ -2,7 +2,6 @@ import { LEGAL_PROSE_SIMPLE } from '@/lib/help/legal-prose';
 import { CONTACT_PHONES } from '@/lib/help/contact-info';
 
 const BRAND = 'SINESIA KAROL';
-const SUPPORT_EMAIL = 'admin@sinesiakarol.com';
 const SENDING_NUMBER = CONTACT_PHONES.us.display;
 
 export function MobileTermsContentPt({ locale }: { locale: string }) {
@@ -50,11 +49,6 @@ export function MobileTermsContentPt({ locale }: { locale: string }) {
         ao seu dispositivo móvel, salvo se iniciada por você. Se você se inscreveu em outros programas de mensagens
         móveis da {BRAND} e deseja cancelar, exceto quando a lei aplicável exigir o contrário, precisará cancelar
         separadamente nesses programas seguindo as instruções fornecidas em seus respectivos termos móveis.
-      </p>
-
-      <p>
-        Para suporte ou assistência do Serviço, envie HELP para {SENDING_NUMBER} ou e-mail{' '}
-        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
       </p>
 
       <p>

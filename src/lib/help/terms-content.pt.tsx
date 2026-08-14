@@ -11,7 +11,7 @@ export function TermsContentPt({ locale }: { locale: string }) {
       <p className="text-neutral-500">Última atualização: 27 de maio de 2026</p>
 
       <section>
-        <h2>Termos de Uso {COMPANY}</h2>
+        <h2>TERMOS DE USO {COMPANY}</h2>
         <p>
           A {COMPANY} presta serviços a você sujeitos aos termos e condições incluídos nestes Termos de Uso e em
           outras páginas de atendimento ao cliente que preparamos para tornar sua experiência de compra com a{' '}
@@ -23,7 +23,7 @@ export function TermsContentPt({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Privacidade</h2>
+        <h2>PRIVACIDADE</h2>
         <p>
           As informações que você nos fornece permanecem na {COMPANY}. Mantemos rigorosa segurança sobre as
           informações que você nos fornece e as utilizamos apenas das seguintes formas:
@@ -48,7 +48,7 @@ export function TermsContentPt({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Propriedade e Direitos Autorais</h2>
+        <h2>PROPRIEDADE E DIREITOS AUTORAIS</h2>
         <p>
           O site da {COMPANY} é de propriedade e operado pela {COMPANY}. Salvo indicação em contrário, todo o design e
           conteúdo incluídos neste site, incluindo textos, gráficos, logotipos, ícones, imagens, obras de arte, clipes
@@ -58,12 +58,12 @@ export function TermsContentPt({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Elegibilidade para Usar e/ou Registrar-se no Site</h2>
+        <h2>ELEGIBILIDADE PARA USAR E/OU REGISTRAR-SE NO SITE</h2>
         <p>
           O Site, o Serviço e a Comunidade não se destinam a usuários menores de 13 anos, e apenas pessoas com 18 anos
           ou mais podem se registrar no Site. A {COMPANY} não coleta intencionalmente informações pessoalmente
           identificáveis de usuários menores de 13 anos. Tais usuários estão expressamente proibidos de usar o Serviço,
-          de enviar suas informações pessoalmente identificáveis a nós e de se registrar como Membros.
+          de enviar suas informações pessoalmente identificáveis a nós e de se registrar como membros.
         </p>
         <p>
           Os usuários concordam em não se passar por outras pessoas, em não fornecer informações falsas e em não
@@ -73,7 +73,7 @@ export function TermsContentPt({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Comunicações Eletrônicas</h2>
+        <h2>COMUNICAÇÕES ELETRÔNICAS</h2>
         <p>
           Você concorda que todos os acordos, avisos, divulgações e outras comunicações que lhe fornecemos
           eletronicamente atendem a qualquer exigência legal de que tais comunicações sejam feitas por escrito.
