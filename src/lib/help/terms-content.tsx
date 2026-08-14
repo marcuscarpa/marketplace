@@ -12,9 +12,9 @@ export function TermsContent({ locale }: { locale: string }) {
       <p className="text-neutral-500">Last Updated: May 27, 2026</p>
 
       <section>
-        <h2>Terms of Use {COMPANY}</h2>
+        <h2>TERMS OF USE {COMPANY}</h2>
         <p>
-          {COMPANY} provides services to you subject to the terms and conditions included in this Terms of Use and other
+          {COMPANY} provides services to you subject to the terms and conditions included in these Terms of Use and other
           customer services pages which we have prepared to help make your shopping experience with {COMPANY} as enjoyable
           and problem-free as possible. Please read them carefully. By visiting or using this web site, you acknowledge
           that you have read and understood, and agree to be bound by, Terms of Use. You also agree to comply with all
@@ -24,7 +24,7 @@ export function TermsContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Privacy</h2>
+        <h2>PRIVACY</h2>
         <p>
           The information you give to us stays at {COMPANY} We maintain strict security over the information you provide
           to us and use it only in the following ways:
@@ -47,32 +47,32 @@ export function TermsContent({ locale }: { locale: string }) {
       </section>
 
       <section>
-        <h2>Ownership and Copyright</h2>
+        <h2>OWNERSHIP AND COPYRIGHT</h2>
         <p>
           {COMPANY} web site is owned and operated by {COMPANY} Unless otherwise noted, all design and content included
           on this web site, including text, graphics, logos, icons, images, artwork, audio and video clips and software
-          is the property of {COMPANY} (or is used under license to {COMPANY} and is protected by United States and
+          is the property of {COMPANY} (Or is used under license to {COMPANY} and is protected by United States and
           international copyright laws.
         </p>
       </section>
 
       <section>
-        <h2>Eligibility to Use and/or Register on the Site</h2>
+        <h2>ELIGIBILITY TO USE AND/OR REGISTER ON THE SITE</h2>
         <p>
-          The Site, Service and Community are not intended for Users under the age of 13, and only persons of the age
+          The Site, Service and Community are not intended for Users under the age of 13, and only people of the age
           of 18 or older may register on the Site. {COMPANY} does not knowingly collect personally identifiable
           information from Users under the age of 13. Such Users are expressly prohibited from using the Service, from
-          submitting their personally identifiable information to us, and from registering as a Member.
+          submitting their personally identifiable information to us, and from registering as a member.
         </p>
         <p>
-          Users agree not to impersonate other persons, not to provide false information and not to rely on the identity
+          Users agree not to impersonate other people, not to provide false information and not to rely on the identity
           or identification of other Users displayed on the Site because {COMPANY} does not employ any means to verify
           the true identity of registered users.
         </p>
       </section>
 
       <section>
-        <h2>Electronic Communications</h2>
+        <h2>ELECTRONIC COMMUNICATIONS</h2>
         <p>
           You agree that all agreements, notices, disclosures, and other communications that we provide to you
           electronically satisfy any legal requirement that such communications be in writing.
