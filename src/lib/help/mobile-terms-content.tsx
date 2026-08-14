@@ -1,10 +1,7 @@
 import { LEGAL_PROSE_SIMPLE } from '@/lib/help/legal-prose';
 import { MobileTermsContentPt } from '@/lib/help/mobile-terms-content.pt';
-import { CONTACT_PHONES } from '@/lib/help/contact-info';
 
 const BRAND = 'SINESIA KAROL';
-const SUPPORT_EMAIL = 'admin@sinesiakarol.com';
-const SENDING_NUMBER = CONTACT_PHONES.us.display;
 
 export function MobileTermsContent({ locale }: { locale: string }) {
   if (locale === 'pt') return <MobileTermsContentPt locale={locale} />;
@@ -16,16 +13,16 @@ export function MobileTermsContent({ locale }: { locale: string }) {
       <p className="text-neutral-500">Last updated: May 27, 2026</p>
 
       <p>
-        The {BRAND} mobile message service (the &quot;Service&quot;) is operated by {BRAND} (&quot;{BRAND}&quot;,
-        &quot;we&quot;, or &quot;us&quot;). Your use of the Service constitutes your agreement to these terms and
-        conditions (&quot;Mobile Terms&quot;). We may modify or cancel the Service or any of its features without
+        The {BRAND} mobile message service (the &ldquo;Service&rdquo;) is operated by {BRAND} (&ldquo;{BRAND}&rdquo;,
+        &ldquo;we&rdquo;, or &ldquo;us&rdquo;). Your use of the Service constitutes your agreement to these terms and
+        conditions (&ldquo;Mobile Terms&rdquo;). We may modify or cancel the Service or any of its features without
         notice. To the extent permitted by applicable law, we may also modify these Mobile Terms at any time and your
         continued use of the Service following the effective date of any such changes shall constitute your acceptance
         of such changes.
       </p>
 
       <p>
-        By consenting to {BRAND}&apos;s SMS/text messaging service, you agree to receive recurring SMS/text messages
+        By consenting to {BRAND}&rsquo;s SMS/text messaging service, you agree to receive recurring SMS/text messages
         from and on behalf of {BRAND} through your wireless provider to the mobile number you provided, even if your
         mobile number is registered on any state or federal Do Not Call list. Text messages may be sent using an
         automatic telephone dialing system or other technology. Service-related messages may include updates, alerts,
@@ -34,8 +31,8 @@ export function MobileTermsContent({ locale }: { locale: string }) {
       </p>
 
       <p>
-        You understand that you do not have to sign up for this program in order to make any purchases, and your consent
-        is not a condition of any purchase with {BRAND}. Your participation in this program is completely voluntary.
+        You understand that you do not have to sign up for this program to make any purchases, and your consent is not a
+        condition of any purchase with {BRAND}. Your participation in this program is completely voluntary.
       </p>
 
       <p>
@@ -46,17 +43,12 @@ export function MobileTermsContent({ locale }: { locale: string }) {
       </p>
 
       <p>
-        You may opt-out of the Service at any time. Text the single keyword command STOP to {SENDING_NUMBER} or click
-        the unsubscribe link (where available) in any text message to cancel. You&apos;ll receive a one-time opt-out
-        confirmation text message. No further messages will be sent to your mobile device, unless initiated by you. If
-        you have subscribed to other {BRAND} mobile message programs and wish to cancel, except where applicable law
-        requires otherwise, you will need to opt out separately from those programs by following the instructions
-        provided in their respective mobile terms.
-      </p>
-
-      <p>
-        For Service support or assistance, text HELP to {SENDING_NUMBER} or email{' '}
-        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+        You may opt-out of the Service at any time. Text the single keyword command STOP to +1 (401) 847-1087 or click
+        the unsubscribe link (where available) in any text message to cancel. You&rsquo;ll receive a one-time opt-out
+        confirmation text message. No further messages will be sent to your mobile device, unless
+        initiated by you. If you have subscribed to other {BRAND} mobile message programs and wish to cancel, except
+        where applicable law requires otherwise, you will need to opt out separately from those programs by following
+        the instructions provided in their respective mobile terms.
       </p>
 
       <p>
