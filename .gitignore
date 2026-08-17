@@ -18,6 +18,16 @@ tsconfig.tsbuildinfo
 # optimized media work dir
 public-optimized/
 
+# large original videos (only optimized versions should be pushed)
+original-videos/
+videos-originais/
+public/original/
+public/originais/
+**/*-original.mp4
+**/*-original.mov
+**/*-original.mkv
+**/*-original.webm
+
 # debug
 npm-debug.log*
 yarn-debug.log*
