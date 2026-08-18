@@ -6,7 +6,8 @@ import { isShopifyConfigured, getShopifyClient } from '@/lib/shopify/client';
 import { GET_ALL_PRODUCTS, GET_COLLECTIONS } from '@/lib/shopify/queries';
 import { getAppUrl } from '@/lib/site-metadata';
 
-const LOCALES = ['en', 'pt'] as const;
+// Only `en` is live — `/pt` is disabled until the BR Shopify store is ready.
+const LOCALES = ['en'] as const;
 
 const STATIC_PAGES = [
   { path: '', priority: 1, frequency: 'weekly' as const },

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const SUPPORTED_LOCALES = ['en', 'pt'] as const;
+/**
+ * Only `en` is live right now. The `/pt` locale is disabled until the
+ * Brazilian Shopify store is ready — any `/pt/*` request redirects to `/en/*`.
+ */
+const DEFAULT_LOCALE = 'en' as const;
 
 function isPrivateIp(ip: string): boolean {
   const parts = ip.split('.').map((p) => Number(p));
@@ -28,14 +32,15 @@ function getClientIp(request: NextRequest): string | null {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Disabled locale: /pt and /pt/... redirect to the English equivalent.
+  if (pathname === '/pt' || pathname.startsWith('/pt/')) {
+    const target = pathname === '/pt' ? '/en' : `/en${pathname.slice('/pt'.length)}`;
+    return NextResponse.redirect(new URL(target, request.url));
+  }
+
+  // Root always resolves to the live default locale.
   if (pathname === '/') {
-    const acceptLanguage = request.headers.get('accept-language') ?? '';
-    const segments = acceptLanguage.split(',');
-    const preferred = segments[0]?.trim().substring(0, 2).toLowerCase() ?? 'en';
-    const locale = SUPPORTED_LOCALES.includes(preferred as typeof SUPPORTED_LOCALES[number])
-      ? preferred
-      : 'en';
-    return NextResponse.redirect(new URL(`/${locale}`, request.url));
+    return NextResponse.redirect(new URL(`/${DEFAULT_LOCALE}`, request.url));
   }
 
   return NextResponse.next();
