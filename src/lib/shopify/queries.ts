@@ -234,6 +234,23 @@ export const GET_COLLECTIONS = `
   }
 `;
 
+export const GET_ALL_PRODUCTS = `
+  query GetAllProducts($first: Int!, $after: String) {
+    products(first: $first, after: $after) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        id
+        title
+        handle
+        publishedAt
+      }
+    }
+  }
+`;
+
 export const GET_PRODUCTS_BY_COLLECTION = `
   query GetProductsByCollection($handle: String!, $first: Int!, $after: String) {
     collection(handle: $handle) {

@@ -2,15 +2,16 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Luxury Store - Global Luxury E-Commerce',
-    short_name: 'Luxury Store',
-    description: 'Curated high-end luxury items authenticated via blockchain.',
+    name: 'Sinesia Karol - Designer Swimwear & Bikini Collection',
+    short_name: 'Sinesia Karol',
+    description:
+      'Shop designer swimwear and bikini collections at Sinesia Karol — luxury Brazilian bikinis, resortwear, one pieces and beach dresses.',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
     theme_color: '#000000',
     orientation: 'portrait-primary',
-    categories: ['shopping', 'lifestyle'],
+    categories: ['shopping', 'fashion', 'lifestyle'],
     icons: [
       {
         src: '/Favicon_sinesia.ico',

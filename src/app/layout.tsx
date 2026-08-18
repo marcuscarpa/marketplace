@@ -32,7 +32,7 @@ const ibmPlex = IBM_Plex_Mono({
 const FAVICON = '/Favicon_sinesia.ico';
 const metadataBaseResolved = resolveMetadataBase();
 const sharePreviewImageUrl = getSocialShareImageUrl();
-const ogTitle = 'Sinesia Karol — Timeless Sophistication';
+const ogTitle = 'Designer Swimwear & Bikini Collection | SINESIA KAROL';
 
 export const metadata: Metadata = {
   metadataBase: metadataBaseResolved,

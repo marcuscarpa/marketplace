@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const description = product.description.slice(0, 160);
   const image = product.images.nodes[0]?.url ?? getSocialShareImageUrl();
   return {
-    title: `${product.title} | Luxury Store`,
+    title: `${product.title} | Sinesia Karol`,
     description,
     openGraph: {
       title: product.title,

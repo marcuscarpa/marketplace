@@ -11,7 +11,7 @@ interface LoginPageProps {
 export async function generateMetadata({ params }: LoginPageProps): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: locale === 'pt' ? 'Entrar | Luxury Store' : 'Login | Luxury Store',
+    title: locale === 'pt' ? 'Entrar | Sinesia Karol' : 'Login | Sinesia Karol',
   };
 }
 

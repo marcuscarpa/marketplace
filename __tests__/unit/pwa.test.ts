@@ -20,8 +20,8 @@ describe('Root Layout Metadata', () => {
 describe('PWA Manifest', () => {
   it('returns valid manifest object', () => {
     const result = manifest();
-    expect(result.name).toBe('Luxury Store - Global Luxury E-Commerce');
-    expect(result.short_name).toBe('Luxury Store');
+    expect(result.name).toBe('Sinesia Karol - Designer Swimwear & Bikini Collection');
+    expect(result.short_name).toBe('Sinesia Karol');
     expect(result.display).toBe('standalone');
     expect(result.theme_color).toBe('#000000');
     expect(result.background_color).toBe('#ffffff');

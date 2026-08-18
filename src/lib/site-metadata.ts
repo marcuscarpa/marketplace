@@ -7,7 +7,7 @@ const SOCIAL_SHARE_IMAGE_PATH = '/og-share.webp';
 const SOCIAL_SHARE_IMAGE_VERSION = '20260729';
 
 export const SITE_DESCRIPTION =
-  'Curated leather goods and accessories — enduring design and contemporary craftsmanship.';
+  'Shop designer swimwear and bikini collections at Sinesia Karol — exclusive resortwear crafted with timeless elegance, fluidity, and sophistication.';
 
 /** Origem canónica para OG/Twitter — igual ao Alist_MKT; nunca incluir segmento /en. */
 export function resolveMetadataBase(): URL | undefined {

@@ -4,7 +4,7 @@ test.describe('Homepage', () => {
   test('should load homepage successfully', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page).toHaveTitle(/Timeless Sophistication/i);
+    await expect(page).toHaveTitle(/SINESIA KAROL/i);
   });
 
   test('should display hero section with headline', async ({ page }) => {

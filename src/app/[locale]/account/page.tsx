@@ -14,7 +14,7 @@ interface AccountPageProps {
 export async function generateMetadata({ params }: AccountPageProps): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: locale === 'pt' ? 'Minha Conta | Luxury Store' : 'My Account | Luxury Store',
+    title: locale === 'pt' ? 'Minha Conta | Sinesia Karol' : 'My Account | Sinesia Karol',
   };
 }
 
