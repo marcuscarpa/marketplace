@@ -138,3 +138,9 @@ All secrets are stored as Vercel environment variables. No secrets are committed
 | Feature Flags | OpenFeature + LaunchDarkly, Vercel Edge Config |
 | Testing | Vitest, Playwright |
 | CI | GitHub Actions |
+
+## Docs
+
+- [OTIMIZACAO_PERFORMANCE.md](./OTIMIZACAO_PERFORMANCE.md) — redução de mídia (imagens/vídeos) e melhorias de lazy load / prefetch / LCP
+- [AUDITORIA_COMPLETA.md](./AUDITORIA_COMPLETA.md) — auditoria de segurança e código
+- [SETUP.md](./SETUP.md) — setup e configuração do ambiente
