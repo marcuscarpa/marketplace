@@ -40,8 +40,21 @@ export function LazyAutoplayVideo({
     if (prefersReducedMotion()) return;
 
     if (eager) {
-      const id = window.requestAnimationFrame(() => setShouldLoad(true));
-      return () => window.cancelAnimationFrame(id);
+      // Start only after the critical path has painted — waiting for idle keeps
+      // the hero video from competing with the LCP poster for bandwidth.
+      const idle = (
+        window as Window & {
+          requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => void;
+        }
+      ).requestIdleCallback;
+      if (idle) {
+        const id = idle(() => setShouldLoad(true), { timeout: 2500 });
+        return () => {
+          (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(id);
+        };
+      }
+      const id = window.setTimeout(() => setShouldLoad(true), 1200);
+      return () => window.clearTimeout(id);
     }
 
     const node = containerRef.current;

@@ -35,7 +35,7 @@ export function CollectionCta({ locale }: CollectionCtaProps) {
   ] as const;
 
   return (
-    <EntranceView stagger className={`mx-auto max-w-[1440px] ${SECTION_PADDING_FLUSH}`}>
+    <EntranceView id="collection-cta" stagger className={`mx-auto max-w-[1440px] ${SECTION_PADDING_FLUSH}`}>
       <div className="grid gap-5 lg:grid-cols-2">
         {ctas.map((item, index) => (
           <Link

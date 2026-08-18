@@ -2,14 +2,24 @@ import { SITE_IMAGES } from '@/lib/catalog/data';
 
 /**
  * Central list of media used on the home page. The `MediaPrefetcher` warms
- * the browser cache for these right after first load so that by the time the
- * user scrolls to a section, its video/image is already downloaded.
+ * the browser cache for these without starving the critical path:
+ * - Images are warmed in small idle batches after first load.
+ * - Videos are only fetched once the user scrolls near their section.
  */
-export const HOME_VIDEOS: readonly string[] = [
-  '/video-banner-hero.mp4',
-  SITE_IMAGES.valuesVideo,
-  '/bloco%205-video%201-esquerda.mp4',
-  '/bloco%205-video%202-direita.mp4',
+export interface HomeVideoGroup {
+  anchorId: string;
+  videos: readonly string[];
+}
+
+export const HOME_VIDEO_GROUPS: readonly HomeVideoGroup[] = [
+  {
+    anchorId: 'collection-cta',
+    videos: ['/bloco%205-video%201-esquerda.mp4', '/bloco%205-video%202-direita.mp4'],
+  },
+  {
+    anchorId: 'our-values',
+    videos: [SITE_IMAGES.valuesVideo],
+  },
 ];
 
 export const HOME_IMAGES: readonly string[] = [

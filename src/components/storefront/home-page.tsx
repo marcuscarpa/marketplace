@@ -13,7 +13,7 @@ import { SocialFeed } from '@/components/storefront/social-feed';
 import type { CatalogProduct, CategoryCyclerItem } from '@/lib/catalog/data';
 import { VALUES_BANNER_PRODUCTS } from '@/lib/catalog/banner-hero-products';
 import { collectionPath, SHOPIFY_COLLECTION } from '@/lib/catalog/collection-handles';
-import { HOME_IMAGES, HOME_VIDEOS } from '@/lib/catalog/media-assets';
+import { HOME_IMAGES, HOME_VIDEO_GROUPS } from '@/lib/catalog/media-assets';
 
 interface HomePageProps {
   locale: string;
@@ -38,7 +38,7 @@ export function HomePage({
 
   return (
     <>
-      <MediaPrefetcher videos={HOME_VIDEOS} images={HOME_IMAGES} />
+      <MediaPrefetcher images={HOME_IMAGES} videoGroups={HOME_VIDEO_GROUPS} />
       <HeroCurtainStage hero={<Hero locale={locale} />}>
         <MostPopular locale={locale} products={popularProducts} />
         <CollectionCta locale={locale} />

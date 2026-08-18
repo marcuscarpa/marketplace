@@ -967,6 +967,17 @@ select {
   display: block;
 }
 
+/*
+ * Below-the-fold sections skip style/layout/paint until the user scrolls near
+ * them. `contain-intrinsic-size: auto` lets the browser remember each section's
+ * rendered height, so the scrollbar never jumps.
+ */
+.mkt-entrance,
+.mkt-entrance-stagger {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .mkt-hero-bg-zoom {
     will-change: transform;

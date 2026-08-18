@@ -20,7 +20,7 @@ export function OurValues({ collectionHref, locale, bannerProducts = [] }: OurVa
   const h = m(locale).home;
 
   return (
-    <section className="our-values our-values__scroll-track">
+    <section id="our-values" className="our-values our-values__scroll-track">
       <div className="our-values__media-layer">
         <LazyAutoplayVideo
           src={SITE_IMAGES.valuesVideo}

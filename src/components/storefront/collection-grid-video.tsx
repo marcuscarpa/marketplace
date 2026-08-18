@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { m } from '@/lib/i18n';
 
@@ -21,13 +21,33 @@ export function CollectionGridVideo({
   productHandle,
   posterImage,
 }: CollectionGridVideoProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const messages = m(locale);
   const productHref = `/${locale}/products/${productHandle}`;
 
   useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '800px 0px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !shouldLoad) return;
 
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const syncPlayback = () => {
@@ -41,23 +61,38 @@ export function CollectionGridVideo({
     syncPlayback();
     motionQuery.addEventListener('change', syncPlayback);
     return () => motionQuery.removeEventListener('change', syncPlayback);
-  }, []);
+  }, [shouldLoad]);
 
   return (
-    <div className="col-span-1 sm:col-span-2">
+    <div ref={containerRef} className="col-span-1 sm:col-span-2">
       <div className="group relative aspect-[16/10] overflow-hidden rounded-xl bg-neutral-900 lg:aspect-[8/5]">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-label={alt}
-          className="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-        >
-          <source src={src} type="video/mp4" />
-        </video>
+        {shouldLoad ? (
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            aria-label={alt}
+            onPlaying={() => setVideoReady(true)}
+            className={`absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover transition-[opacity,transform] duration-700 group-hover:scale-[1.03] motion-safe:duration-[520ms] ${
+              videoReady ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <source src={src} type="video/mp4" />
+          </video>
+        ) : null}
+
+        <Image
+          src={posterImage}
+          alt={alt}
+          fill
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          className={`object-cover transition-opacity motion-safe:duration-700 ${
+            videoReady ? 'pointer-events-none opacity-0' : 'opacity-100'
+          }`}
+        />
 
         <div
           aria-hidden

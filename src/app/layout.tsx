@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Instrument_Sans, IBM_Plex_Mono } from 'next/font/google';
 import React from 'react';
 
+import { ASSET_ORIGIN } from '@/lib/catalog/assets';
 import {
   getAppUrl,
   getSocialShareImageUrl,
@@ -84,6 +85,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${playfair.variable} ${instrument.variable} ${ibmPlex.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://cdn.shopify.com" />
+        <link rel="preconnect" href={ASSET_ORIGIN} />
+      </head>
       <body className="font-sans-ui antialiased">{children}</body>
     </html>
   );
