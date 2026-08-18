@@ -12,7 +12,7 @@ const NAV_BANNERS: Record<string, NavBanner> = {
     alt: 'Accessories',
   },
   'mens-collection': {
-    src: '/Men-1.png',
+    src: '/Men-1.webp',
     alt: 'Men',
     imageClassName: 'object-cover object-[center_82%]',
   },

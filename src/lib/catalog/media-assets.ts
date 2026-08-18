@@ -17,7 +17,7 @@ export const HOME_IMAGES: readonly string[] = [
   '/logotipo.webp',
   '/New-Collections%20-1.webp',
   '/Acessorios-1.webp',
-  '/Men-1.png',
+  '/Men-1.webp',
   '/Sales-1.webp',
   '/mega-menu-swimwear-1.webp',
   '/mega-menu-swimwear-2.webp',

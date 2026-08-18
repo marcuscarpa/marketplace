@@ -39,6 +39,14 @@ footer-fixed-*.png
 footer-local*.png
 scripts/*-out.txt
 
+# audit/debug screenshots
+scripts/**/*.png
+scripts/**/*.jpg
+scripts/**/*.jpeg
+scripts/*.png
+scripts/*.jpg
+scripts/*.jpeg
+
 # OS
 .DS_Store
 Thumbs.db

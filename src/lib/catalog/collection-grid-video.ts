@@ -10,7 +10,7 @@ const COLLECTION_GRID_VIDEOS: Record<string, CollectionGridVideoConfig> = {
     src: '/Video%20New%20Collections.mp4',
     alt: 'New Collections',
     productHandle: 'sadie-one-piece-beach-pattern-copy',
-    posterImage: '/imagem%20video%20new%20collections.jpg',
+    posterImage: '/imagem%20video%20new%20collections.webp',
   },
 };
 
